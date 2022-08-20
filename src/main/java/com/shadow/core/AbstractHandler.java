@@ -85,10 +85,10 @@ public abstract class AbstractHandler {
         ctField.setModifiers(Modifier.PRIVATE);
         cc.addField(ctField);
         // 3、给属性添加注解
-        ctField = cc.getDeclaredField("agentApplicationContext" + Constants.DOLLER_D);
+        ctField = cc.getDeclaredField("agentApplicationContext");
         List<AttributeInfo> attributes = ctField.getFieldInfo().getAttributes();
         AnnotationsAttribute annotationsAttr = !attributes.isEmpty() ? (AnnotationsAttribute) attributes.get(0) :
-                new AnnotationsAttribute(ctField.getFieldInfo().getConstPool(), AnnotationsAttribute.invisibleTag);
+                new AnnotationsAttribute(ctField.getFieldInfo().getConstPool(), AnnotationsAttribute.visibleTag);
         Annotation annotation = new Annotation("org.springframework.beans.factory.annotation.Autowired", ctField.getFieldInfo().getConstPool());
         annotationsAttr.addAnnotation(annotation);
         ctField.getFieldInfo().addAttribute(annotationsAttr);
@@ -111,7 +111,7 @@ public abstract class AbstractHandler {
 
 
     private void setClassMethodAnnotations(CtMethod method, Supplier<String> path, ConstPool constPool) {
-        AnnotationsAttribute methodAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.invisibleTag);
+        AnnotationsAttribute methodAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
         // 1、创建方法注解
         Annotation annotation = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constPool);
         // 1.1 设置注解参数
@@ -126,7 +126,7 @@ public abstract class AbstractHandler {
 
     private void setClassMethodParameters(CtMethod method, ConstPool constPool) {
         ParameterAnnotationsAttribute parameterAnnotationsAttr =
-                new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.invisibleTag);
+                new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
         // 1、创建方法参数
         // 1.1 方法参数1
         Annotation annotation1 = new Annotation("org.springframework.web.bind.annotation.PathVariable", constPool);

@@ -17,7 +17,7 @@ public class Constants {
     public static String DOLLER_S = "$";
     public static String DOLLER_D = "$$";
 
-    public static String DEFAULT_PATH = "/agent/run";
+    public static String DEFAULT_PATH = "/agent/run/{taskKey}";
 
     public enum ScheduleTypeEnum {
         XXL,
