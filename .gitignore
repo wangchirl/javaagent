@@ -1,0 +1,56 @@
+﻿# idea ignore
+.idea
+*.ipr
+*.iml
+*.iws
+logs
+target
+out
+README.html
+.mvn
+*.cab
+mvnw
+mvnw.cmd
+
+out/
+.gradle/
+
+# 如果文件已经提交到git上了，则先执行下面命令删除文件
+# git rm -r --cached .idea logs target
+
+# eclipse ignore
+.settings/
+.project
+.classpath
+
+# maven ignore
+target/
+*.war
+*.zip
+*.tar
+*.tar.gz
+
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
