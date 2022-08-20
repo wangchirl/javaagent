@@ -7,7 +7,7 @@ class SimpleJobHandler extends AbstractHandler {
     SimpleJobHandler() {
         System.out.println("Simple Job agent ...");
     }
-    
+
     @Override
     Supplier<String> getMethodBody() {
         return () -> {

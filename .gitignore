@@ -1,5 +1,5 @@
 ﻿# idea ignore
-.idea
+.idea/
 *.ipr
 *.iml
 *.iws
@@ -42,6 +42,7 @@ target/
 .springBeans
 
 ### IntelliJ IDEA ###
+.idea/
 .idea
 *.iws
 *.iml
