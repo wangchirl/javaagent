@@ -1,0 +1,169 @@
+{
+	"info": {
+		"_postman_id": "4d92e09b-2e87-496d-bbe4-70839a05712b",
+		"name": "定时任务-javaagent",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Xxl定时任务测试",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
+				},
+				"url": {
+					"raw": "localhost:50084/shadow/api/system/agent/run/xxl2?params=王钦",
+					"host": [
+						"localhost"
+					],
+					"port": "50084",
+					"path": [
+						"shadow",
+						"api",
+						"system",
+						"agent",
+						"run",
+						"xxl2"
+					],
+					"query": [
+						{
+							"key": "params",
+							"value": "王钦"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Quartz定时任务测试",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
+				},
+				"url": {
+					"raw": "localhost:50084/shadow/api/system/agent/run/quartzTriggerKey?params=quartzJob",
+					"host": [
+						"localhost"
+					],
+					"port": "50084",
+					"path": [
+						"shadow",
+						"api",
+						"system",
+						"agent",
+						"run",
+						"quartzTriggerKey"
+					],
+					"query": [
+						{
+							"key": "params",
+							"value": "quartzJob"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Spring注解定时任务",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
+				},
+				"url": {
+					"raw": "localhost:50084/shadow/api/system/agent/run/spring2?params=王钦1",
+					"host": [
+						"localhost"
+					],
+					"port": "50084",
+					"path": [
+						"shadow",
+						"api",
+						"system",
+						"agent",
+						"run",
+						"spring2"
+					],
+					"query": [
+						{
+							"key": "params",
+							"value": "王钦1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Simple自定义定时任务",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
+				},
+				"url": {
+					"raw": "localhost:50084/shadow/api/system/agent/run/simple1?params=王钦1",
+					"host": [
+						"localhost"
+					],
+					"port": "50084",
+					"path": [
+						"shadow",
+						"api",
+						"system",
+						"agent",
+						"run",
+						"simple1"
+					],
+					"query": [
+						{
+							"key": "params",
+							"value": "王钦1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

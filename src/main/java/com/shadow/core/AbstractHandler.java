@@ -4,36 +4,12 @@ import com.shadow.utils.Constants;
 import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 
 public abstract class AbstractHandler {
-
-    private boolean debug = true;
-
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    /**
-     * agent method name
-     *
-     * @return {@link java.lang.String}
-     */
-    Supplier<String> getMethodName() {
-        return () -> this.getClass().getSimpleName().toLowerCase();
-    }
-
-    /**
-     * request path
-     *
-     * @return {@link java.lang.String}
-     */
-    Supplier<String> getPath() {
-        return () -> Constants.DEFAULT_PATH;
-    }
 
     /**
      * agent method body
@@ -41,6 +17,29 @@ public abstract class AbstractHandler {
      * @return {@link java.lang.String}
      */
     abstract Supplier<String> getMethodBody();
+
+    private Map<String, String> args;
+
+    Map<String, String> getArgs() {
+        return this.args;
+    }
+
+    AbstractHandler(Map<String, String> args) {
+        this.args = args;
+    }
+
+    private boolean isDebug() {
+        return Boolean.parseBoolean(this.args.get(Constants.DEBUG));
+    }
+
+    /**
+     * agent method name
+     *
+     * @return {@link java.lang.String}
+     */
+    private Supplier<String> getMethodName() {
+        return () -> this.args.get(Constants.METHOD_NAME) == null ? this.getClass().getSimpleName().toLowerCase() : this.args.get(Constants.METHOD_NAME);
+    }
 
     byte[] handle(ClassLoader loader, String className) {
         try {
@@ -59,19 +58,19 @@ public abstract class AbstractHandler {
             ClassFile ccFile = cc.getClassFile();
             ConstPool constPool = ccFile.getConstPool();
             // 6.1 添加方法注解
-            setClassMethodAnnotations(method, getPath(), constPool);
+            setClassMethodAnnotations(method, this.args.get(Constants.HTTP_REQUEST_PREFIX_URI), constPool);
             // 6.2 添加方法参数
             setClassMethodParameters(method, constPool);
             // 7、write file for debug
-            if (debug) {
+            if (this.isDebug()) {
                 cc.writeFile();
             }
             // 8、remove classpath
             cp.removeClassPath(classPath);
-            // 9、return new bytecode
+            // 9、return new byte code
             return cc.toBytecode();
         } catch (Exception e) {
-            System.out.println("handle Xxl Job Agent error " + e.getMessage());
+            System.out.println("handle " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
             e.printStackTrace();
         }
         // return null for do nothing
@@ -80,22 +79,22 @@ public abstract class AbstractHandler {
 
     private void setClassField(CtClass cc) throws CannotCompileException, NotFoundException {
         // 1、创建属性
-        CtField ctField = CtField.make("private org.springframework.context.ApplicationContext agentApplicationContext;", cc);
+        CtField ctField = CtField.make(Constants.SPRING_IOC_FIELD + this.args.get(Constants.IOC_FIELD_NAME) + Constants.SEMICOLON, cc);
         // 2、设置属性访问权限
         ctField.setModifiers(Modifier.PRIVATE);
         cc.addField(ctField);
         // 3、给属性添加注解
-        ctField = cc.getDeclaredField("agentApplicationContext");
+        ctField = cc.getDeclaredField(this.args.get(Constants.IOC_FIELD_NAME));
         List<AttributeInfo> attributes = ctField.getFieldInfo().getAttributes();
         AnnotationsAttribute annotationsAttr = !attributes.isEmpty() ? (AnnotationsAttribute) attributes.get(0) :
                 new AnnotationsAttribute(ctField.getFieldInfo().getConstPool(), AnnotationsAttribute.visibleTag);
-        Annotation annotation = new Annotation("org.springframework.beans.factory.annotation.Autowired", ctField.getFieldInfo().getConstPool());
+        Annotation annotation = new Annotation(Constants.SPRING_AUTOWIRED, ctField.getFieldInfo().getConstPool());
         annotationsAttr.addAnnotation(annotation);
         ctField.getFieldInfo().addAttribute(annotationsAttr);
     }
 
 
-    private CtMethod getAndSetClassMethod(ClassPool cp, CtClass cc, Supplier<String> methodName, Supplier<String> supplier) throws CannotCompileException, NotFoundException {
+    private CtMethod getAndSetClassMethod(ClassPool cp, CtClass cc, Supplier<String> methodName, Supplier<String> methodBody) throws CannotCompileException, NotFoundException {
         CtClass string = cp.get(String.class.getName());
         CtClass object = cp.get(Object.class.getName());
         // 1、创建方法
@@ -104,21 +103,21 @@ public abstract class AbstractHandler {
         method.setModifiers(Modifier.PUBLIC);
         method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
         // 3、设置方法体
-        method.setBody(supplier.get());
+        method.setBody(this.args.get(Constants.METHOD_BODY) == null ? methodBody.get() : this.args.get(Constants.METHOD_BODY));
         cc.addMethod(method);
         return method;
     }
 
 
-    private void setClassMethodAnnotations(CtMethod method, Supplier<String> path, ConstPool constPool) {
+    private void setClassMethodAnnotations(CtMethod method, String path, ConstPool constPool) {
         AnnotationsAttribute methodAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
         // 1、创建方法注解
-        Annotation annotation = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constPool);
+        Annotation annotation = new Annotation(Constants.SPRING_REQUEST_MAPPING, constPool);
         // 1.1 设置注解参数
-        StringMemberValue path1 = new StringMemberValue(path.get(), constPool);
+        StringMemberValue path1 = new StringMemberValue(path, constPool);
         ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
         arrayMemberValue.setValue(new MemberValue[]{path1});
-        annotation.addMemberValue("path", arrayMemberValue);
+        annotation.addMemberValue(Constants.SPRING_REQUEST_MAPPING_PATH, arrayMemberValue);
         // 2、添加到方法上
         methodAttr.addAnnotation(annotation);
         method.getMethodInfo().addAttribute(methodAttr);
@@ -129,15 +128,15 @@ public abstract class AbstractHandler {
                 new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
         // 1、创建方法参数
         // 1.1 方法参数1
-        Annotation annotation1 = new Annotation("org.springframework.web.bind.annotation.PathVariable", constPool);
-        annotation1.addMemberValue("value", new StringMemberValue("taskKey", constPool));
+        Annotation annotation1 = new Annotation(Constants.SPRING_PATH_VARIABLE, constPool);
+        annotation1.addMemberValue(Constants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(Constants.SPRING_PATH_VARIABLE_PARAMETER_NAME, constPool));
         // 1.2 方法参数2
-        Annotation annotation2 = new Annotation("org.springframework.web.bind.annotation.RequestParam", constPool);
-        annotation2.addMemberValue("value", new StringMemberValue("params", constPool));
-        annotation2.addMemberValue("required", new BooleanMemberValue(false, constPool));
+        Annotation annotation2 = new Annotation(Constants.SPRING_REQUEST_PARAM, constPool);
+        annotation2.addMemberValue(Constants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(Constants.SPRING_REQUEST_PARAM_NAME, constPool));
+        annotation2.addMemberValue(Constants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
         // 1.3 方法参数3
-        Annotation annotation3 = new Annotation("org.springframework.web.bind.annotation.RequestBody", constPool);
-        annotation3.addMemberValue("required", new BooleanMemberValue(false, constPool));
+        Annotation annotation3 = new Annotation(Constants.SPRING_REQUEST_BODY, constPool);
+        annotation3.addMemberValue(Constants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
         // 2、加入方法
         Annotation[][] annotations = new Annotation[3][1];
         annotations[0][0] = annotation1;
@@ -145,6 +144,40 @@ public abstract class AbstractHandler {
         annotations[2][0] = annotation3;
         parameterAnnotationsAttr.setAnnotations(annotations);
         method.getMethodInfo().addAttribute(parameterAnnotationsAttr);
+    }
+
+    String setThreadLocal() {
+        if (this.args.get(Constants.THREADLOCAL_CLASS) != null && this.args.get(Constants.THREADLOCAL_FIELD_NAME) != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("try {");
+            builder.append("\n    if($2 != null) {");
+            builder.append(getArgs().get(Constants.THREADLOCAL_CLASS));
+            builder.append(".");
+            builder.append(getArgs().get(Constants.THREADLOCAL_FIELD_NAME));
+            builder.append(".set($2);");
+            builder.append("\n   } else {");
+            builder.append(getArgs().get(Constants.THREADLOCAL_CLASS));
+            builder.append(".");
+            builder.append(getArgs().get(Constants.THREADLOCAL_FIELD_NAME));
+            builder.append(".set($3);");
+            builder.append("}");
+            return builder.toString();
+        }
+        return "";
+    }
+
+    String removeThreadLocal() {
+        if (this.args.get(Constants.THREADLOCAL_CLASS) != null && this.args.get(Constants.THREADLOCAL_FIELD_NAME) != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("} finally {");
+            builder.append(getArgs().get(Constants.THREADLOCAL_CLASS));
+            builder.append(".");
+            builder.append(getArgs().get(Constants.THREADLOCAL_FIELD_NAME));
+            builder.append(".remove();");
+            builder.append("}");
+            return builder.toString();
+        }
+        return "";
     }
 
 }

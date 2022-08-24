@@ -1,10 +1,14 @@
 package com.shadow.core;
 
+import com.shadow.utils.Constants;
+
+import java.util.Map;
 import java.util.function.Supplier;
 
 class SpringJobHandler extends AbstractHandler {
 
-    SpringJobHandler() {
+    SpringJobHandler(Map<String, String> args) {
+        super(args);
         System.out.println("Spring Job agent ...");
     }
 
@@ -13,7 +17,10 @@ class SpringJobHandler extends AbstractHandler {
         return () -> {
             StringBuilder body = new StringBuilder();
             body.append("{");
-            body.append("\n    org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor postProcessor = agentApplicationContext.getBean(org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class);");
+            body.append(setThreadLocal());
+            body.append("\n    org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor postProcessor = ");
+            body.append(getArgs().get(Constants.IOC_FIELD_NAME));
+            body.append(".getBean(org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class);");
             body.append("\n    java.lang.reflect.Field field = org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class.getDeclaredField(\"scheduledTasks\");");
             body.append("\n    field.setAccessible(true);");
             body.append("\n    Object o1 = field.get(postProcessor);");
@@ -49,6 +56,7 @@ class SpringJobHandler extends AbstractHandler {
             body.append("\n            break;");
             body.append("\n        };");
             body.append("\n    };");
+            body.append(removeThreadLocal());
             body.append("\n    return \"Successful execute task job : task key = \" + $1 + \" params = \" + $2 + \" body = \" + $3;");
             body.append("\n}");
             return body.toString();

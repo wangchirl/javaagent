@@ -5,6 +5,7 @@ import com.shadow.utils.Constants;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.Map;
 
 public class JavassistTransformer implements ClassFileTransformer {
 
@@ -21,14 +22,19 @@ public class JavassistTransformer implements ClassFileTransformer {
     private String innerClassName;
 
     /**
+     * 代理参数
+     */
+    private Map<String, String> args;
+    /**
      * 定时任务类型
      */
     private Constants.ScheduleTypeEnum scheduleTypeEnum;
 
-    public JavassistTransformer(String className, Constants.ScheduleTypeEnum scheduleTypeEnum) {
-        this.className = className;
-        this.innerClassName = this.className.replaceAll(Constants.DOT, Constants.BIAS);
+    public JavassistTransformer(Map<String, String> resolveArgs, Constants.ScheduleTypeEnum scheduleTypeEnum) {
+        this.args = resolveArgs;
         this.scheduleTypeEnum = scheduleTypeEnum;
+        this.className = this.args.get(Constants.CONTROLLER_CLASS);
+        this.innerClassName = this.className.replaceAll(Constants.DOT, Constants.BIAS);
     }
 
     /**
@@ -47,16 +53,16 @@ public class JavassistTransformer implements ClassFileTransformer {
         // load assigned class
         if (className.equals(this.innerClassName)) {
             System.out.println("LOAD ASSIGNED CLASS : " + className);
-            System.out.println("LOAD CLASS LOADER : " + loader);
+            System.out.println("LOAD TIME AGENT ARGS : " + this.args);
             switch (this.scheduleTypeEnum) {
                 case XXL:
-                    return new XxlJobHandler().handle(loader, this.className);
+                    return new XxlJobHandler(this.args).handle(loader, this.className);
                 case QUARTZ:
-                    return new QuartzJobHandler().handle(loader, this.className);
+                    return new QuartzJobHandler(this.args).handle(loader, this.className);
                 case SPRING:
-                    return new SpringJobHandler().handle(loader, this.className);
+                    return new SpringJobHandler(this.args).handle(loader, this.className);
                 case SIMPLE:
-                    return new SimpleJobHandler().handle(loader, this.className);
+                    return new SimpleJobHandler(this.args).handle(loader, this.className);
                 default:
                     break;
             }
