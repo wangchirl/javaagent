@@ -16,22 +16,39 @@
 - 此项目可直接打包为 jar 包
 - 可结合测试仓库进行测试，测试仓库地址 ：https://github.com/wangchirl/scheduler.git
 - 源码以开源，可根据自己需求进行改造
-- 后续版本将使用 ASM 来对项目进行改造
-- 目前只实现了 load time 的实现方式，attach 方式将在后续进行开发
+- 后续版本将使用 ASM 、Byte buddy 来对项目进行改造
+- 目前实现了 load time 、dynamic 的 javassist 实现方式，其他方式将在后续进行实现
 
 #### 3、针对测试仓库进行测试的相关说明
 
 > 参数说明：
 >
+> ##### Load time 参数：
+>
 > - jobType ：定时任务类型 -> XXL、QUARTZ、SPRING、SIMPLE【必须】
 > - ctlClass ：暴露 HTTP 请求的 controller 全限类名【必须】
 > - iocFieldName ：注入 controller 的 Spring IOC 容器的字段名称，默认 $$$springIoc$$$【可选】
-> - tlClass ：支持 ThreadLocal 参数传递的全限类名，【可选】
+> - tlClass ：支持 ThreadLocal 参数传递的全限类名【可选】
 > - tlFieldName ：ThreadLocal 所在类定义的字段名，tlClass 存在时生效【可选】
 > - methodName ：暴露 HTTP 请求的方法的名称，有默认值【可选】
 > - methodBody ：暴露 HTTP 请求的方法体，已提供以上四种定时任务实现方式【可选】
 > - httpUri ：暴露 HTTP 请求的 URI 前缀，会拼接上 /{taskKey} ，默认 /agent/run【可选】
 > - debug ：是否 debug 模式，次模式方便调试，可生成对应的增强的 controller 类信息文件【可选】
+>
+> ##### Dynamic time 参数：
+>
+> - originJobType ：原定时任务类型 -> XXL、QUARTZ、SPRING、SIMPLE【必须】
+>
+> > <font color=red>特别说明：除 httpUri 参数外，其他参数必须和 Load time 的保持一致</font>
+> >
+> > - jobType ：定时任务类型 -> XXL、QUARTZ、SPRING、SIMPLE【必须】
+> > - ctlClass ：暴露 HTTP 请求的 controller 全限类名【必须】
+> > - iocFieldName ：注入 controller 的 Spring IOC 容器的字段名称，默认 $$$springIoc$$$【可选】
+> > - tlClass ：支持 ThreadLocal 参数传递的全限类名【可选】
+> > - tlFieldName ：ThreadLocal 所在类定义的字段名，tlClass 存在时生效【可选】
+> > - methodName ：暴露 HTTP 请求的方法的名称，有默认值【可选】
+> > - methodBody ：暴露 HTTP 请求的方法体，已提供以上四种定时任务实现方式【可选】
+> > - debug ：是否 debug 模式，此模式方便调试，可生成对应的增强的 controller 类信息文件【可选】
 
 - xxl job 测试
 
@@ -91,7 +108,7 @@
   ```
 
 
-##### 4、最全的 agent 请求参数传递
+#### 4、最全的 agent 请求参数传递
 
 > ```sh
 > -javaagent:F:\source\javaagent\target\SuperAgent-jar-with-dependencies.jar=jobType=XXL&ctlClass=com.shadow.controller.AgentBaseController&tlClass=com.shadow.supports.framework.ScheduleService&tlFieldName=JOB_PARAMETERS_THREAD_LOCAL&methodName=testMethod&iocFieldName=ioc&httpUri=/test/run&debug=true
@@ -109,3 +126,13 @@
 > - debug 是 true，会在当前位置生成所增强的 controller 的字节码文件
 
 #### 5、postman 相关测试在同目录下的 `javaagent+schedule项目POSTMAN测试.json`
+
+
+
+#### 6、Attach 机制 - 可动态替换定时任务类型
+
+>  测试类：com.shadow.agent.AttachAgentTest
+>
+> ```sh
+> originJobType=xxl&jobType=simple&ctlClass=com.shadow.controller.AgentBaseController&methodName=testMethod&iocFieldName=ioc&tlClass=com.shadow.supports.framework.ScheduleService&tlFieldName=JOB_PARAMETERS_THREAD_LOCAL&debug=true
+> ```

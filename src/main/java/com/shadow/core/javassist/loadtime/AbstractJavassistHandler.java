@@ -1,33 +1,40 @@
-package com.shadow.core;
+package com.shadow.core.javassist.loadtime;
 
 import com.shadow.utils.Constants;
 import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 
-public abstract class AbstractHandler {
+public abstract class AbstractJavassistHandler {
 
     /**
      * agent method body
      *
      * @return {@link java.lang.String}
      */
-    abstract Supplier<String> getMethodBody();
+    public abstract Supplier<String> getMethodBody();
 
+    /**
+     * 记录 javaagent 传递的参数信息
+     */
     private Map<String, String> args;
 
     Map<String, String> getArgs() {
         return this.args;
     }
 
-    AbstractHandler(Map<String, String> args) {
+    AbstractJavassistHandler(Map<String, String> args) {
         this.args = args;
     }
 
+    /**
+     * 是否 debug 模式
+     */
     private boolean isDebug() {
         return Boolean.parseBoolean(this.args.get(Constants.DEBUG));
     }
@@ -37,10 +44,13 @@ public abstract class AbstractHandler {
      *
      * @return {@link java.lang.String}
      */
-    private Supplier<String> getMethodName() {
+    public Supplier<String> getMethodName() {
         return () -> this.args.get(Constants.METHOD_NAME) == null ? this.getClass().getSimpleName().toLowerCase() : this.args.get(Constants.METHOD_NAME);
     }
 
+    /**
+     * 主方法
+     */
     byte[] handle(ClassLoader loader, String className) {
         try {
             // 1、得到类池
@@ -70,13 +80,16 @@ public abstract class AbstractHandler {
             // 9、return new byte code
             return cc.toBytecode();
         } catch (Exception e) {
-            System.out.println("handle " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
+            System.out.println("handle agent " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
             e.printStackTrace();
         }
         // return null for do nothing
         return null;
     }
 
+    /**
+     * 设置属性 & 属性添加注解
+     */
     private void setClassField(CtClass cc) throws CannotCompileException, NotFoundException {
         // 1、创建属性
         CtField ctField = CtField.make(Constants.SPRING_IOC_FIELD + this.args.get(Constants.IOC_FIELD_NAME) + Constants.SEMICOLON, cc);
@@ -93,7 +106,9 @@ public abstract class AbstractHandler {
         ctField.getFieldInfo().addAttribute(annotationsAttr);
     }
 
-
+    /**
+     * 创建方法 & 方法体
+     */
     private CtMethod getAndSetClassMethod(ClassPool cp, CtClass cc, Supplier<String> methodName, Supplier<String> methodBody) throws CannotCompileException, NotFoundException {
         CtClass string = cp.get(String.class.getName());
         CtClass object = cp.get(Object.class.getName());
@@ -108,7 +123,9 @@ public abstract class AbstractHandler {
         return method;
     }
 
-
+    /**
+     * 方法添加注解
+     */
     private void setClassMethodAnnotations(CtMethod method, String path, ConstPool constPool) {
         AnnotationsAttribute methodAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
         // 1、创建方法注解
@@ -123,6 +140,9 @@ public abstract class AbstractHandler {
         method.getMethodInfo().addAttribute(methodAttr);
     }
 
+    /**
+     * 方法参数 & 注解参数
+     */
     private void setClassMethodParameters(CtMethod method, ConstPool constPool) {
         ParameterAnnotationsAttribute parameterAnnotationsAttr =
                 new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
@@ -146,6 +166,9 @@ public abstract class AbstractHandler {
         method.getMethodInfo().addAttribute(parameterAnnotationsAttr);
     }
 
+    /**
+     * ThreadLocal 参数设置
+     */
     String setThreadLocal() {
         if (this.args.get(Constants.THREADLOCAL_CLASS) != null && this.args.get(Constants.THREADLOCAL_FIELD_NAME) != null) {
             StringBuilder builder = new StringBuilder();
@@ -166,6 +189,9 @@ public abstract class AbstractHandler {
         return "";
     }
 
+    /**
+     * ThreadLocal 参数移除
+     */
     String removeThreadLocal() {
         if (this.args.get(Constants.THREADLOCAL_CLASS) != null && this.args.get(Constants.THREADLOCAL_FIELD_NAME) != null) {
             StringBuilder builder = new StringBuilder();

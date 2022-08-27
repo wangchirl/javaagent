@@ -1,6 +1,6 @@
 package com.shadow.utils;
 
-import com.shadow.core.AbstractHandler;
+import com.shadow.core.javassist.loadtime.AbstractJavassistHandler;
 
 public class Constants {
 
@@ -84,7 +84,7 @@ public class Constants {
 
     /**
      * 方法名称 - 非必须
-     * default {@link AbstractHandler#getMethodName()}
+     * default {@link AbstractJavassistHandler#getMethodName()}
      */
     public static String METHOD_NAME = "methodName";
 
@@ -104,6 +104,11 @@ public class Constants {
      */
     public static String DEBUG = "debug";
 
+    /**
+     * System.out.println() log 是否打印
+     */
+    public static String LOGGER_PRINT_OPEN = "logger";
+
 
     // Spring 相关类
     public static String SPRING_IOC_FIELD = "private org.springframework.context.ApplicationContext ";
@@ -118,5 +123,14 @@ public class Constants {
     public static String SPRING_REQUEST_PARAM_NAME = "params";
     public static String SPRING_REQUEST_PARAM_REQUIRED = "required";
     public static String SPRING_REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
+
+    // ========= dynamic args naming ==========
+
+    /**
+     * 原 JOB 类型
+     *
+     * @see com.shadow.utils.Constants#JOB_TYPE
+     */
+    public static String ORIGIN_JOB_TYPE = "originJobType";
 
 }

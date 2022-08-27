@@ -1,19 +1,19 @@
-package com.shadow.core;
+package com.shadow.core.javassist.loadtime;
 
 import com.shadow.utils.Constants;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-class QuartzJobHandler extends AbstractHandler {
+public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
 
-    QuartzJobHandler(Map<String, String> args) {
+    public QuartzJobJavassistHandler(Map<String, String> args) {
         super(args);
         System.out.println("Quartz Job agent ...");
     }
 
     @Override
-    Supplier<String> getMethodBody() {
+    public Supplier<String> getMethodBody() {
         return () -> {
             StringBuilder body = new StringBuilder();
             body.append("{");

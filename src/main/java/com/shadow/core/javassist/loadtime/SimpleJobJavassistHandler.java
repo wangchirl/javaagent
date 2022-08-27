@@ -1,19 +1,19 @@
-package com.shadow.core;
+package com.shadow.core.javassist.loadtime;
 
 import com.shadow.utils.Constants;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-class SimpleJobHandler extends AbstractHandler {
+public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
 
-    SimpleJobHandler(Map<String, String> args) {
+    public SimpleJobJavassistHandler(Map<String, String> args) {
         super(args);
         System.out.println("Simple Job agent ...");
     }
 
     @Override
-    Supplier<String> getMethodBody() {
+    public Supplier<String> getMethodBody() {
         return () -> {
             StringBuilder body = new StringBuilder();
             body.append("{");
