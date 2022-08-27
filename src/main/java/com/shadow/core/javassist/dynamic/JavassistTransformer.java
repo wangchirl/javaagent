@@ -68,6 +68,7 @@ public class JavassistTransformer implements ClassFileTransformer {
                 CtClass object = cp.get(Object.class.getName());
                 CtMethod method = cc.getDeclaredMethod(args.get(Constants.METHOD_NAME), new CtClass[]{string, string, object});
                 // 5、重新设置方法体
+                System.out.println(args.get(Constants.METHOD_BODY));
                 method.setBody(args.get(Constants.METHOD_BODY));
                 byte[] bytes = cc.toBytecode();
                 // 6、write file for debug
