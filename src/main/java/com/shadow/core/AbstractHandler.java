@@ -170,10 +170,12 @@ public abstract class AbstractHandler {
         if (this.args.get(Constants.THREADLOCAL_CLASS) != null && this.args.get(Constants.THREADLOCAL_FIELD_NAME) != null) {
             StringBuilder builder = new StringBuilder();
             builder.append("} finally {");
+            builder.append("if ($2 != null || $3 != null){");
             builder.append(getArgs().get(Constants.THREADLOCAL_CLASS));
             builder.append(".");
             builder.append(getArgs().get(Constants.THREADLOCAL_FIELD_NAME));
             builder.append(".remove();");
+            builder.append("  }");
             builder.append("}");
             return builder.toString();
         }
