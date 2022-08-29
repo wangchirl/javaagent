@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 
-public abstract class AbstractJavassistHandler {
+public abstract class AbstractJavassistHandler implements IHandler {
 
     /**
      * agent method body
@@ -56,12 +56,13 @@ public abstract class AbstractJavassistHandler {
             // 1、得到类池
             ClassPool cp = new ClassPool();
             // 2、设置类路径
-            LoaderClassPath classPath = new LoaderClassPath(loader);
-            cp.appendClassPath(classPath);
+            cp.insertClassPath(new ClassClassPath(this.getClass()));
             // 3、得到需要操作的类
             CtClass cc = cp.get(className);
             // 4、给得到的类添加注解属性
             setClassField(cc);
+            // 4.1 扩展额外的字段
+            addFields(cc);
             // 5、给得到的类添加方法
             CtMethod method = getAndSetClassMethod(cp, cc, getMethodName(), getMethodBody());
             // 6、给方法添加注解和参数
@@ -71,13 +72,13 @@ public abstract class AbstractJavassistHandler {
             setClassMethodAnnotations(method, this.args.get(Constants.HTTP_REQUEST_PREFIX_URI), constPool);
             // 6.2 添加方法参数
             setClassMethodParameters(method, constPool);
+            // 6.3 扩展添加其他方法
+            addMethods(cp, cc);
             // 7、write file for debug
             if (this.isDebug()) {
                 cc.writeFile();
             }
-            // 8、remove classpath
-            cp.removeClassPath(classPath);
-            // 9、return new byte code
+            // 8、return new byte code
             return cc.toBytecode();
         } catch (Exception e) {
             System.out.println("handle agent " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
@@ -149,7 +150,7 @@ public abstract class AbstractJavassistHandler {
         // 1、创建方法参数
         // 1.1 方法参数1
         Annotation annotation1 = new Annotation(Constants.SPRING_PATH_VARIABLE, constPool);
-        annotation1.addMemberValue(Constants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(Constants.SPRING_PATH_VARIABLE_PARAMETER_NAME, constPool));
+        annotation1.addMemberValue(Constants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(Constants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY, constPool));
         // 1.2 方法参数2
         Annotation annotation2 = new Annotation(Constants.SPRING_REQUEST_PARAM, constPool);
         annotation2.addMemberValue(Constants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(Constants.SPRING_REQUEST_PARAM_NAME, constPool));

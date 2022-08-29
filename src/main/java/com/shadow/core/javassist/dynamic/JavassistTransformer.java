@@ -2,10 +2,7 @@ package com.shadow.core.javassist.dynamic;
 
 import com.shadow.utils.Constants;
 import com.sun.org.apache.bcel.internal.util.ByteSequence;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.LoaderClassPath;
+import javassist.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,8 +56,7 @@ public class JavassistTransformer implements ClassFileTransformer {
                 // 1、得到类池
                 ClassPool cp = new ClassPool();
                 // 2、设置类路径
-                LoaderClassPath classPath = new LoaderClassPath(loader);
-                cp.appendClassPath(classPath);
+                cp.insertClassPath(new ClassClassPath(this.getClass()));
                 // 3、得到需要操作的类
                 CtClass cc = cp.makeClass(byteSequence);
                 // 4、得到方法
@@ -68,7 +64,6 @@ public class JavassistTransformer implements ClassFileTransformer {
                 CtClass object = cp.get(Object.class.getName());
                 CtMethod method = cc.getDeclaredMethod(args.get(Constants.METHOD_NAME), new CtClass[]{string, string, object});
                 // 5、重新设置方法体
-                System.out.println(args.get(Constants.METHOD_BODY));
                 method.setBody(args.get(Constants.METHOD_BODY));
                 byte[] bytes = cc.toBytecode();
                 // 6、write file for debug
@@ -78,9 +73,7 @@ public class JavassistTransformer implements ClassFileTransformer {
                     FileOutputStream fileOutputStream = new FileOutputStream(new File(this.className + ".class"));
                     outputStream.writeTo(fileOutputStream);
                 }
-                // 7、remove classPath
-                cp.removeClassPath(classPath);
-                // 8、return new byte code
+                // 7、return new byte code
                 return bytes;
             } catch (Exception e) {
                 System.out.println("handle attach " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());

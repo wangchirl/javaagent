@@ -31,8 +31,7 @@ public class DynamicAgent {
         // 2、必要参数有时才处理
         if (resolveArgs.get(Constants.ORIGIN_JOB_TYPE) != null &&
                 resolveArgs.get(Constants.CONTROLLER_CLASS) != null &&
-                resolveArgs.get(Constants.JOB_TYPE) != null &&
-                !resolveArgs.get(Constants.ORIGIN_JOB_TYPE).equals(resolveArgs.get(Constants.JOB_TYPE))) {
+                resolveArgs.get(Constants.JOB_TYPE) != null) {
             Constants.ScheduleTypeEnum originScheduleTypeEnum = Constants.getByName(resolveArgs.get(Constants.ORIGIN_JOB_TYPE));
             Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByName(resolveArgs.get(Constants.JOB_TYPE));
             if (originScheduleTypeEnum != null && scheduleTypeEnum != null) {
@@ -62,13 +61,16 @@ public class DynamicAgent {
         resolveArgs.putIfAbsent(Constants.DEBUG, "false");
         // 2、IOC_FIELD_NAME
         resolveArgs.computeIfAbsent(Constants.IOC_FIELD_NAME, k -> Constants.DEFAULT_IOC_FIELD_VALUE);
-        // 3、find origin handle for method name
+        // 3、CRUD 相关
+        resolveArgs.putIfAbsent(Constants.TASK_CRUD, "false");
+        resolveArgs.computeIfAbsent(Constants.SIMPLE_JOB_IOC_FIELD_NAME, k -> Constants.DEFAULT_SIMPLE_JOB_IOC_FIELD_NAME);
+        // 4、find origin handle for method name
         AbstractJavassistHandler originHandler = getAbstractJavassistHandler(resolveArgs, originScheduleTypeEnum);
         // if args not found method name, set default
         if (resolveArgs.get(Constants.METHOD_NAME) == null) {
             resolveArgs.put(Constants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
         }
-        // 4、find current handle for method body
+        // 5、find current handle for method body
         AbstractJavassistHandler currentHandler = getAbstractJavassistHandler(resolveArgs, scheduleTypeEnum);
         resolveArgs.put(Constants.METHOD_BODY, currentHandler.getMethodBody().get());
     }

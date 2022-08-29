@@ -110,6 +110,30 @@ public class Constants {
     public static String LOGGER_PRINT_OPEN = "logger";
 
 
+    // Simple Job CRUD 相关
+
+    /**
+     * Simple Job 定时任务容器对象字段名称
+     */
+    public static String SIMPLE_JOB_IOC_FIELD_NAME = "crudFieldName";
+
+    /**
+     * Simple Job IOC 对象类型
+     */
+    public static String SIMPLE_JOB_IOC_FIELD = "private com.shadow.supports.framework.CommonSchedulingConfigurer ";
+
+    /**
+     * 默认 Simple Job 定时任务容器对象字段名称
+     */
+    public static String DEFAULT_SIMPLE_JOB_IOC_FIELD_NAME = "$$$simpleJobConfigurer$$$";
+
+    /**
+     * 是否给 Simple Job 添加 CRUD 方法
+     */
+    public static String TASK_CRUD = "crud";
+
+
+
     // Spring 相关类
     public static String SPRING_IOC_FIELD = "private org.springframework.context.ApplicationContext ";
     public static String SPRING_AUTOWIRED = "org.springframework.beans.factory.annotation.Autowired";
@@ -118,7 +142,8 @@ public class Constants {
     public static String SPRING_REQUEST_MAPPING_VALUE = "value";
 
     public static String SPRING_PATH_VARIABLE = "org.springframework.web.bind.annotation.PathVariable";
-    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME = "taskKey";
+    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_OPT = "opt";
+    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY = "taskKey";
     public static String SPRING_REQUEST_PARAM = "org.springframework.web.bind.annotation.RequestParam";
     public static String SPRING_REQUEST_PARAM_NAME = "params";
     public static String SPRING_REQUEST_PARAM_REQUIRED = "required";
