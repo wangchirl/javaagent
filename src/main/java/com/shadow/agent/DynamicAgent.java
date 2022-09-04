@@ -32,8 +32,8 @@ public class DynamicAgent {
         if (resolveArgs.get(Constants.ORIGIN_JOB_TYPE) != null &&
                 resolveArgs.get(Constants.CONTROLLER_CLASS) != null &&
                 resolveArgs.get(Constants.JOB_TYPE) != null) {
-            Constants.ScheduleTypeEnum originScheduleTypeEnum = Constants.getByName(resolveArgs.get(Constants.ORIGIN_JOB_TYPE));
-            Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByName(resolveArgs.get(Constants.JOB_TYPE));
+            Constants.ScheduleTypeEnum originScheduleTypeEnum = Constants.getByJobTypeName(resolveArgs.get(Constants.ORIGIN_JOB_TYPE));
+            Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByJobTypeName(resolveArgs.get(Constants.JOB_TYPE));
             if (originScheduleTypeEnum != null && scheduleTypeEnum != null) {
                 // set default args
                 handleDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);

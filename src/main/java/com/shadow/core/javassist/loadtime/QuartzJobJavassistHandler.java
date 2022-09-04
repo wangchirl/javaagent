@@ -9,7 +9,7 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
 
     public QuartzJobJavassistHandler(Map<String, String> args) {
         super(args);
-        System.out.println("Quartz Job agent ...");
+        System.out.println("Javassist Quartz Job agent ...");
     }
 
     @Override

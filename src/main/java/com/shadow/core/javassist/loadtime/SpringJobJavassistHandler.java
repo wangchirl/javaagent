@@ -9,7 +9,7 @@ public class SpringJobJavassistHandler extends AbstractJavassistHandler {
 
     public SpringJobJavassistHandler(Map<String, String> args) {
         super(args);
-        System.out.println("Spring Job agent ...");
+        System.out.println("Javassist Spring Job agent ...");
     }
 
     @Override

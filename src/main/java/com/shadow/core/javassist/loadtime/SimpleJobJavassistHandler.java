@@ -13,7 +13,7 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
 
     public SimpleJobJavassistHandler(Map<String, String> args) {
         super(args);
-        System.out.println("Simple Job agent ...");
+        System.out.println("Javassist Simple Job agent ...");
     }
 
     @Override

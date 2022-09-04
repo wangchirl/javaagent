@@ -1,10 +1,12 @@
 package com.shadow.agent;
 
+import com.shadow.core.asm.loadtime.AsmTransformer;
 import com.shadow.core.javassist.loadtime.JavassistTransformer;
 import com.shadow.utils.CommonUtils;
 import com.shadow.utils.Constants;
 import com.shadow.utils.ParamResolveUtils;
 
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
 
@@ -26,12 +28,26 @@ public class LoadTimeAgent {
 
         // 2、必要参数有时才处理
         if (resolveArgs.get(Constants.JOB_TYPE) != null && resolveArgs.get(Constants.CONTROLLER_CLASS) != null) {
-            Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByName(resolveArgs.get(Constants.JOB_TYPE));
+            Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByJobTypeName(resolveArgs.get(Constants.JOB_TYPE));
             if (scheduleTypeEnum != null) {
                 // set default args
                 handleDefaultArgs(resolveArgs);
                 // transformer
-                JavassistTransformer transformer = new JavassistTransformer(resolveArgs, scheduleTypeEnum);
+                ClassFileTransformer transformer = null;
+                switch (Constants.getByProxyTypeName(resolveArgs.get(Constants.PROXY_TYPE))) {
+                    case JAVASSIST:
+                        transformer = new JavassistTransformer(resolveArgs, scheduleTypeEnum);
+                        break;
+                    case ASM:
+                        transformer = new AsmTransformer(resolveArgs, scheduleTypeEnum);
+                        break;
+                    case BUDDY:
+                        // TODO
+                        throw new RuntimeException("暂不支持的操作");
+                    default:
+                        transformer = new JavassistTransformer(resolveArgs, scheduleTypeEnum);
+                        break;
+                }
                 // add redefined transformer
                 inst.addTransformer(transformer);
             }

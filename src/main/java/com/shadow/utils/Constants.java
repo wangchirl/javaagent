@@ -32,6 +32,21 @@ public class Constants {
      */
     public static String PATH_SUFFIX = "/{taskKey}";
 
+    public enum ProxyTypeEnum {
+        JAVASSIST,
+        ASM,
+        BUDDY
+    }
+
+    public static ProxyTypeEnum getByProxyTypeName(String type) {
+        for (ProxyTypeEnum proxyTypeEnum : ProxyTypeEnum.values()) {
+            if (proxyTypeEnum.name().equalsIgnoreCase(type)) {
+                return proxyTypeEnum;
+            }
+        }
+        return ProxyTypeEnum.JAVASSIST;
+    }
+
     /**
      * 定时任务类型枚举
      */
@@ -42,7 +57,7 @@ public class Constants {
         SIMPLE
     }
 
-    public static ScheduleTypeEnum getByName(String type) {
+    public static ScheduleTypeEnum getByJobTypeName(String type) {
         for (ScheduleTypeEnum scheduleTypeEnum : ScheduleTypeEnum.values()) {
             if (scheduleTypeEnum.name().equalsIgnoreCase(type)) {
                 return scheduleTypeEnum;
@@ -50,6 +65,11 @@ public class Constants {
         }
         return null;
     }
+
+    /**
+     * 字节码操作类型 javassist 、 ASM 、 ByteBuddy
+     */
+    public static String PROXY_TYPE = "proxyType";
 
     /**
      * JOB 类型 - 必须
@@ -133,7 +153,6 @@ public class Constants {
     public static String TASK_CRUD = "crud";
 
 
-
     // Spring 相关类
     public static String SPRING_IOC_FIELD = "private org.springframework.context.ApplicationContext ";
     public static String SPRING_AUTOWIRED = "org.springframework.beans.factory.annotation.Autowired";
@@ -147,7 +166,24 @@ public class Constants {
     public static String SPRING_REQUEST_PARAM = "org.springframework.web.bind.annotation.RequestParam";
     public static String SPRING_REQUEST_PARAM_NAME = "params";
     public static String SPRING_REQUEST_PARAM_REQUIRED = "required";
+    public static String SPRING_REQUEST_PARAM_NAEM = "name";
     public static String SPRING_REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
+
+    public static String CLASS_SUFFIX = ".class";
+
+
+    //  ASM 相关
+    public static String OBJECT_DESCRIPTOR = "Ljava/lang/Object;";
+    public static String STRING_DESCRIPTOR = "Ljava/lang/String;";
+    public static String METHOD_DESCRIPTOR = "(" + STRING_DESCRIPTOR + STRING_DESCRIPTOR + OBJECT_DESCRIPTOR + ")" + OBJECT_DESCRIPTOR;
+    public static String EXCEPTION_DESCRIPTOR = "Ljava/lang/Exception;";
+    public static String SPRING_REQUESTMAPPING_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/RequestMapping;";
+    public static String SPRING_PATHVARIABLE_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/PathVariable;";
+    public static String SPRING_REQUESTPARAM_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/RequestParam;";
+    public static String SPRING_REQUESTBODY_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/RequestBody;";
+    public static String SPRING_APPLICATIONCONTEXT_DESCRIPTOR = "Lorg/springframework/context/ApplicationContext;";
+    public static String SPRING_AUTOWIRED_DESCRIPTOR = "Lorg/springframework/beans/factory/annotation/Autowired;";
+
 
     // ========= dynamic args naming ==========
 
@@ -157,5 +193,6 @@ public class Constants {
      * @see com.shadow.utils.Constants#JOB_TYPE
      */
     public static String ORIGIN_JOB_TYPE = "originJobType";
+
 
 }

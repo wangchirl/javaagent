@@ -51,7 +51,7 @@ public abstract class AbstractJavassistHandler implements IHandler {
     /**
      * 主方法
      */
-    byte[] handle(ClassLoader loader, String className) {
+    byte[] handle(String className) {
         try {
             // 1、得到类池
             ClassPool cp = new ClassPool();
@@ -81,7 +81,7 @@ public abstract class AbstractJavassistHandler implements IHandler {
             // 8、return new byte code
             return cc.toBytecode();
         } catch (Exception e) {
-            System.out.println("handle agent " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
+            System.out.println("Javassist handle agent " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
             e.printStackTrace();
         }
         // return null for do nothing

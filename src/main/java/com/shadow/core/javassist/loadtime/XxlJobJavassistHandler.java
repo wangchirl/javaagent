@@ -9,7 +9,7 @@ public class XxlJobJavassistHandler extends AbstractJavassistHandler {
 
     public XxlJobJavassistHandler(Map<String, String> args) {
         super(args);
-        System.out.println("Xxl Job Agent ...");
+        System.out.println("Javassist Xxl Job Agent ...");
     }
 
     @Override

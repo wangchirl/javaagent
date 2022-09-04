@@ -25,6 +25,7 @@ public class JavassistTransformer implements ClassFileTransformer {
      * 代理参数
      */
     private Map<String, String> args;
+
     /**
      * 定时任务类型
      */
@@ -56,13 +57,13 @@ public class JavassistTransformer implements ClassFileTransformer {
             System.out.println("LOAD TIME AGENT ARGS : " + this.args);
             switch (this.scheduleTypeEnum) {
                 case XXL:
-                    return new XxlJobJavassistHandler(this.args).handle(loader, this.className);
+                    return new XxlJobJavassistHandler(this.args).handle(this.className);
                 case QUARTZ:
-                    return new QuartzJobJavassistHandler(this.args).handle(loader, this.className);
+                    return new QuartzJobJavassistHandler(this.args).handle(this.className);
                 case SPRING:
-                    return new SpringJobJavassistHandler(this.args).handle(loader, this.className);
+                    return new SpringJobJavassistHandler(this.args).handle(this.className);
                 case SIMPLE:
-                    return new SimpleJobJavassistHandler(this.args).handle(loader, this.className);
+                    return new SimpleJobJavassistHandler(this.args).handle(this.className);
                 default:
                     break;
             }
