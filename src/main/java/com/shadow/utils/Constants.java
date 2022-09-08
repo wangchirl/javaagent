@@ -1,12 +1,16 @@
 package com.shadow.utils;
 
-import com.shadow.core.javassist.loadtime.AbstractJavassistHandler;
+import com.shadow.core.AbstractHandler;
+import jdk.internal.org.objectweb.asm.Opcodes;
 
 public class Constants {
 
     private Constants() {
 
     }
+
+    // tips
+    public static String SUCCESS = "Success!";
 
     /**
      * 常见符号
@@ -104,7 +108,7 @@ public class Constants {
 
     /**
      * 方法名称 - 非必须
-     * default {@link AbstractJavassistHandler#getMethodName()}
+     * default {@link AbstractHandler#getMethodName()}
      */
     public static String METHOD_NAME = "methodName";
 
@@ -184,6 +188,7 @@ public class Constants {
     public static String SPRING_APPLICATIONCONTEXT_DESCRIPTOR = "Lorg/springframework/context/ApplicationContext;";
     public static String SPRING_AUTOWIRED_DESCRIPTOR = "Lorg/springframework/beans/factory/annotation/Autowired;";
 
+    public static int ASM_API_VERSION = Opcodes.ASM5;
 
     // ========= dynamic args naming ==========
 

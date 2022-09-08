@@ -1,4 +1,4 @@
-package com.shadow.core.asm.loadtime;
+package com.shadow.core.asm.handler;
 
 import com.shadow.utils.Constants;
 import jdk.internal.org.objectweb.asm.Opcodes;
@@ -9,9 +9,18 @@ import java.util.Map;
 
 public class SimpleJobAsmHandler extends AbstractAsmHandler {
 
+    public SimpleJobAsmHandler(Map<String, String> args) {
+        super(args);
+        if (isDebug()) {
+            System.out.println("ASM Simple Job agent ...");
+        }
+    }
+
     public SimpleJobAsmHandler(String innerClassName, Map<String, String> args) {
         super(innerClassName, args);
-        System.out.println("ASM Simple Job agent ...");
+        if (isDebug()) {
+            System.out.println("ASM Simple Job agent ...");
+        }
     }
 
     @Override
@@ -38,5 +47,15 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new InsnNode(Opcodes.ARETURN));
         methodNode.maxStack = 3;
         methodNode.maxLocals = 5;
+    }
+
+    @Override
+    public void addFields(int api, ClassNode cn) throws Exception {
+
+    }
+
+    @Override
+    public void addMethods(int api, ClassNode cn) throws Exception {
+
     }
 }

@@ -1,47 +1,19 @@
 package com.shadow.core.javassist.dynamic;
 
+import com.shadow.core.AbstractTransformer;
 import com.shadow.utils.Constants;
+import com.shadow.utils.FileUtils;
 import com.sun.org.apache.bcel.internal.util.ByteSequence;
 import javassist.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.Map;
 
-public class JavassistTransformer implements ClassFileTransformer {
-
-    /**
-     * class name
-     * {@code java.lang.String}
-     */
-    private String className;
-
-    /**
-     * inner class name
-     * {@code java/lang/String}
-     */
-    private String innerClassName;
-
-    /**
-     * 代理参数
-     */
-    private Map<String, String> args;
+public class JavassistTransformer extends AbstractTransformer implements ClassFileTransformer {
 
     public JavassistTransformer(Map<String, String> args) {
-        this.args = args;
-        this.className = this.args.get(Constants.CONTROLLER_CLASS);
-        this.innerClassName = this.className.replaceAll(Constants.DOT, Constants.BIAS);
-    }
-
-    /**
-     * 是否 debug 模式
-     */
-    private boolean isDebug() {
-        return Boolean.parseBoolean(this.args.get(Constants.DEBUG));
+        super(args);
     }
 
     @Override
@@ -50,7 +22,7 @@ public class JavassistTransformer implements ClassFileTransformer {
                             Class<?> classBeingRedefined,
                             ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
-        if (className.equals(innerClassName)) {
+        if (className.equals(getInnerClassName())) {
             try {
                 ByteSequence byteSequence = new ByteSequence(classfileBuffer);
                 // 1、得到类池
@@ -62,21 +34,18 @@ public class JavassistTransformer implements ClassFileTransformer {
                 // 4、得到方法
                 CtClass string = cp.get(String.class.getName());
                 CtClass object = cp.get(Object.class.getName());
-                CtMethod method = cc.getDeclaredMethod(args.get(Constants.METHOD_NAME), new CtClass[]{string, string, object});
+                CtMethod method = cc.getDeclaredMethod(getArgs().get(Constants.METHOD_NAME), new CtClass[]{string, string, object});
                 // 5、重新设置方法体
-                method.setBody(args.get(Constants.METHOD_BODY));
+                method.setBody(getArgs().get(Constants.METHOD_BODY));
                 byte[] bytes = cc.toBytecode();
                 // 6、write file for debug
                 if (isDebug()) {
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bytes.length);
-                    outputStream.write(bytes);
-                    FileOutputStream fileOutputStream = new FileOutputStream(new File(this.className + ".class"));
-                    outputStream.writeTo(fileOutputStream);
+                    FileUtils.writeBytes(getInnerClassName() + Constants.CLASS_SUFFIX, bytes);
                 }
                 // 7、return new byte code
                 return bytes;
             } catch (Exception e) {
-                System.out.println("handle attach " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
+                System.out.println("Javassist handle attach " + this.getClass().getSimpleName() + " Job Agent error " + e.getMessage());
                 e.printStackTrace();
             }
         }

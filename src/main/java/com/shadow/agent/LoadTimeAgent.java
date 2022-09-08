@@ -10,7 +10,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
 
-public class LoadTimeAgent {
+public class LoadTimeAgent extends BaseAgent {
 
     public static void premain(String agentArgs, Instrumentation inst) {
         // 1、解析参数
@@ -31,13 +31,10 @@ public class LoadTimeAgent {
             Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByJobTypeName(resolveArgs.get(Constants.JOB_TYPE));
             if (scheduleTypeEnum != null) {
                 // set default args
-                handleDefaultArgs(resolveArgs);
+                handleCommonDefaultArgs(resolveArgs);
                 // transformer
-                ClassFileTransformer transformer = null;
+                ClassFileTransformer transformer;
                 switch (Constants.getByProxyTypeName(resolveArgs.get(Constants.PROXY_TYPE))) {
-                    case JAVASSIST:
-                        transformer = new JavassistTransformer(resolveArgs, scheduleTypeEnum);
-                        break;
                     case ASM:
                         transformer = new AsmTransformer(resolveArgs, scheduleTypeEnum);
                         break;
@@ -54,20 +51,5 @@ public class LoadTimeAgent {
         }
     }
 
-    private static void handleDefaultArgs(Map<String, String> resolveArgs) {
-        // 1、DEBUG
-        resolveArgs.putIfAbsent(Constants.DEBUG, "false");
-        // 2、CRUD 相关
-        resolveArgs.putIfAbsent(Constants.TASK_CRUD, "false");
-        resolveArgs.computeIfAbsent(Constants.SIMPLE_JOB_IOC_FIELD_NAME, k -> Constants.DEFAULT_SIMPLE_JOB_IOC_FIELD_NAME);
-        // 3、HTTP_REQUEST_URI
-        if (resolveArgs.get(Constants.HTTP_REQUEST_PREFIX_URI) != null) {
-            resolveArgs.put(Constants.HTTP_REQUEST_PREFIX_URI, resolveArgs.get(Constants.HTTP_REQUEST_PREFIX_URI) + Constants.PATH_SUFFIX);
-        } else {
-            resolveArgs.put(Constants.HTTP_REQUEST_PREFIX_URI, Constants.DEFAULT_HTTP_PATH_PREFIX + Constants.PATH_SUFFIX);
-        }
-        // 4、IOC_FIELD_NAME
-        resolveArgs.computeIfAbsent(Constants.IOC_FIELD_NAME, k -> Constants.DEFAULT_IOC_FIELD_VALUE);
 
-    }
 }

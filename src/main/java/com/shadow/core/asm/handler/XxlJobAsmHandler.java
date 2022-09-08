@@ -1,4 +1,4 @@
-package com.shadow.core.asm.loadtime;
+package com.shadow.core.asm.handler;
 
 import com.shadow.utils.Constants;
 import jdk.internal.org.objectweb.asm.Opcodes;
@@ -9,9 +9,18 @@ import java.util.Map;
 
 public class XxlJobAsmHandler extends AbstractAsmHandler {
 
+    public XxlJobAsmHandler(Map<String, String> args) {
+        super(args);
+        if (isDebug()) {
+            System.out.println("ASM Xxl Job Agent ...");
+        }
+    }
+
     public XxlJobAsmHandler(String innerClassName, Map<String, String> args) {
         super(innerClassName, args);
-        System.out.println("ASM Xxl Job Agent ...");
+        if (isDebug()) {
+            System.out.println("ASM Xxl Job Agent ...");
+        }
     }
 
     @Override
@@ -42,7 +51,7 @@ public class XxlJobAsmHandler extends AbstractAsmHandler {
         il.add(new VarInsnNode(Opcodes.ASTORE, 5));
         il.add(new VarInsnNode(Opcodes.ALOAD, 5));
         il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "com/xxl/job/core/handler/IJobHandler", "execute", "()V", false));
-        il.add(new LdcInsnNode("xxx"));
+        il.add(new LdcInsnNode(Constants.SUCCESS));
         il.add(new InsnNode(Opcodes.ARETURN));
         methodNode.maxStack = 2;
         methodNode.maxLocals = 6;

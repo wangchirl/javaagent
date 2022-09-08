@@ -1,4 +1,4 @@
-package com.shadow.core.asm.loadtime;
+package com.shadow.core.asm.handler;
 
 import com.shadow.utils.Constants;
 import jdk.internal.org.objectweb.asm.Opcodes;
@@ -9,9 +9,18 @@ import java.util.Map;
 
 public class SpringJobAsmHandler extends AbstractAsmHandler {
 
+    public SpringJobAsmHandler(Map<String, String> args) {
+        super(args);
+        if (isDebug()) {
+            System.out.println("ASM Spring Job agent ...");
+        }
+    }
+
     public SpringJobAsmHandler(String innerClassName, Map<String, String> args) {
         super(innerClassName, args);
-        System.out.println("ASM Spring Job agent ...");
+        if (isDebug()) {
+            System.out.println("ASM Spring Job agent ...");
+        }
     }
 
     @Override
@@ -62,7 +71,7 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(labelNode3);
         il.add(new JumpInsnNode(Opcodes.GOTO, labelNode1));
         il.add(labelNode4);
-        il.add(new LdcInsnNode("xxxx"));
+        il.add(new LdcInsnNode(Constants.SUCCESS));
         il.add(new InsnNode(Opcodes.ARETURN));
         methodNode.maxStack = 7;
         methodNode.maxLocals = 8;

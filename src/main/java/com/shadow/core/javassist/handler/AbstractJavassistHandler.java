@@ -1,5 +1,6 @@
-package com.shadow.core.javassist.loadtime;
+package com.shadow.core.javassist.handler;
 
+import com.shadow.core.AbstractHandler;
 import com.shadow.utils.Constants;
 import javassist.*;
 import javassist.bytecode.*;
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 
-public abstract class AbstractJavassistHandler implements IHandler {
+public abstract class AbstractJavassistHandler extends AbstractHandler {
 
     /**
      * agent method body
@@ -19,39 +20,14 @@ public abstract class AbstractJavassistHandler implements IHandler {
      */
     public abstract Supplier<String> getMethodBody();
 
-    /**
-     * 记录 javaagent 传递的参数信息
-     */
-    private Map<String, String> args;
-
-    Map<String, String> getArgs() {
-        return this.args;
-    }
-
     AbstractJavassistHandler(Map<String, String> args) {
-        this.args = args;
-    }
-
-    /**
-     * 是否 debug 模式
-     */
-    private boolean isDebug() {
-        return Boolean.parseBoolean(this.args.get(Constants.DEBUG));
-    }
-
-    /**
-     * agent method name
-     *
-     * @return {@link java.lang.String}
-     */
-    public Supplier<String> getMethodName() {
-        return () -> this.args.get(Constants.METHOD_NAME) == null ? this.getClass().getSimpleName().toLowerCase() : this.args.get(Constants.METHOD_NAME);
+        super(args);
     }
 
     /**
      * 主方法
      */
-    byte[] handle(String className) {
+    public byte[] handle(String className) {
         try {
             // 1、得到类池
             ClassPool cp = new ClassPool();
@@ -69,7 +45,7 @@ public abstract class AbstractJavassistHandler implements IHandler {
             ClassFile ccFile = cc.getClassFile();
             ConstPool constPool = ccFile.getConstPool();
             // 6.1 添加方法注解
-            setClassMethodAnnotations(method, this.args.get(Constants.HTTP_REQUEST_PREFIX_URI), constPool);
+            setClassMethodAnnotations(method, getArgs().get(Constants.HTTP_REQUEST_PREFIX_URI), constPool);
             // 6.2 添加方法参数
             setClassMethodParameters(method, constPool);
             // 6.3 扩展添加其他方法
@@ -93,12 +69,12 @@ public abstract class AbstractJavassistHandler implements IHandler {
      */
     private void setClassField(CtClass cc) throws CannotCompileException, NotFoundException {
         // 1、创建属性
-        CtField ctField = CtField.make(Constants.SPRING_IOC_FIELD + this.args.get(Constants.IOC_FIELD_NAME) + Constants.SEMICOLON, cc);
+        CtField ctField = CtField.make(Constants.SPRING_IOC_FIELD + getArgs().get(Constants.IOC_FIELD_NAME) + Constants.SEMICOLON, cc);
         // 2、设置属性访问权限
         ctField.setModifiers(Modifier.PRIVATE);
         cc.addField(ctField);
         // 3、给属性添加注解
-        ctField = cc.getDeclaredField(this.args.get(Constants.IOC_FIELD_NAME));
+        ctField = cc.getDeclaredField(getArgs().get(Constants.IOC_FIELD_NAME));
         List<AttributeInfo> attributes = ctField.getFieldInfo().getAttributes();
         AnnotationsAttribute annotationsAttr = !attributes.isEmpty() ? (AnnotationsAttribute) attributes.get(0) :
                 new AnnotationsAttribute(ctField.getFieldInfo().getConstPool(), AnnotationsAttribute.visibleTag);
@@ -119,7 +95,7 @@ public abstract class AbstractJavassistHandler implements IHandler {
         method.setModifiers(Modifier.PUBLIC);
         method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
         // 3、设置方法体
-        method.setBody(this.args.get(Constants.METHOD_BODY) == null ? methodBody.get() : this.args.get(Constants.METHOD_BODY));
+        method.setBody(getArgs().get(Constants.METHOD_BODY) == null ? methodBody.get() : getArgs().get(Constants.METHOD_BODY));
         cc.addMethod(method);
         return method;
     }
@@ -171,7 +147,7 @@ public abstract class AbstractJavassistHandler implements IHandler {
      * ThreadLocal 参数设置
      */
     String setThreadLocal() {
-        if (this.args.get(Constants.THREADLOCAL_CLASS) != null && this.args.get(Constants.THREADLOCAL_FIELD_NAME) != null) {
+        if (getArgs().get(Constants.THREADLOCAL_CLASS) != null && getArgs().get(Constants.THREADLOCAL_FIELD_NAME) != null) {
             StringBuilder builder = new StringBuilder();
             builder.append("try {");
             builder.append("\n    if($2 != null) {");
@@ -194,7 +170,7 @@ public abstract class AbstractJavassistHandler implements IHandler {
      * ThreadLocal 参数移除
      */
     String removeThreadLocal() {
-        if (this.args.get(Constants.THREADLOCAL_CLASS) != null && this.args.get(Constants.THREADLOCAL_FIELD_NAME) != null) {
+        if (getArgs().get(Constants.THREADLOCAL_CLASS) != null && getArgs().get(Constants.THREADLOCAL_FIELD_NAME) != null) {
             StringBuilder builder = new StringBuilder();
             builder.append("} finally {");
             builder.append("if ($2 != null || $3 != null){");

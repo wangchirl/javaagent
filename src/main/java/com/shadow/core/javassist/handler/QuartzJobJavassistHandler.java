@@ -1,4 +1,4 @@
-package com.shadow.core.javassist.loadtime;
+package com.shadow.core.javassist.handler;
 
 import com.shadow.utils.Constants;
 
@@ -9,7 +9,9 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
 
     public QuartzJobJavassistHandler(Map<String, String> args) {
         super(args);
-        System.out.println("Javassist Quartz Job agent ...");
+        if (isDebug()) {
+            System.out.println("Javassist Quartz Job agent ...");
+        }
     }
 
     @Override

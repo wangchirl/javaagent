@@ -1,4 +1,4 @@
-package com.shadow.core.javassist.loadtime;
+package com.shadow.core.javassist.handler;
 
 import com.shadow.utils.Constants;
 
@@ -9,7 +9,9 @@ public class XxlJobJavassistHandler extends AbstractJavassistHandler {
 
     public XxlJobJavassistHandler(Map<String, String> args) {
         super(args);
-        System.out.println("Javassist Xxl Job Agent ...");
+        if (isDebug()) {
+            System.out.println("Javassist Xxl Job Agent ...");
+        }
     }
 
     @Override
