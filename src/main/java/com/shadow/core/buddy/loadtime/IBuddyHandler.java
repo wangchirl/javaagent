@@ -1,10 +1,10 @@
-package com.shadow.core;
+package com.shadow.core.buddy.loadtime;
 
 import javassist.ClassPool;
 import javassist.CtClass;
 import jdk.internal.org.objectweb.asm.tree.ClassNode;
 
-public interface IHandler {
+public interface IBuddyHandler {
 
     /**
      * 添加额外的字段

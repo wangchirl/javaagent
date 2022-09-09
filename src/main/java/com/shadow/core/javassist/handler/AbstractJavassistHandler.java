@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 
-public abstract class AbstractJavassistHandler extends AbstractHandler {
+public abstract class AbstractJavassistHandler extends AbstractHandler implements IJavassistHandler {
 
     /**
      * agent method body

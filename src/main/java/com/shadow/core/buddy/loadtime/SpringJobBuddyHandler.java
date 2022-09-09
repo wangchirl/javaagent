@@ -1,6 +1,10 @@
 package com.shadow.core.buddy.loadtime;
 
 
-public class SpringJobBuddyHandler extends AbstractBuddyHandler {
+import java.util.Map;
 
+public class SpringJobBuddyHandler extends AbstractBuddyHandler {
+    SpringJobBuddyHandler(Map<String, String> args) {
+        super(args);
+    }
 }

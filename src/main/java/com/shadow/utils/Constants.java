@@ -10,7 +10,9 @@ public class Constants {
     }
 
     // tips
-    public static String SUCCESS = "Success!";
+    public static String XXL_SUCCESS = "Execute Xxl Job Successful !";
+    public static String QUARTZ_SUCCESS = "Execute Quartz Job Successful !";
+    public static String SPRING_SUCCESS = "Execute Spring Job Successful !";
 
     /**
      * 常见符号

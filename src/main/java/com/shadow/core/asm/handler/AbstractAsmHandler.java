@@ -14,12 +14,29 @@ import jdk.internal.org.objectweb.asm.tree.MethodNode;
 
 import java.util.Map;
 
-public abstract class AbstractAsmHandler extends AbstractHandler {
+public abstract class AbstractAsmHandler extends AbstractHandler implements IAsmHandler {
 
     /**
      * agent method body
      */
-    public abstract void getMethodBody(MethodNode methodNode);
+    public void getMethodBody(MethodNode methodNode) {
+        if (getThreadLocalInnerClassName() != null &&
+                getThreadLocalFieldName() != null) {
+            getThreadLocalMethodBody(methodNode);
+        } else {
+            getNormalMethodBody(methodNode);
+        }
+    }
+
+    /**
+     * 可传递参数的方法体实现
+     */
+    public abstract void getThreadLocalMethodBody(MethodNode methodNode);
+
+    /**
+     * 常规方法体实现
+     */
+    public abstract void getNormalMethodBody(MethodNode methodNode);
 
     /**
      * inner class name
