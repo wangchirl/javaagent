@@ -4,7 +4,7 @@ import com.shadow.core.asm.dynamic.AsmTransformer;
 import com.shadow.core.asm.handler.*;
 import com.shadow.core.javassist.dynamic.JavassistTransformer;
 import com.shadow.core.javassist.handler.*;
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
 import com.shadow.utils.ParamResolveUtils;
 import jdk.internal.org.objectweb.asm.tree.MethodNode;
 
@@ -33,15 +33,15 @@ public class DynamicAgent extends BaseAgent {
         System.out.println("========= ========= =========");
 
         // 2、必要参数有时才处理
-        if (resolveArgs.get(Constants.ORIGIN_JOB_TYPE) != null &&
-                resolveArgs.get(Constants.CONTROLLER_CLASS) != null &&
-                resolveArgs.get(Constants.JOB_TYPE) != null) {
-            Constants.ScheduleTypeEnum originScheduleTypeEnum = Constants.getByJobTypeName(resolveArgs.get(Constants.ORIGIN_JOB_TYPE));
-            Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByJobTypeName(resolveArgs.get(Constants.JOB_TYPE));
+        if (resolveArgs.get(CommonConstants.ORIGIN_JOB_TYPE) != null &&
+                resolveArgs.get(CommonConstants.CONTROLLER_CLASS) != null &&
+                resolveArgs.get(CommonConstants.JOB_TYPE) != null) {
+            CommonConstants.ScheduleTypeEnum originScheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.ORIGIN_JOB_TYPE));
+            CommonConstants.ScheduleTypeEnum scheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
             if (originScheduleTypeEnum != null && scheduleTypeEnum != null) {
                 // transformer
                 ClassFileTransformer transformer;
-                switch (Constants.getByProxyTypeName(resolveArgs.get(Constants.PROXY_TYPE))) {
+                switch (CommonConstants.getByProxyTypeName(resolveArgs.get(CommonConstants.PROXY_TYPE))) {
                     case ASM:
                         // handle ASM default args
                         MethodNode methodNode = handleAsmDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
@@ -57,7 +57,7 @@ public class DynamicAgent extends BaseAgent {
                         transformer = new JavassistTransformer(resolveArgs);
                         break;
                 }
-                String ctlClass = resolveArgs.get(Constants.CONTROLLER_CLASS);
+                String ctlClass = resolveArgs.get(CommonConstants.CONTROLLER_CLASS);
                 try {
                     // add retransform transformer
                     inst.addTransformer(transformer, true);
@@ -73,40 +73,38 @@ public class DynamicAgent extends BaseAgent {
     }
 
     private static MethodNode handleAsmDefaultArgs(Map<String, String> resolveArgs,
-                                                   Constants.ScheduleTypeEnum originScheduleTypeEnum,
-                                                   Constants.ScheduleTypeEnum scheduleTypeEnum) {
+                                                   CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
+                                                   CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         // 1、公共默认参数处理
         handleCommonDefaultArgs(resolveArgs);
         // 2、find origin handle for method name
         AbstractAsmHandler originHandler = getAbstractAsmHandler(resolveArgs, originScheduleTypeEnum);
         // if args not found method name, set default
-        if (resolveArgs.get(Constants.METHOD_NAME) == null) {
-            resolveArgs.put(Constants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
+        if (resolveArgs.get(CommonConstants.METHOD_NAME) == null) {
+            resolveArgs.put(CommonConstants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
         }
         // 3、find current handle for method body
         AbstractAsmHandler currentHandler = getAbstractAsmHandler(resolveArgs, scheduleTypeEnum);
-        MethodNode methodNode = currentHandler.getAndSetClassMethod(Constants.ASM_API_VERSION);
-        currentHandler.getMethodBody(methodNode);
-        return methodNode;
+        return currentHandler.getAndSetClassMethod(CommonConstants.ASM_API_VERSION);
     }
 
     private static void handleJavassistDefaultArgs(Map<String, String> resolveArgs,
-                                                   Constants.ScheduleTypeEnum originScheduleTypeEnum,
-                                                   Constants.ScheduleTypeEnum scheduleTypeEnum) {
+                                                   CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
+                                                   CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         // 1、公共默认参数处理
         handleCommonDefaultArgs(resolveArgs);
         // 2、find origin handle for method name
         AbstractJavassistHandler originHandler = getAbstractJavassistHandler(resolveArgs, originScheduleTypeEnum);
         // if args not found method name, set default
-        if (resolveArgs.get(Constants.METHOD_NAME) == null) {
-            resolveArgs.put(Constants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
+        if (resolveArgs.get(CommonConstants.METHOD_NAME) == null) {
+            resolveArgs.put(CommonConstants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
         }
         // 3、find current handle for method body
         AbstractJavassistHandler currentHandler = getAbstractJavassistHandler(resolveArgs, scheduleTypeEnum);
-        resolveArgs.put(Constants.METHOD_BODY, currentHandler.getMethodBody().get());
+        resolveArgs.put(CommonConstants.METHOD_BODY, currentHandler.getMethodBody().get());
     }
 
-    private static AbstractJavassistHandler getAbstractJavassistHandler(Map<String, String> resolveArgs, Constants.ScheduleTypeEnum scheduleTypeEnum) {
+    private static AbstractJavassistHandler getAbstractJavassistHandler(Map<String, String> resolveArgs, CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         AbstractJavassistHandler handler = null;
         switch (scheduleTypeEnum) {
             case XXL:
@@ -127,7 +125,7 @@ public class DynamicAgent extends BaseAgent {
         return handler;
     }
 
-    private static AbstractAsmHandler getAbstractAsmHandler(Map<String, String> resolveArgs, Constants.ScheduleTypeEnum scheduleTypeEnum) {
+    private static AbstractAsmHandler getAbstractAsmHandler(Map<String, String> resolveArgs, CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         AbstractAsmHandler handler = null;
         switch (scheduleTypeEnum) {
             case XXL:

@@ -1,6 +1,7 @@
 package com.shadow.core.javassist.handler;
 
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
+import com.shadow.utils.SpringConstants;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -10,7 +11,7 @@ public class SpringJobJavassistHandler extends AbstractJavassistHandler {
     public SpringJobJavassistHandler(Map<String, String> args) {
         super(args);
         if (isDebug()) {
-            System.out.println("Javassist Spring Job agent ...");
+            System.out.println(SpringConstants.JAVASSIST_PROXY_LOG_TIPS);
         }
     }
 
@@ -21,7 +22,7 @@ public class SpringJobJavassistHandler extends AbstractJavassistHandler {
             body.append("{");
             body.append(setThreadLocal());
             body.append("\n    org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor postProcessor = ");
-            body.append(getArgs().get(Constants.IOC_FIELD_NAME));
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
             body.append(".getBean(org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class);");
             body.append("\n    java.lang.reflect.Field field = org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class.getDeclaredField(\"scheduledTasks\");");
             body.append("\n    field.setAccessible(true);");

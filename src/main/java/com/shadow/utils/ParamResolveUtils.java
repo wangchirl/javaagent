@@ -18,9 +18,9 @@ public class ParamResolveUtils {
     public static Map<String, String> resolveArgs(String agentArgs) {
         Map<String, String> map = new HashMap<>();
         if (agentArgs != null && agentArgs.length() > 0) {
-            String[] kvs = agentArgs.split(Constants.AND);
+            String[] kvs = agentArgs.split(CommonConstants.AND);
             for (String kv : kvs) {
-                String[] data = kv.split(Constants.EQUAL);
+                String[] data = kv.split(CommonConstants.EQUAL);
                 if (data.length == 2) {
                     map.put(data[0], data[1]);
                 }

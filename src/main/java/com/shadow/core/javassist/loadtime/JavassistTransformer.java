@@ -5,7 +5,7 @@ import com.shadow.core.javassist.handler.QuartzJobJavassistHandler;
 import com.shadow.core.javassist.handler.SimpleJobJavassistHandler;
 import com.shadow.core.javassist.handler.SpringJobJavassistHandler;
 import com.shadow.core.javassist.handler.XxlJobJavassistHandler;
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -17,9 +17,9 @@ public class JavassistTransformer extends AbstractTransformer implements ClassFi
     /**
      * 定时任务类型
      */
-    private Constants.ScheduleTypeEnum scheduleTypeEnum;
+    private CommonConstants.ScheduleTypeEnum scheduleTypeEnum;
 
-    public JavassistTransformer(Map<String, String> resolveArgs, Constants.ScheduleTypeEnum scheduleTypeEnum) {
+    public JavassistTransformer(Map<String, String> resolveArgs, CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         super(resolveArgs);
         this.scheduleTypeEnum = scheduleTypeEnum;
     }

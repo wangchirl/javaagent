@@ -1,6 +1,6 @@
 package com.shadow.core.asm.handler;
 
-import com.shadow.utils.Constants;
+import com.shadow.utils.*;
 import jdk.internal.org.objectweb.asm.Type;
 import jdk.internal.org.objectweb.asm.tree.*;
 
@@ -14,14 +14,14 @@ public class XxlJobAsmHandler extends AbstractAsmHandler {
     public XxlJobAsmHandler(Map<String, String> args) {
         super(args);
         if (isDebug()) {
-            System.out.println("ASM Xxl Job Agent ...");
+            System.out.println(XxlConstants.ASM_PROXY_LOG_TIPS);
         }
     }
 
     public XxlJobAsmHandler(String innerClassName, Map<String, String> args) {
         super(innerClassName, args);
         if (isDebug()) {
-            System.out.println("ASM Xxl Job Agent ...");
+            System.out.println(XxlConstants.ASM_PROXY_LOG_TIPS);
         }
     }
 
@@ -84,7 +84,7 @@ public class XxlJobAsmHandler extends AbstractAsmHandler {
      * 125: athrow
      */
     @Override
-    public void getThreadLocalMethodBody(MethodNode methodNode) {
+    public void setThreadLocalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
         // try - finally
         LabelNode start = new LabelNode();
@@ -101,43 +101,60 @@ public class XxlJobAsmHandler extends AbstractAsmHandler {
         il.add(start);
         il.add(new VarInsnNode(ALOAD, 2));
         il.add(new JumpInsnNode(IFNULL, line14));
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), "Ljava/lang/ThreadLocal;"));
+        // "Ljava/lang/ThreadLocal;"
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_DESCRIPTOR));
         il.add(new VarInsnNode(ALOAD, 2));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/ThreadLocal", "set", "(Ljava/lang/Object;)V", false));
+        // "java/lang/ThreadLocal"、"set"、"(Ljava/lang/Object;)V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
         il.add(new JumpInsnNode(GOTO, line25));
         il.add(line14);
         il.add(new VarInsnNode(ALOAD, 3));
         il.add(new JumpInsnNode(IFNULL, line25));
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), "Ljava/lang/ThreadLocal;"));
+        // "Ljava/lang/ThreadLocal;"
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_DESCRIPTOR));
         il.add(new VarInsnNode(ALOAD, 3));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/ThreadLocal", "set", "(Ljava/lang/Object;)V", false));
+        // "java/lang/ThreadLocal"、"set"、"(Ljava/lang/Object;)V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
         il.add(line25);
         il.add(new VarInsnNode(ALOAD, 0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(Constants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
-        il.add(new LdcInsnNode(Type.getType("Lcom/xxl/job/core/executor/XxlJobExecutor;")));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/Class;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "com/xxl/job/core/executor/XxlJobExecutor"));
+        // "Lorg/springframework/context/ApplicationContext;"
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_DESCRIPTOR));
+        // "Lcom/xxl/job/core/executor/XxlJobExecutor;"
+        il.add(new LdcInsnNode(Type.getType(XxlConstants.XXL_JOBEXECUTOR_DESCRIPTOR)));
+        // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/Class;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_C_, true));
+        // "com/xxl/job/core/executor/XxlJobExecutor"
+        il.add(new TypeInsnNode(CHECKCAST, XxlConstants.XXL_JOBEXECUTOR_INTERNAL_CLASS));
         il.add(new VarInsnNode(ASTORE, 4));
-        il.add(new LdcInsnNode(Type.getType("Lcom/xxl/job/core/executor/XxlJobExecutor;")));
-        il.add(new LdcInsnNode("jobHandlerRepository"));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;", false));
+        // "Lcom/xxl/job/core/executor/XxlJobExecutor;"
+        il.add(new LdcInsnNode(Type.getType(XxlConstants.XXL_JOBEXECUTOR_DESCRIPTOR)));
+        // "jobHandlerRepository"
+        il.add(new LdcInsnNode(XxlConstants.JOB_HANDLERRE_POSITORY));
+        // "java/lang/Class"、"getDeclaredField"、"(Ljava/lang/String;)Ljava/lang/reflect/Field;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.CLASS_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETDECLAREDFIELD, BaseConstants.REFLECT_FIELD_S, false));
         il.add(new VarInsnNode(ASTORE, 5));
         il.add(new VarInsnNode(ALOAD, 5));
         il.add(new InsnNode(ICONST_1));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "setAccessible", "(Z)V", false));
+        // "java/lang/reflect/Field"、"setAccessible"、"(Z)V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_SETACCESSIBLE, BaseConstants.V_Z, false));
         il.add(new VarInsnNode(ALOAD, 5));
         il.add(new VarInsnNode(ALOAD, 4));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false));
+        // "java/lang/reflect/Field"、"get"、"(Ljava/lang/Object;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, false));
         il.add(new VarInsnNode(ASTORE, 6));
         il.add(new VarInsnNode(ALOAD, 6));
-        il.add(new TypeInsnNode(CHECKCAST, "java/util/Map"));
+        // "java/util/Map"
+        il.add(new TypeInsnNode(CHECKCAST, BaseConstants.MAP_INTERNAL_CLASS));
         il.add(new VarInsnNode(ALOAD, 1));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "com/xxl/job/core/handler/IJobHandler"));
+        // "java/util/Map"、"get"、"(Ljava/lang/Object;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, BaseConstants.MAP_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, true));
+        // "com/xxl/job/core/handler/IJobHandler"
+        il.add(new TypeInsnNode(CHECKCAST, XxlConstants.XXL_JOBHANDLER_INTERNAL_CLASS));
         il.add(new VarInsnNode(ASTORE, 7));
         il.add(new VarInsnNode(ALOAD, 7));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "com/xxl/job/core/handler/IJobHandler", "execute", "()V", false));
-        il.add(new LdcInsnNode(Constants.XXL_SUCCESS));
+        // "com/xxl/job/core/handler/IJobHandler"、"execute"、"()V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, XxlConstants.XXL_JOBHANDLER_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_EXECUTE, BaseConstants.V_, false));
+        il.add(new LdcInsnNode(CommonConstants.XXL_SUCCESS));
         il.add(new VarInsnNode(ASTORE, 8));
         il.add(end);
         il.add(new VarInsnNode(ALOAD, 2));
@@ -145,8 +162,10 @@ public class XxlJobAsmHandler extends AbstractAsmHandler {
         il.add(new VarInsnNode(ALOAD, 3));
         il.add(new JumpInsnNode(IFNULL, line104));
         il.add(line98);
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), "Ljava/lang/ThreadLocal;"));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/ThreadLocal", "remove", "()V", false));
+        // "Ljava/lang/ThreadLocal;"
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_DESCRIPTOR));
+        // "java/lang/ThreadLocal"、"remove"、"()V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
         il.add(line104);
         il.add(new VarInsnNode(ALOAD, 8));
         il.add(new InsnNode(ARETURN));
@@ -157,8 +176,10 @@ public class XxlJobAsmHandler extends AbstractAsmHandler {
         il.add(new VarInsnNode(ALOAD, 3));
         il.add(new JumpInsnNode(IFNULL, line123));
         il.add(line117);
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), "Ljava/lang/ThreadLocal;"));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/ThreadLocal", "remove", "()V", false));
+        // "Ljava/lang/ThreadLocal;"
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_DESCRIPTOR));
+        // "java/lang/ThreadLocal"、"remove"、"()V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
         il.add(line123);
         il.add(new VarInsnNode(ALOAD, 9));
         il.add(new InsnNode(ATHROW));
@@ -196,34 +217,47 @@ public class XxlJobAsmHandler extends AbstractAsmHandler {
      * 63: areturn
      */
     @Override
-    public void getNormalMethodBody(MethodNode methodNode) {
+    public void setNormalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
         il.add(new VarInsnNode(ALOAD, 0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(Constants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
-        il.add(new LdcInsnNode(Type.getType("Lcom/xxl/job/core/executor/XxlJobExecutor;")));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/Class;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "com/xxl/job/core/executor/XxlJobExecutor"));
+        // "Lorg/springframework/context/ApplicationContext;"
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_DESCRIPTOR));
+        // "Lcom/xxl/job/core/executor/XxlJobExecutor;"
+        il.add(new LdcInsnNode(Type.getType(XxlConstants.XXL_JOBEXECUTOR_DESCRIPTOR)));
+        // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/Class;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_C_, true));
+        // "com/xxl/job/core/executor/XxlJobExecutor"
+        il.add(new TypeInsnNode(CHECKCAST, XxlConstants.XXL_JOBEXECUTOR_INTERNAL_CLASS));
         il.add(new VarInsnNode(ASTORE, 4));
-        il.add(new LdcInsnNode(Type.getType("Lcom/xxl/job/core/executor/XxlJobExecutor;")));
-        il.add(new LdcInsnNode("jobHandlerRepository"));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;", false));
+        // "Lcom/xxl/job/core/executor/XxlJobExecutor;"
+        il.add(new LdcInsnNode(Type.getType(XxlConstants.XXL_JOBEXECUTOR_DESCRIPTOR)));
+        // "jobHandlerRepository"
+        il.add(new LdcInsnNode(XxlConstants.JOB_HANDLERRE_POSITORY));
+        // "java/lang/Class"、"getDeclaredField"、"(Ljava/lang/String;)Ljava/lang/reflect/Field;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.CLASS_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETDECLAREDFIELD, BaseConstants.REFLECT_FIELD_S, false));
         il.add(new VarInsnNode(ASTORE, 5));
         il.add(new VarInsnNode(ALOAD, 5));
         il.add(new InsnNode(ICONST_1));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "setAccessible", "(Z)V", false));
+        // "java/lang/reflect/Field"、"setAccessible"、"(Z)V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_SETACCESSIBLE, BaseConstants.V_Z, false));
         il.add(new VarInsnNode(ALOAD, 5));
         il.add(new VarInsnNode(ALOAD, 4));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false));
+        // "java/lang/reflect/Field"、"get"、"(Ljava/lang/Object;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, false));
         il.add(new VarInsnNode(ASTORE, 6));
         il.add(new VarInsnNode(ALOAD, 6));
-        il.add(new TypeInsnNode(CHECKCAST, "java/util/Map"));
+        // "java/util/Map"
+        il.add(new TypeInsnNode(CHECKCAST, BaseConstants.MAP_INTERNAL_CLASS));
         il.add(new VarInsnNode(ALOAD, 1));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "com/xxl/job/core/handler/IJobHandler"));
+        // "java/util/Map"、"get"、"(Ljava/lang/Object;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, BaseConstants.MAP_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, true));
+        // "com/xxl/job/core/handler/IJobHandler"
+        il.add(new TypeInsnNode(CHECKCAST, XxlConstants.XXL_JOBHANDLER_INTERNAL_CLASS));
         il.add(new VarInsnNode(ASTORE, 7));
         il.add(new VarInsnNode(ALOAD, 7));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "com/xxl/job/core/handler/IJobHandler", "execute", "()V", false));
-        il.add(new LdcInsnNode(Constants.XXL_SUCCESS));
+        // "com/xxl/job/core/handler/IJobHandler"、"execute"、"()V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, XxlConstants.XXL_JOBHANDLER_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_EXECUTE, BaseConstants.V_, false));
+        il.add(new LdcInsnNode(CommonConstants.XXL_SUCCESS));
         il.add(new InsnNode(ARETURN));
         methodNode.maxStack = 7;
         methodNode.maxLocals = 8;

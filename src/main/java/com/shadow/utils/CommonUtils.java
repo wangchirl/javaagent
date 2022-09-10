@@ -11,8 +11,8 @@ public class CommonUtils {
 
     public static void printLogAllowed(Map<String, String> resolveArgs) {
         // System.out 打印是否开启
-        if (resolveArgs.get(Constants.LOGGER_PRINT_OPEN) == null ||
-                !Boolean.parseBoolean(resolveArgs.get(Constants.LOGGER_PRINT_OPEN))) {
+        if (resolveArgs.get(CommonConstants.LOGGER_PRINT_OPEN) == null ||
+                !Boolean.parseBoolean(resolveArgs.get(CommonConstants.LOGGER_PRINT_OPEN))) {
             System.setOut(new PrintStream(System.out) {
                 @Override
                 public void println(String x) {

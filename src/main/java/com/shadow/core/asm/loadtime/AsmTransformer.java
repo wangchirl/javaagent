@@ -5,7 +5,7 @@ import com.shadow.core.asm.handler.QuartzJobAsmHandler;
 import com.shadow.core.asm.handler.SimpleJobAsmHandler;
 import com.shadow.core.asm.handler.SpringJobAsmHandler;
 import com.shadow.core.asm.handler.XxlJobAsmHandler;
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -17,9 +17,9 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
     /**
      * 定时任务类型
      */
-    private Constants.ScheduleTypeEnum scheduleTypeEnum;
+    private CommonConstants.ScheduleTypeEnum scheduleTypeEnum;
 
-    public AsmTransformer(Map<String, String> resolveArgs, Constants.ScheduleTypeEnum scheduleTypeEnum) {
+    public AsmTransformer(Map<String, String> resolveArgs, CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         super(resolveArgs);
         this.scheduleTypeEnum = scheduleTypeEnum;
     }

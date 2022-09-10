@@ -1,7 +1,7 @@
 package com.shadow.core.javassist.dynamic;
 
 import com.shadow.core.AbstractTransformer;
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
 import com.shadow.utils.FileUtils;
 import com.sun.org.apache.bcel.internal.util.ByteSequence;
 import javassist.*;
@@ -34,13 +34,13 @@ public class JavassistTransformer extends AbstractTransformer implements ClassFi
                 // 4、得到方法
                 CtClass string = cp.get(String.class.getName());
                 CtClass object = cp.get(Object.class.getName());
-                CtMethod method = cc.getDeclaredMethod(getArgs().get(Constants.METHOD_NAME), new CtClass[]{string, string, object});
+                CtMethod method = cc.getDeclaredMethod(getArgs().get(CommonConstants.METHOD_NAME), new CtClass[]{string, string, object});
                 // 5、重新设置方法体
-                method.setBody(getArgs().get(Constants.METHOD_BODY));
+                method.setBody(getArgs().get(CommonConstants.METHOD_BODY));
                 byte[] bytes = cc.toBytecode();
                 // 6、write file for debug
                 if (isDebug()) {
-                    FileUtils.writeBytes(getInnerClassName() + Constants.CLASS_SUFFIX, bytes);
+                    FileUtils.writeBytes(getInnerClassName() + CommonConstants.CLASS_SUFFIX, bytes);
                 }
                 // 7、return new byte code
                 return bytes;

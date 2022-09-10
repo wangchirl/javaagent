@@ -1,7 +1,8 @@
 package com.shadow.core.javassist.handler;
 
 import com.shadow.core.AbstractHandler;
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
+import com.shadow.utils.SpringConstants;
 import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.*;
@@ -45,7 +46,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
             ClassFile ccFile = cc.getClassFile();
             ConstPool constPool = ccFile.getConstPool();
             // 6.1 添加方法注解
-            setClassMethodAnnotations(method, getArgs().get(Constants.HTTP_REQUEST_PREFIX_URI), constPool);
+            setClassMethodAnnotations(method, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI), constPool);
             // 6.2 添加方法参数
             setClassMethodParameters(method, constPool);
             // 6.3 扩展添加其他方法
@@ -69,16 +70,16 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
      */
     private void setClassField(CtClass cc) throws CannotCompileException, NotFoundException {
         // 1、创建属性
-        CtField ctField = CtField.make(Constants.SPRING_IOC_FIELD + getArgs().get(Constants.IOC_FIELD_NAME) + Constants.SEMICOLON, cc);
+        CtField ctField = CtField.make(CommonConstants.ACC_PRIVATE + CommonConstants.SPACE + SpringConstants.SPRING_APPLICATION_CONTEXT_CLASS + CommonConstants.SPACE  + getArgs().get(CommonConstants.IOC_FIELD_NAME) + CommonConstants.SEMICOLON, cc);
         // 2、设置属性访问权限
         ctField.setModifiers(Modifier.PRIVATE);
         cc.addField(ctField);
         // 3、给属性添加注解
-        ctField = cc.getDeclaredField(getArgs().get(Constants.IOC_FIELD_NAME));
+        ctField = cc.getDeclaredField(getArgs().get(CommonConstants.IOC_FIELD_NAME));
         List<AttributeInfo> attributes = ctField.getFieldInfo().getAttributes();
         AnnotationsAttribute annotationsAttr = !attributes.isEmpty() ? (AnnotationsAttribute) attributes.get(0) :
                 new AnnotationsAttribute(ctField.getFieldInfo().getConstPool(), AnnotationsAttribute.visibleTag);
-        Annotation annotation = new Annotation(Constants.SPRING_AUTOWIRED, ctField.getFieldInfo().getConstPool());
+        Annotation annotation = new Annotation(SpringConstants.SPRING_AUTOWIRED_CLASS, ctField.getFieldInfo().getConstPool());
         annotationsAttr.addAnnotation(annotation);
         ctField.getFieldInfo().addAttribute(annotationsAttr);
     }
@@ -95,7 +96,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         method.setModifiers(Modifier.PUBLIC);
         method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
         // 3、设置方法体
-        method.setBody(getArgs().get(Constants.METHOD_BODY) == null ? methodBody.get() : getArgs().get(Constants.METHOD_BODY));
+        method.setBody(getArgs().get(CommonConstants.METHOD_BODY) == null ? methodBody.get() : getArgs().get(CommonConstants.METHOD_BODY));
         cc.addMethod(method);
         return method;
     }
@@ -106,12 +107,12 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
     private void setClassMethodAnnotations(CtMethod method, String path, ConstPool constPool) {
         AnnotationsAttribute methodAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
         // 1、创建方法注解
-        Annotation annotation = new Annotation(Constants.SPRING_REQUEST_MAPPING, constPool);
+        Annotation annotation = new Annotation(SpringConstants.SPRING_REQUEST_MAPPING_CLASS, constPool);
         // 1.1 设置注解参数
         StringMemberValue path1 = new StringMemberValue(path, constPool);
         ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
         arrayMemberValue.setValue(new MemberValue[]{path1});
-        annotation.addMemberValue(Constants.SPRING_REQUEST_MAPPING_PATH, arrayMemberValue);
+        annotation.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_PATH, arrayMemberValue);
         // 2、添加到方法上
         methodAttr.addAnnotation(annotation);
         method.getMethodInfo().addAttribute(methodAttr);
@@ -125,15 +126,15 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
                 new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
         // 1、创建方法参数
         // 1.1 方法参数1
-        Annotation annotation1 = new Annotation(Constants.SPRING_PATH_VARIABLE, constPool);
-        annotation1.addMemberValue(Constants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(Constants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY, constPool));
+        Annotation annotation1 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_CLASS, constPool);
+        annotation1.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY, constPool));
         // 1.2 方法参数2
-        Annotation annotation2 = new Annotation(Constants.SPRING_REQUEST_PARAM, constPool);
-        annotation2.addMemberValue(Constants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(Constants.SPRING_REQUEST_PARAM_NAME, constPool));
-        annotation2.addMemberValue(Constants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
+        Annotation annotation2 = new Annotation(SpringConstants.SPRING_REQUEST_PARAM_CLASS, constPool);
+        annotation2.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_REQUEST_PARAM_NAME, constPool));
+        annotation2.addMemberValue(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
         // 1.3 方法参数3
-        Annotation annotation3 = new Annotation(Constants.SPRING_REQUEST_BODY, constPool);
-        annotation3.addMemberValue(Constants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
+        Annotation annotation3 = new Annotation(SpringConstants.SPRING_REQUEST_BODY_CLASS, constPool);
+        annotation3.addMemberValue(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
         // 2、加入方法
         Annotation[][] annotations = new Annotation[3][1];
         annotations[0][0] = annotation1;
@@ -147,18 +148,18 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
      * ThreadLocal 参数设置
      */
     String setThreadLocal() {
-        if (getArgs().get(Constants.THREADLOCAL_CLASS) != null && getArgs().get(Constants.THREADLOCAL_FIELD_NAME) != null) {
+        if (getThreadLocalClassName() != null && getThreadLocalFieldName() != null) {
             StringBuilder builder = new StringBuilder();
             builder.append("try {");
             builder.append("\n    if($2 != null) {");
-            builder.append(getArgs().get(Constants.THREADLOCAL_CLASS));
+            builder.append(getThreadLocalClassName());
             builder.append(".");
-            builder.append(getArgs().get(Constants.THREADLOCAL_FIELD_NAME));
+            builder.append(getThreadLocalFieldName());
             builder.append(".set($2);");
             builder.append("\n   } else {");
-            builder.append(getArgs().get(Constants.THREADLOCAL_CLASS));
+            builder.append(getThreadLocalClassName());
             builder.append(".");
-            builder.append(getArgs().get(Constants.THREADLOCAL_FIELD_NAME));
+            builder.append(getThreadLocalFieldName());
             builder.append(".set($3);");
             builder.append("}");
             return builder.toString();
@@ -170,13 +171,13 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
      * ThreadLocal 参数移除
      */
     String removeThreadLocal() {
-        if (getArgs().get(Constants.THREADLOCAL_CLASS) != null && getArgs().get(Constants.THREADLOCAL_FIELD_NAME) != null) {
+        if (getThreadLocalClassName() != null && getThreadLocalFieldName() != null) {
             StringBuilder builder = new StringBuilder();
             builder.append("} finally {");
             builder.append("if ($2 != null || $3 != null){");
-            builder.append(getArgs().get(Constants.THREADLOCAL_CLASS));
+            builder.append(getThreadLocalClassName());
             builder.append(".");
-            builder.append(getArgs().get(Constants.THREADLOCAL_FIELD_NAME));
+            builder.append(getThreadLocalFieldName());
             builder.append(".remove();");
             builder.append("  }");
             builder.append("}");

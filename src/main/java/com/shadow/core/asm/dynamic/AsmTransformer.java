@@ -1,7 +1,8 @@
 package com.shadow.core.asm.dynamic;
 
 import com.shadow.core.AbstractTransformer;
-import com.shadow.utils.Constants;
+import com.shadow.utils.BaseConstants;
+import com.shadow.utils.CommonConstants;
 import com.shadow.utils.FileUtils;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.ClassWriter;
@@ -34,11 +35,11 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
                 ClassReader cr = new ClassReader(classfileBuffer);
                 // 2、从 class buffer -> class node
                 // 默认 ASM5 ，支持 JDK8版本
-                ClassNode cn = new ClassNode(Constants.ASM_API_VERSION);
+                ClassNode cn = new ClassNode(CommonConstants.ASM_API_VERSION);
                 cr.accept(cn, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 // 3、transform
                 // 3.1 删除方法
-                cn.methods.removeIf(mn -> mn.name.equals(getArgs().get(Constants.METHOD_NAME)) && mn.desc.equals(Constants.METHOD_DESCRIPTOR));
+                cn.methods.removeIf(mn -> mn.name.equals(getArgs().get(CommonConstants.METHOD_NAME)) && mn.desc.equals(BaseConstants.O_SSO));
                 // 3.2 添加方法
                 cn.methods.add(this.methodNode);
                 // 4、class node -> class writer
@@ -46,7 +47,7 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
                 cn.accept(cw);
                 // 5、debug
                 if (isDebug()) {
-                    FileUtils.writeBytes(getInnerClassName() + Constants.CLASS_SUFFIX, cw.toByteArray());
+                    FileUtils.writeBytes(getInnerClassName() + CommonConstants.CLASS_SUFFIX, cw.toByteArray());
                 }
                 // 6、write to bytes
                 return cw.toByteArray();

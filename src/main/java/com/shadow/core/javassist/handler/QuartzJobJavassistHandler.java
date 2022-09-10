@@ -1,6 +1,7 @@
 package com.shadow.core.javassist.handler;
 
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
+import com.shadow.utils.QuartzConstants;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -10,7 +11,7 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
     public QuartzJobJavassistHandler(Map<String, String> args) {
         super(args);
         if (isDebug()) {
-            System.out.println("Javassist Quartz Job agent ...");
+            System.out.println(QuartzConstants.JAVASSIST_PROXY_LOG_TIPS);
         }
     }
 
@@ -21,11 +22,11 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
             body.append("{");
             body.append(setThreadLocal());
             body.append("\n    org.quartz.impl.triggers.CronTriggerImpl trigger = (org.quartz.impl.triggers.CronTriggerImpl) ");
-            body.append(getArgs().get(Constants.IOC_FIELD_NAME));
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
             body.append(".getBean($1);");
             body.append("\n    org.quartz.JobKey jobKey = new org.quartz.JobKey(trigger.getJobName());");
             body.append("\n    org.quartz.Scheduler scheduler = ((org.springframework.scheduling.quartz.SchedulerFactoryBean) ");
-            body.append(getArgs().get(Constants.IOC_FIELD_NAME));
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
             body.append(".getBean(org.springframework.scheduling.quartz.SchedulerFactoryBean.class)).getScheduler();");
             body.append("\n    scheduler.triggerJob(jobKey, jobDataMap);");
             body.append("\n    return \"Successful execute task job : task key = \" + $1 + \" params = \" + $2 + \" body = \" + $3;");

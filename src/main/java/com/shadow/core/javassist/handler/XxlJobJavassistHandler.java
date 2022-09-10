@@ -1,6 +1,7 @@
 package com.shadow.core.javassist.handler;
 
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
+import com.shadow.utils.XxlConstants;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -10,7 +11,7 @@ public class XxlJobJavassistHandler extends AbstractJavassistHandler {
     public XxlJobJavassistHandler(Map<String, String> args) {
         super(args);
         if (isDebug()) {
-            System.out.println("Javassist Xxl Job Agent ...");
+            System.out.println(XxlConstants.JAVASSIST_PROXY_LOG_TIPS);
         }
     }
 
@@ -21,7 +22,7 @@ public class XxlJobJavassistHandler extends AbstractJavassistHandler {
             body.append("{");
             body.append(setThreadLocal());
             body.append("\n    com.xxl.job.core.executor.XxlJobExecutor xxlJobExecutor = ");
-            body.append(getArgs().get(Constants.IOC_FIELD_NAME));
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
             body.append(".getBean(com.xxl.job.core.executor.XxlJobExecutor.class);");
             body.append("\n    java.lang.reflect.Field field = com.xxl.job.core.executor.XxlJobExecutor.class.getDeclaredField(\"jobHandlerRepository\");");
             body.append("\n    field.setAccessible(true);");

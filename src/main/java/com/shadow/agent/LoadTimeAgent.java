@@ -3,7 +3,7 @@ package com.shadow.agent;
 import com.shadow.core.asm.loadtime.AsmTransformer;
 import com.shadow.core.javassist.loadtime.JavassistTransformer;
 import com.shadow.utils.CommonUtils;
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
 import com.shadow.utils.ParamResolveUtils;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -27,14 +27,14 @@ public class LoadTimeAgent extends BaseAgent {
         System.out.println("===========================");
 
         // 2、必要参数有时才处理
-        if (resolveArgs.get(Constants.JOB_TYPE) != null && resolveArgs.get(Constants.CONTROLLER_CLASS) != null) {
-            Constants.ScheduleTypeEnum scheduleTypeEnum = Constants.getByJobTypeName(resolveArgs.get(Constants.JOB_TYPE));
+        if (resolveArgs.get(CommonConstants.JOB_TYPE) != null && resolveArgs.get(CommonConstants.CONTROLLER_CLASS) != null) {
+            CommonConstants.ScheduleTypeEnum scheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
             if (scheduleTypeEnum != null) {
                 // set default args
                 handleCommonDefaultArgs(resolveArgs);
                 // transformer
                 ClassFileTransformer transformer;
-                switch (Constants.getByProxyTypeName(resolveArgs.get(Constants.PROXY_TYPE))) {
+                switch (CommonConstants.getByProxyTypeName(resolveArgs.get(CommonConstants.PROXY_TYPE))) {
                     case ASM:
                         transformer = new AsmTransformer(resolveArgs, scheduleTypeEnum);
                         break;

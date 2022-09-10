@@ -3,16 +3,18 @@ package com.shadow.utils;
 import com.shadow.core.AbstractHandler;
 import jdk.internal.org.objectweb.asm.Opcodes;
 
-public class Constants {
+public class CommonConstants {
 
-    private Constants() {
+    private CommonConstants() {
 
     }
+
 
     // tips
     public static String XXL_SUCCESS = "Execute Xxl Job Successful !";
     public static String QUARTZ_SUCCESS = "Execute Quartz Job Successful !";
     public static String SPRING_SUCCESS = "Execute Spring Job Successful !";
+    public static final String TIPS = "Job agent ...";
 
     /**
      * 常见符号
@@ -25,6 +27,8 @@ public class Constants {
     public static String OR = "|";
     public static String SPACE = " ";
     public static String SEMICOLON = ";";
+    public static String LEFT_BRACKETS = "(";
+    public static String RIGHT_BRACKETS = ")";
     public static String DOLLER_S = "$";
     public static String DOLLER_D = "$$";
 
@@ -72,6 +76,18 @@ public class Constants {
         return null;
     }
 
+    public enum JavaTypeEnum {
+        Z, // boolean
+        B, // byte
+        C, // char
+        S, // short
+        I, // int
+        J, // long
+        F, // float
+        D, // double
+        V // void
+    }
+
     /**
      * 字节码操作类型 javassist 、 ASM 、 ByteBuddy
      */
@@ -89,7 +105,7 @@ public class Constants {
 
     /**
      * 注入 controller IOC 容器字段名称 - 非必须
-     * {@link Constants#DEFAULT_IOC_FIELD_VALUE}
+     * {@link CommonConstants#DEFAULT_IOC_FIELD_VALUE}
      */
     public static String IOC_FIELD_NAME = "iocFieldName";
 
@@ -101,7 +117,7 @@ public class Constants {
     /**
      * ThreadLocal 传参使用的类 - 非必须
      */
-    public static String THREADLOCAL_CLASS = "tlClass";
+    public static String THREADLOCAL_CLASS_NAME = "tlClass";
 
     /**
      * ThreadLocal 所在类的字段名称 - THREADLOCAL_CLASS 存在的情况下必须
@@ -121,7 +137,7 @@ public class Constants {
 
     /**
      * HTTP 请求 uri - 非必须
-     * {@link Constants#DEFAULT_HTTP_PATH_PREFIX}
+     * {@link CommonConstants#DEFAULT_HTTP_PATH_PREFIX}
      */
     public static String HTTP_REQUEST_PREFIX_URI = "httpUri";
 
@@ -158,46 +174,33 @@ public class Constants {
      */
     public static String TASK_CRUD = "crud";
 
+    // ASM version
+    public static int ASM_API_VERSION = Opcodes.ASM5;
 
-    // Spring 相关类
-    public static String SPRING_IOC_FIELD = "private org.springframework.context.ApplicationContext ";
-    public static String SPRING_AUTOWIRED = "org.springframework.beans.factory.annotation.Autowired";
-    public static String SPRING_REQUEST_MAPPING = "org.springframework.web.bind.annotation.RequestMapping";
+    // 访问修饰符
+    public static String ACC_PUBLIC = "public";
+    public static String ACC_PROTECTED = "protected";
+    public static String ACC_PRIVATE = "private";
+
+    // 常量字段值
+    public static String SPRING_REQUEST_PARAM_NAEM = "name";
     public static String SPRING_REQUEST_MAPPING_PATH = "path";
     public static String SPRING_REQUEST_MAPPING_VALUE = "value";
-
-    public static String SPRING_PATH_VARIABLE = "org.springframework.web.bind.annotation.PathVariable";
+    public static String SPRING_REQUEST_PARAM_REQUIRED = "required";
+    public static String SPRING_REQUEST_PARAM_NAME = "params";
+    public static String SPRING_REQUEST_BODY_NAME = "body";
     public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_OPT = "opt";
     public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY = "taskKey";
-    public static String SPRING_REQUEST_PARAM = "org.springframework.web.bind.annotation.RequestParam";
-    public static String SPRING_REQUEST_PARAM_NAME = "params";
-    public static String SPRING_REQUEST_PARAM_REQUIRED = "required";
-    public static String SPRING_REQUEST_PARAM_NAEM = "name";
-    public static String SPRING_REQUEST_BODY = "org.springframework.web.bind.annotation.RequestBody";
 
+    // .class 后缀
     public static String CLASS_SUFFIX = ".class";
-
-
-    //  ASM 相关
-    public static String OBJECT_DESCRIPTOR = "Ljava/lang/Object;";
-    public static String STRING_DESCRIPTOR = "Ljava/lang/String;";
-    public static String METHOD_DESCRIPTOR = "(" + STRING_DESCRIPTOR + STRING_DESCRIPTOR + OBJECT_DESCRIPTOR + ")" + OBJECT_DESCRIPTOR;
-    public static String EXCEPTION_DESCRIPTOR = "Ljava/lang/Exception;";
-    public static String SPRING_REQUESTMAPPING_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/RequestMapping;";
-    public static String SPRING_PATHVARIABLE_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/PathVariable;";
-    public static String SPRING_REQUESTPARAM_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/RequestParam;";
-    public static String SPRING_REQUESTBODY_DESCRIPTOR = "Lorg/springframework/web/bind/annotation/RequestBody;";
-    public static String SPRING_APPLICATIONCONTEXT_DESCRIPTOR = "Lorg/springframework/context/ApplicationContext;";
-    public static String SPRING_AUTOWIRED_DESCRIPTOR = "Lorg/springframework/beans/factory/annotation/Autowired;";
-
-    public static int ASM_API_VERSION = Opcodes.ASM5;
 
     // ========= dynamic args naming ==========
 
     /**
      * 原 JOB 类型
      *
-     * @see com.shadow.utils.Constants#JOB_TYPE
+     * @see CommonConstants#JOB_TYPE
      */
     public static String ORIGIN_JOB_TYPE = "originJobType";
 

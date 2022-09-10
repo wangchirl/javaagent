@@ -1,6 +1,6 @@
 package com.shadow.core;
 
-import com.shadow.utils.Constants;
+import com.shadow.utils.CommonConstants;
 
 import java.util.Map;
 
@@ -37,15 +37,15 @@ public abstract class AbstractTransformer {
 
     public AbstractTransformer(Map<String, String> resolveArgs) {
         this.args = resolveArgs;
-        this.className = getArgs().get(Constants.CONTROLLER_CLASS);
-        this.innerClassName = getClassName().replaceAll(Constants.DOT, Constants.BIAS);
+        this.className = getArgs().get(CommonConstants.CONTROLLER_CLASS);
+        this.innerClassName = getClassName().replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
     }
 
     /**
      * 是否 debug 模式
      */
     public boolean isDebug() {
-        return Boolean.parseBoolean(getArgs().get(Constants.DEBUG));
+        return Boolean.parseBoolean(getArgs().get(CommonConstants.DEBUG));
     }
 
 }

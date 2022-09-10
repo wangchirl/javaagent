@@ -1,6 +1,6 @@
 package com.shadow.core.asm.handler;
 
-import com.shadow.utils.Constants;
+import com.shadow.utils.*;
 
 import static jdk.internal.org.objectweb.asm.Opcodes.*;
 
@@ -14,14 +14,14 @@ public class QuartzJobAsmHandler extends AbstractAsmHandler {
     public QuartzJobAsmHandler(Map<String, String> args) {
         super(args);
         if (isDebug()) {
-            System.out.println("ASM Quartz Job agent ...");
+            System.out.println(QuartzConstants.ASM_PROXY_LOG_TIPS);
         }
     }
 
     public QuartzJobAsmHandler(String innerClassName, Map<String, String> args) {
         super(innerClassName, args);
         if (isDebug()) {
-            System.out.println("ASM Quartz Job agent ...");
+            System.out.println(QuartzConstants.ASM_PROXY_LOG_TIPS);
         }
     }
 
@@ -66,45 +66,63 @@ public class QuartzJobAsmHandler extends AbstractAsmHandler {
      * 87: areturn
      */
     @Override
-    public void getThreadLocalMethodBody(MethodNode methodNode) {
+    public void setThreadLocalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
-        il.add(new TypeInsnNode(NEW, "org/quartz/JobDataMap"));
+        // "org/quartz/JobDataMap"
+        il.add(new TypeInsnNode(NEW, QuartzConstants.QUARTZ_JOBDATAMAP_INTERNAL_CLASS));
         il.add(new InsnNode(DUP));
-        il.add(new MethodInsnNode(INVOKESPECIAL, "org/quartz/JobDataMap", "<init>", "()V", false));
+        // "org/quartz/JobDataMap"、"<init>"、"()V"
+        il.add(new MethodInsnNode(INVOKESPECIAL, QuartzConstants.QUARTZ_JOBDATAMAP_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_INIT, BaseConstants.V_, false));
         il.add(new VarInsnNode(ASTORE, 4));
         il.add(new VarInsnNode(ALOAD, 4));
-        il.add(new LdcInsnNode("params"));
+        // "params"
+        il.add(new LdcInsnNode(CommonConstants.SPRING_REQUEST_PARAM_NAME));
         il.add(new VarInsnNode(ALOAD, 2));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/JobDataMap", "put", "(Ljava/lang/String;Ljava/lang/String;)V", false));
+        // "org/quartz/JobDataMap"、"put"、"(Ljava/lang/String;Ljava/lang/String;)V"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, QuartzConstants.QUARTZ_JOBDATAMAP_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_PUT, BaseConstants.V_SS, false));
         il.add(new VarInsnNode(ALOAD, 4));
-        il.add(new LdcInsnNode("body"));
+        // "body"
+        il.add(new LdcInsnNode(CommonConstants.SPRING_REQUEST_BODY_NAME));
         il.add(new VarInsnNode(ALOAD, 3));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/JobDataMap", "put", "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;", false));
+        // "org/quartz/JobDataMap"、"put"、"(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, QuartzConstants.QUARTZ_JOBDATAMAP_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_PUT, BaseConstants.O_SO, false));
         il.add(new InsnNode(POP));
         il.add(new VarInsnNode(ALOAD, 0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(Constants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
+        // "Lorg/springframework/context/ApplicationContext;"
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_DESCRIPTOR));
         il.add(new VarInsnNode(ALOAD, 1));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/String;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "org/quartz/impl/triggers/CronTriggerImpl"));
+        // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/String;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_S, true));
+        // "org/quartz/impl/triggers/CronTriggerImpl"
+        il.add(new TypeInsnNode(CHECKCAST, QuartzConstants.QUARTZ_CRONTRIGGERIMPL_INTERNAL_CLASS));
         il.add(new VarInsnNode(ASTORE, 5));
-        il.add(new TypeInsnNode(NEW, "org/quartz/JobKey"));
+        // "org/quartz/JobKey"
+        il.add(new TypeInsnNode(NEW, QuartzConstants.QUARTZ_JOBKEY_INTERNAL_CLASS));
         il.add(new InsnNode(DUP));
         il.add(new VarInsnNode(ALOAD, 5));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/impl/triggers/CronTriggerImpl", "getJobName", "()Ljava/lang/String;", false));
-        il.add(new MethodInsnNode(INVOKESPECIAL, "org/quartz/JobKey", "<init>", "(Ljava/lang/String;)V", false));
+        // "org/quartz/impl/triggers/CronTriggerImpl"、"getJobName"、"()Ljava/lang/String;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, QuartzConstants.QUARTZ_CRONTRIGGERIMPL_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETJOBNAME, BaseConstants.S_, false));
+        // "org/quartz/JobKey"、"<init>"、"(Ljava/lang/String;)V"
+        il.add(new MethodInsnNode(INVOKESPECIAL, QuartzConstants.QUARTZ_JOBKEY_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_INIT, BaseConstants.V_S, false));
         il.add(new VarInsnNode(ASTORE, 6));
         il.add(new VarInsnNode(ALOAD, 0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(Constants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
-        il.add(new LdcInsnNode(Type.getType("Lorg/springframework/scheduling/quartz/SchedulerFactoryBean;")));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/Class;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/quartz/SchedulerFactoryBean"));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/quartz/SchedulerFactoryBean", "getScheduler", "()Lorg/quartz/Scheduler;", false));
+        // "Lorg/springframework/context/ApplicationContext;"
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_DESCRIPTOR));
+        // "Lorg/springframework/scheduling/quartz/SchedulerFactoryBean;"
+        il.add(new LdcInsnNode(Type.getType(SpringConstants.SPRING_QUARTZ_SCHEDULERFACTORYBEAN_DESCRIPTOR)));
+        // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/Class;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_C_, true));
+        // "org/springframework/scheduling/quartz/SchedulerFactoryBean"
+        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_QUARTZ_SCHEDULERFACTORYBEAN_INTERNAL_CLASS));
+        // "org/springframework/scheduling/quartz/SchedulerFactoryBean"、"getScheduler"、"()Lorg/quartz/Scheduler;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_QUARTZ_SCHEDULERFACTORYBEAN_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETSCHEDULER, QuartzConstants.SCHEDULER_, false));
         il.add(new VarInsnNode(ASTORE, 7));
         il.add(new VarInsnNode(ALOAD, 7));
         il.add(new VarInsnNode(ALOAD, 6));
         il.add(new VarInsnNode(ALOAD, 4));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Scheduler", "triggerJob", "(Lorg/quartz/JobKey;Lorg/quartz/JobDataMap;)V", true));
-        il.add(new LdcInsnNode(Constants.QUARTZ_SUCCESS));
+        // "org/quartz/Scheduler"、"triggerJob"、"(Lorg/quartz/JobKey;Lorg/quartz/JobDataMap;)V"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, QuartzConstants.QUARTZ_SCHEDULER_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_TRIGGERJOB, QuartzConstants.V_JOBKEY_JOBDATAMAP, true));
+        il.add(new LdcInsnNode(CommonConstants.QUARTZ_SUCCESS));
         il.add(new InsnNode(ARETURN));
         methodNode.maxStack = 7;
         methodNode.maxLocals = 8;
@@ -137,31 +155,43 @@ public class QuartzJobAsmHandler extends AbstractAsmHandler {
      * 59: areturn
      */
     @Override
-    public void getNormalMethodBody(MethodNode methodNode) {
+    public void setNormalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
         il.add(new VarInsnNode(ALOAD, 0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(Constants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
+        // "Lorg/springframework/context/ApplicationContext;"
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_DESCRIPTOR));
         il.add(new VarInsnNode(ALOAD, 1));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/String;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "org/quartz/impl/triggers/CronTriggerImpl"));
+        // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/String;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_S, true));
+        // "org/quartz/impl/triggers/CronTriggerImpl"
+        il.add(new TypeInsnNode(CHECKCAST, QuartzConstants.QUARTZ_CRONTRIGGERIMPL_INTERNAL_CLASS));
         il.add(new VarInsnNode(ASTORE, 4));
-        il.add(new TypeInsnNode(NEW, "org/quartz/JobKey"));
+        // "org/quartz/JobKey"
+        il.add(new TypeInsnNode(NEW, QuartzConstants.QUARTZ_JOBKEY_INTERNAL_CLASS));
         il.add(new InsnNode(DUP));
         il.add(new VarInsnNode(ALOAD, 4));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/impl/triggers/CronTriggerImpl", "getJobName", "()Ljava/lang/String;", false));
-        il.add(new MethodInsnNode(INVOKESPECIAL, "org/quartz/JobKey", "<init>", "(Ljava/lang/String;)V", false));
+        // "org/quartz/impl/triggers/CronTriggerImpl"、"getJobName"、"()Ljava/lang/String;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, QuartzConstants.QUARTZ_CRONTRIGGERIMPL_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETJOBNAME, BaseConstants.S_, false));
+        // "org/quartz/JobKey"、"<init>"、"(Ljava/lang/String;)V"
+        il.add(new MethodInsnNode(INVOKESPECIAL, QuartzConstants.QUARTZ_JOBKEY_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_INIT, BaseConstants.V_S, false));
         il.add(new VarInsnNode(ASTORE, 5));
         il.add(new VarInsnNode(ALOAD, 0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(Constants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
-        il.add(new LdcInsnNode(Type.getType("Lorg/springframework/scheduling/quartz/SchedulerFactoryBean;")));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/Class;)Ljava/lang/Object;", true));
-        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/quartz/SchedulerFactoryBean"));
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/quartz/SchedulerFactoryBean", "getScheduler", "()Lorg/quartz/Scheduler;", false));
+        // "Lorg/springframework/context/ApplicationContext;"
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_DESCRIPTOR));
+        // "Lorg/springframework/scheduling/quartz/SchedulerFactoryBean;"
+        il.add(new LdcInsnNode(Type.getType(SpringConstants.SPRING_QUARTZ_SCHEDULERFACTORYBEAN_DESCRIPTOR)));
+        // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/Class;)Ljava/lang/Object;"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_C_, true));
+        // "org/springframework/scheduling/quartz/SchedulerFactoryBean"
+        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_QUARTZ_SCHEDULERFACTORYBEAN_INTERNAL_CLASS));
+        // "org/springframework/scheduling/quartz/SchedulerFactoryBean"、"getScheduler"、"()Lorg/quartz/Scheduler;"
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_QUARTZ_SCHEDULERFACTORYBEAN_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_GETSCHEDULER, QuartzConstants.SCHEDULER_, false));
         il.add(new VarInsnNode(ASTORE, 6));
         il.add(new VarInsnNode(ALOAD, 6));
         il.add(new VarInsnNode(ALOAD, 5));
-        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Scheduler", "triggerJob", "(Lorg/quartz/JobKey;)V", true));
-        il.add(new LdcInsnNode(Constants.QUARTZ_SUCCESS));
+        // "org/quartz/Scheduler"、"triggerJob"、"(Lorg/quartz/JobKey;)V"
+        il.add(new MethodInsnNode(INVOKEINTERFACE, QuartzConstants.QUARTZ_SCHEDULER_INTERNAL_CLASS, MethodNameConstants.METHOD_NAME_TRIGGERJOB, QuartzConstants.V_JOBKEY, true));
+        il.add(new LdcInsnNode(CommonConstants.QUARTZ_SUCCESS));
         il.add(new InsnNode(ARETURN));
         methodNode.maxStack = 6;
         methodNode.maxLocals = 7;
