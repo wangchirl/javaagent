@@ -53,7 +53,7 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
             List<AttributeInfo> attributes = ctField.getFieldInfo().getAttributes();
             AnnotationsAttribute annotationsAttr = !attributes.isEmpty() ? (AnnotationsAttribute) attributes.get(0) :
                     new AnnotationsAttribute(ctField.getFieldInfo().getConstPool(), AnnotationsAttribute.visibleTag);
-            Annotation annotation = new Annotation(SpringConstants.SPRING_AUTOWIRED_CLASS, ctField.getFieldInfo().getConstPool());
+            Annotation annotation = new Annotation(SpringConstants.SPRING_AUTOWIRED_TYPE.getClassName(), ctField.getFieldInfo().getConstPool());
             annotationsAttr.addAnnotation(annotation);
             ctField.getFieldInfo().addAttribute(annotationsAttr);
         }
@@ -113,7 +113,7 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
             ConstPool constPool = ccFile.getConstPool();
             AnnotationsAttribute methodAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
             // 1、创建方法注解
-            Annotation annotation = new Annotation(SpringConstants.SPRING_REQUEST_MAPPING_CLASS, constPool);
+            Annotation annotation = new Annotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getClassName(), constPool);
             // 1.1 设置注解参数
             StringMemberValue path1 = new StringMemberValue(CommonConstants.DEFAULT_CRUD_HTTP_PATH, constPool);
             ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
@@ -127,13 +127,13 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
                     new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
             // 1、创建方法参数
             // 1.1 方法参数1
-            Annotation annotation1 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_CLASS, constPool);
+            Annotation annotation1 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_TYPE.getClassName(), constPool);
             annotation1.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_OPERATION, constPool));
             // 1.2 方法参数2
-            Annotation annotation2 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_CLASS, constPool);
+            Annotation annotation2 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_TYPE.getClassName(), constPool);
             annotation2.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY, constPool));
             // 1.3 方法参数3
-            Annotation annotation3 = new Annotation(SpringConstants.SPRING_REQUEST_PARAM_CLASS, constPool);
+            Annotation annotation3 = new Annotation(SpringConstants.SPRING_REQUEST_PARAM_TYPE.getClassName(), constPool);
             annotation3.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_CRON, constPool));
             annotation3.addMemberValue(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
 

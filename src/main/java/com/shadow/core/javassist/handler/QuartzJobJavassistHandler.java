@@ -28,7 +28,11 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
             body.append("\n    org.quartz.Scheduler scheduler = ((org.springframework.scheduling.quartz.SchedulerFactoryBean) ");
             body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
             body.append(".getBean(org.springframework.scheduling.quartz.SchedulerFactoryBean.class)).getScheduler();");
-            body.append("\n    scheduler.triggerJob(jobKey, jobDataMap);");
+            if (getThreadLocalClassName() != null && getThreadLocalFieldName() != null) {
+                body.append("\n    scheduler.triggerJob(jobKey, jobDataMap);");
+            } else {
+                body.append("\n    scheduler.triggerJob(jobKey);");
+            }
             body.append("\n    return \"Successful execute task job : task key = \" + $1 + \" params = \" + $2 + \" body = \" + $3;");
             body.append("\n}");
             return body.toString();
@@ -37,10 +41,13 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
 
     @Override
     String setThreadLocal() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("org.quartz.JobDataMap jobDataMap = new org.quartz.JobDataMap();");
-        builder.append("jobDataMap.put(\"params\", $2);");
-        builder.append("jobDataMap.put(\"body\", $3);");
-        return builder.toString();
+        if (getThreadLocalClassName() != null && getThreadLocalFieldName() != null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("org.quartz.JobDataMap jobDataMap = new org.quartz.JobDataMap();");
+            builder.append("jobDataMap.put(\"params\", $2);");
+            builder.append("jobDataMap.put(\"body\", $3);");
+            return builder.toString();
+        }
+        return "";
     }
 }

@@ -1,6 +1,6 @@
 package com.shadow.utils;
-import static com.shadow.utils.CommonConstants.*;
-import static com.shadow.utils.BaseConstants.*;
+import jdk.internal.org.objectweb.asm.Type;
+
 
 public class XxlConstants {
 
@@ -17,22 +17,7 @@ public class XxlConstants {
 
     // ♥♥♥♥♥♥♥♥ XXL 相关类及其描述符 ♥♥♥♥♥♥♥♥
 
-    /**
-     * class name
-     */
-    public static String XXL_JOBEXECUTOR_CLASS = "com.xxl.job.core.executor.XxlJobExecutor";
-    public static String XXL_JOBHANDLER_CLASS = "com.xxl.job.core.handler.IJobHandler";
-
-    /**
-     * internal class name
-     */
-    public static String XXL_JOBEXECUTOR_INTERNAL_CLASS = XXL_JOBEXECUTOR_CLASS.replaceAll(DOT, BIAS);
-    public static String XXL_JOBHANDLER_INTERNAL_CLASS = XXL_JOBHANDLER_CLASS.replaceAll(DOT, BIAS);
-
-    // Lcom/xxl/job/core/executor/XxlJobExecutor;
-    public static String XXL_JOBEXECUTOR_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + XXL_JOBEXECUTOR_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
-
-    // Lcom/xxl/job/core/handler/IJobHandler;
-    public static String XXL_JOBHANDLER_INTERNAL_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + XXL_JOBHANDLER_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
+    public static Type XXL_JOBEXECUTOR_TYPE = Type.getType("Lcom/xxl/job/core/executor/XxlJobExecutor;");
+    public static Type XXL_JOBHANDLER_TYPE = Type.getType("Lcom/xxl/job/core/handler/IJobHandler;");
 
 }

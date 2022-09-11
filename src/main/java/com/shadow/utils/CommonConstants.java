@@ -9,7 +9,6 @@ public class CommonConstants {
 
     }
 
-
     // tips
     public static String XXL_SUCCESS = "Execute Xxl Job Successful !";
     public static String QUARTZ_SUCCESS = "Execute Quartz Job Successful !";
