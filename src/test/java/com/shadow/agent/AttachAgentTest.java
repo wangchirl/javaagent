@@ -29,7 +29,7 @@ public class AttachAgentTest {
                 System.out.println("agentProperties : " + agentProperties);
                 // attach
                 String agentPath = "F:\\source\\javaagent\\target\\SuperAgent-jar-with-dependencies.jar";
-                vm.loadAgent(agentPath, "proxyType=asm&debug=true&originJobType=spring&jobType=quartz&ctlClass=com.shadow.controller.AgentBaseController&tlClass=com.shadow.supports.framework.ScheduleService&tlFieldName=JOB_PARAMETERS_THREAD_LOCAL");
+                vm.loadAgent(agentPath, "proxyType=asm&debug=true&originJobType=xxl&jobType=xxl&ctlClass=com.shadow.controller.AgentBaseController&tlClass=com.shadow.supports.framework.ScheduleService&tlFieldName=JOB_PARAMETERS_THREAD_LOCAL");
                 vm.detach();
                 break;
             }

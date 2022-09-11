@@ -27,6 +27,8 @@ public class SpringConstants {
     public static String SPRING_SCHEDULEDTASK_CLASS = "org.springframework.scheduling.config.ScheduledTask";
     public static String SPRING_QUARTZ_SCHEDULERFACTORYBEAN_CLASS = "org.springframework.scheduling.quartz.SchedulerFactoryBean";
     public static String SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_CLASS = "org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor";
+    public static String SPRING_CRONTRIGGER_CLASS = "org.springframework.scheduling.support.CronTrigger";
+    public static String SPRING_ENVIRONMENT_CLASS = "org.springframework.core.env.Environment";
 
     /**
      * internal class name
@@ -42,6 +44,8 @@ public class SpringConstants {
     public static String SPRING_SCHEDULEDTASK_INTERNAL_CLASS = SPRING_SCHEDULEDTASK_CLASS.replaceAll(DOT, BIAS);
     public static String SPRING_QUARTZ_SCHEDULERFACTORYBEAN_INTERNAL_CLASS = SPRING_QUARTZ_SCHEDULERFACTORYBEAN_CLASS.replaceAll(DOT, BIAS);
     public static String SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_INTERNAL_CLASS = SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_CLASS.replaceAll(DOT, BIAS);
+    public static String SPRING_CRONTRIGGER_INTERNAL_CLASS = SPRING_CRONTRIGGER_CLASS.replaceAll(DOT, BIAS);
+    public static String SPRING_ENVIRONMENT_INTERNAL_CLASS = SPRING_ENVIRONMENT_CLASS.replaceAll(DOT, BIAS);
 
     /**
      * class descriptor
@@ -79,8 +83,17 @@ public class SpringConstants {
     // Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;
     public static String SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
 
+    // Lorg/springframework/scheduling/support/CronTrigger;
+    public static String SPRING_CRONTRIGGER_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + SPRING_CRONTRIGGER_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
+
+    // Lorg/springframework/core/env/Environment;
+    public static String SPRING_ENVIRONMENT_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + SPRING_ENVIRONMENT_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
+
     // ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ 常见的方法描述符 ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀
 
     // ()Lorg/springframework/scheduling/config/Task;
     public static String TASK_ = CommonConstants.LEFT_BRACKETS + CommonConstants.RIGHT_BRACKETS + SPRING_TASK_DESCRIPTOR;
+
+    // ()Lorg/springframework/core/env/Environment;
+    public static String ENVIRONMENT_ = CommonConstants.LEFT_BRACKETS + CommonConstants.RIGHT_BRACKETS + SPRING_ENVIRONMENT_DESCRIPTOR;
 }

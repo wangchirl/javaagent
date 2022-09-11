@@ -37,6 +37,8 @@ public class CommonConstants {
      */
     public static String DEFAULT_HTTP_PATH_PREFIX = "/agent/run";
 
+    public static String DEFAULT_CRUD_HTTP_PATH = "/agent/crud/{operation}/{taskKey}";
+
     /**
      * 路径后缀
      */
@@ -174,6 +176,11 @@ public class CommonConstants {
      */
     public static String TASK_CRUD = "crud";
 
+    /**
+     * crud 方法名称
+     */
+    public static String DEFAULT_CRUD_METHOD_NAME = "$$$simpleJobCrud$$$";
+
     // ASM version
     public static int ASM_API_VERSION = Opcodes.ASM5;
 
@@ -189,7 +196,8 @@ public class CommonConstants {
     public static String SPRING_REQUEST_PARAM_REQUIRED = "required";
     public static String SPRING_REQUEST_PARAM_NAME = "params";
     public static String SPRING_REQUEST_BODY_NAME = "body";
-    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_OPT = "opt";
+    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_OPERATION = "operation";
+    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_CRON = "cron";
     public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY = "taskKey";
 
     // .class 后缀

@@ -65,7 +65,7 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
             CtClass string = cp.get(String.class.getName());
             CtClass object = cp.get(Object.class.getName());
             // 1、创建方法
-            CtMethod method = new CtMethod(object, "$$$simpleJobCrud$$$", new CtClass[]{string, string, string}, cc);
+            CtMethod method = new CtMethod(object, CommonConstants.DEFAULT_CRUD_METHOD_NAME, new CtClass[]{CtClass.intType, string, string}, cc);
             // 2、方法访问权限
             method.setModifiers(Modifier.PUBLIC);
             method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
@@ -73,19 +73,19 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
             StringBuilder builder = new StringBuilder();
             builder.append("{");
             builder.append("\n       java.lang.Object res;");
-            builder.append("\n       if (\"update\".equalsIgnoreCase($1)) {");
+            builder.append("\n       if (1 == $1) {");
             builder.append("\n          res = ");
             builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
             builder.append(".update($2, $3);");
-            builder.append("\n        } else if (\"cancel\".equalsIgnoreCase($1) || \"delete\".equalsIgnoreCase($1) || \"remove\".equalsIgnoreCase($1)) {");
-            builder.append("\n          res = ");
-            builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
-            builder.append(".cancel($2);");
-            builder.append("\n        } else if (\"restart\".equalsIgnoreCase($1) || \"reload\".equalsIgnoreCase($1)) {");
+            builder.append("\n        } else if (2 == $1) {");
             builder.append("\n          res = ");
             builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
             builder.append(".restart($2);");
-            builder.append("\n        } else if(\"add\".equalsIgnoreCase($1) || \"insert\".equalsIgnoreCase($1)) {");
+            builder.append("\n        } else if (3 == $1) {");
+            builder.append("\n          res = ");
+            builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
+            builder.append(".cancel($2);");
+            builder.append("\n        } else if(4 == $1) {");
             builder.append("\n          java.lang.String beanName = com.shadow.supports.helper.ScheduleTaskInfoEnum.getScheduleTaskBeanNameByTaskKey($2);");
             builder.append("\n          com.shadow.supports.framework.ICronTriggerTask triggerTask = ");
             builder.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
@@ -115,7 +115,7 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
             // 1、创建方法注解
             Annotation annotation = new Annotation(SpringConstants.SPRING_REQUEST_MAPPING_CLASS, constPool);
             // 1.1 设置注解参数
-            StringMemberValue path1 = new StringMemberValue("/{opt}/{taskKey}", constPool);
+            StringMemberValue path1 = new StringMemberValue(CommonConstants.DEFAULT_CRUD_HTTP_PATH, constPool);
             ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
             arrayMemberValue.setValue(new MemberValue[]{path1});
             annotation.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_PATH, arrayMemberValue);
@@ -128,13 +128,13 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
             // 1、创建方法参数
             // 1.1 方法参数1
             Annotation annotation1 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_CLASS, constPool);
-            annotation1.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_OPT, constPool));
+            annotation1.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_OPERATION, constPool));
             // 1.2 方法参数2
             Annotation annotation2 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_CLASS, constPool);
             annotation2.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY, constPool));
             // 1.3 方法参数3
             Annotation annotation3 = new Annotation(SpringConstants.SPRING_REQUEST_PARAM_CLASS, constPool);
-            annotation3.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_REQUEST_PARAM_NAME, constPool));
+            annotation3.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_CRON, constPool));
             annotation3.addMemberValue(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
 
             // 2、加入方法

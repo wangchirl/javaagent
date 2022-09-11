@@ -25,6 +25,7 @@ public class BaseConstants {
     public static String ITERATOR_CLASS = "java.util.Iterator";
     public static String SET_CLASS = "java.util.Set";
     public static String MAP_CLASS = "java.util.Map";
+    public static String BOOLEAN_CLASS = "java.lang.Boolean";
 
     /**
      * internal class name
@@ -40,6 +41,7 @@ public class BaseConstants {
     public static String ITERATOR_INTERNAL_CLASS = ITERATOR_CLASS.replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
     public static String SET_INTERNAL_CLASS = SET_CLASS.replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
     public static String MAP_INTERNAL_CLASS = MAP_CLASS.replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
+    public static String BOOLEAN_INTERNAL_CLASS = BOOLEAN_CLASS.replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
 
     // Ljava/lang/String;
     public static String STRING_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + STRING_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
@@ -74,6 +76,9 @@ public class BaseConstants {
     // Ljava/util/Map;
     public static String MAP_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + MAP_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
 
+    // Ljava/lang/Boolean;
+    public static String BOOLEAN_DESCRIPTOR = CLASS_DESCRIPTOR_PREFIX + BOOLEAN_INTERNAL_CLASS + CLASS_DESCRIPTOR_SUFFIX;
+
 
     // ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ 常见的方法描述符 ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀
 
@@ -85,6 +90,15 @@ public class BaseConstants {
 
     // ()Ljava/lang/Object;
     public static String O_ = CommonConstants.LEFT_BRACKETS + CommonConstants.RIGHT_BRACKETS + OBJECT_DESCRIPTOR;
+
+    // ()I
+    public static String I_ = CommonConstants.LEFT_BRACKETS + CommonConstants.RIGHT_BRACKETS + CommonConstants.JavaTypeEnum.I;
+
+    // (Ljava/lang/String;)Ljava/lang/Boolean;
+    public static String BOOLEAN_S = CommonConstants.LEFT_BRACKETS + STRING_DESCRIPTOR + CommonConstants.RIGHT_BRACKETS + BOOLEAN_DESCRIPTOR;
+
+    // (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Boolean;
+    public static String BOOLEAN_S_S = CommonConstants.LEFT_BRACKETS + STRING_DESCRIPTOR + STRING_DESCRIPTOR + CommonConstants.RIGHT_BRACKETS + BOOLEAN_DESCRIPTOR;
 
     // (Ljava/lang/Object;)Ljava/lang/Object;
     public static String O_O = CommonConstants.LEFT_BRACKETS + OBJECT_DESCRIPTOR + CommonConstants.RIGHT_BRACKETS + OBJECT_DESCRIPTOR;
@@ -109,6 +123,9 @@ public class BaseConstants {
 
     // (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
     public static String O_SSO = CommonConstants.LEFT_BRACKETS + STRING_DESCRIPTOR + STRING_DESCRIPTOR + OBJECT_DESCRIPTOR + CommonConstants.RIGHT_BRACKETS + OBJECT_DESCRIPTOR;
+
+    // (ILjava/lang/String;Ljava/lang/String;)Ljava/lang/Object;
+    public static String O_ISS = CommonConstants.LEFT_BRACKETS + CommonConstants.JavaTypeEnum.I + STRING_DESCRIPTOR + STRING_DESCRIPTOR + CommonConstants.RIGHT_BRACKETS + OBJECT_DESCRIPTOR;
 
     // (Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
     public static String O_SO = CommonConstants.LEFT_BRACKETS + STRING_DESCRIPTOR + OBJECT_DESCRIPTOR + CommonConstants.RIGHT_BRACKETS + OBJECT_DESCRIPTOR;
