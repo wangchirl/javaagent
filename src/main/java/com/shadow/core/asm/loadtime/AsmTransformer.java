@@ -1,27 +1,34 @@
 package com.shadow.core.asm.loadtime;
 
 import com.shadow.core.AbstractTransformer;
-import com.shadow.core.asm.handler.QuartzJobAsmHandler;
-import com.shadow.core.asm.handler.SimpleJobAsmHandler;
-import com.shadow.core.asm.handler.SpringJobAsmHandler;
-import com.shadow.core.asm.handler.XxlJobAsmHandler;
+import com.shadow.core.asm.handler.*;
 import com.shadow.utils.CommonConstants;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 public class AsmTransformer extends AbstractTransformer implements ClassFileTransformer {
 
     /**
-     * 定时任务类型
+     * current handle
      */
-    private CommonConstants.ScheduleTypeEnum scheduleTypeEnum;
+    public AbstractAsmHandler handler;
 
     public AsmTransformer(Map<String, String> resolveArgs, CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         super(resolveArgs);
-        this.scheduleTypeEnum = scheduleTypeEnum;
+        // SPI
+        ServiceLoader<IAsmHandler> handlers = ServiceLoader.load(IAsmHandler.class);
+        for (IAsmHandler handler : handlers) {
+            ((AbstractAsmHandler) handler).setArgs(resolveArgs);
+            ((AbstractAsmHandler) handler).initInnerClassName();
+            if (scheduleTypeEnum.name().equalsIgnoreCase(handler.getClass().getSimpleName().replace(CommonConstants.ASM_HANDLER_NAME_SUFFIX, ""))) {
+                this.handler = (AbstractAsmHandler) handler;
+                break;
+            }
+        }
     }
 
     @Override
@@ -31,18 +38,7 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
                             ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         if (className.equals(getInnerClassName())) {
-            switch (this.scheduleTypeEnum) {
-                case XXL:
-                    return new XxlJobAsmHandler(getInnerClassName(), getArgs()).handle(classfileBuffer);
-                case QUARTZ:
-                    return new QuartzJobAsmHandler(getInnerClassName(), getArgs()).handle(classfileBuffer);
-                case SPRING:
-                    return new SpringJobAsmHandler(getInnerClassName(), getArgs()).handle(classfileBuffer);
-                case SIMPLE:
-                    return new SimpleJobAsmHandler(getInnerClassName(), getArgs()).handle(classfileBuffer);
-                default:
-                    break;
-            }
+            return this.handler.handle(classfileBuffer);
         }
         return null;
     }

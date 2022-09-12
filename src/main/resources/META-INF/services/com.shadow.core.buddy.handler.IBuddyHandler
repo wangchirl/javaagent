@@ -1,0 +1,4 @@
+com.shadow.core.buddy.handler.QuartzJobBuddyHandler
+com.shadow.core.buddy.handler.SimpleJobBuddyHandler
+com.shadow.core.buddy.handler.SpringJobBuddyHandler
+com.shadow.core.buddy.handler.XxlJobBuddyHandler

@@ -1,19 +1,9 @@
 package com.shadow.core.javassist.handler;
 
 import com.shadow.utils.CommonConstants;
-import com.shadow.utils.XxlConstants;
-
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class XxlJobJavassistHandler extends AbstractJavassistHandler {
-
-    public XxlJobJavassistHandler(Map<String, String> args) {
-        super(args);
-        if (isDebug()) {
-            System.out.println(XxlConstants.JAVASSIST_PROXY_LOG_TIPS);
-        }
-    }
 
     @Override
     public Supplier<String> getMethodBody() {

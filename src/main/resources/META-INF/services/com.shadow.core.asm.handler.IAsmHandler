@@ -1,0 +1,4 @@
+com.shadow.core.asm.handler.QuartzJobAsmHandler
+com.shadow.core.asm.handler.SimpleJobAsmHandler
+com.shadow.core.asm.handler.SpringJobAsmHandler
+com.shadow.core.asm.handler.XxlJobAsmHandler

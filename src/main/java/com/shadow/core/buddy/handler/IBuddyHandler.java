@@ -1,4 +1,4 @@
-package com.shadow.core.buddy.loadtime;
+package com.shadow.core.buddy.handler;
 
 import javassist.ClassPool;
 import javassist.CtClass;

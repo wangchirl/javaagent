@@ -1,27 +1,33 @@
 package com.shadow.core.javassist.loadtime;
 
 import com.shadow.core.AbstractTransformer;
-import com.shadow.core.javassist.handler.QuartzJobJavassistHandler;
-import com.shadow.core.javassist.handler.SimpleJobJavassistHandler;
-import com.shadow.core.javassist.handler.SpringJobJavassistHandler;
-import com.shadow.core.javassist.handler.XxlJobJavassistHandler;
+import com.shadow.core.javassist.handler.*;
 import com.shadow.utils.CommonConstants;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 public class JavassistTransformer extends AbstractTransformer implements ClassFileTransformer {
 
     /**
-     * 定时任务类型
+     * current handle
      */
-    private CommonConstants.ScheduleTypeEnum scheduleTypeEnum;
+    public AbstractJavassistHandler handler;
 
     public JavassistTransformer(Map<String, String> resolveArgs, CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         super(resolveArgs);
-        this.scheduleTypeEnum = scheduleTypeEnum;
+        // SPI
+        ServiceLoader<IJavassistHandler> handlers = ServiceLoader.load(IJavassistHandler.class);
+        for (IJavassistHandler handler : handlers) {
+            ((AbstractJavassistHandler) handler).setArgs(resolveArgs);
+            if (scheduleTypeEnum.name().equalsIgnoreCase(handler.getClass().getSimpleName().replace(CommonConstants.JAVASSIST_HANDLER_NAME_SUFFIX, ""))) {
+                this.handler = (AbstractJavassistHandler) handler;
+                break;
+            }
+        }
     }
 
     /**
@@ -39,20 +45,7 @@ public class JavassistTransformer extends AbstractTransformer implements ClassFi
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         // load assigned class
         if (className.equals(getInnerClassName())) {
-            System.out.println("LOAD ASSIGNED CLASS : " + className);
-            System.out.println("LOAD TIME AGENT ARGS : " + getArgs());
-            switch (this.scheduleTypeEnum) {
-                case XXL:
-                    return new XxlJobJavassistHandler(getArgs()).handle(getClassName());
-                case QUARTZ:
-                    return new QuartzJobJavassistHandler(getArgs()).handle(getClassName());
-                case SPRING:
-                    return new SpringJobJavassistHandler(getArgs()).handle(getClassName());
-                case SIMPLE:
-                    return new SimpleJobJavassistHandler(getArgs()).handle(getClassName());
-                default:
-                    break;
-            }
+            return this.handler.handle(getClassName());
         }
         return null;
     }

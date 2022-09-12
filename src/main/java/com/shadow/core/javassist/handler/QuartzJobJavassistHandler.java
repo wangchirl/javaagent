@@ -1,19 +1,9 @@
 package com.shadow.core.javassist.handler;
 
 import com.shadow.utils.CommonConstants;
-import com.shadow.utils.QuartzConstants;
-
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
-
-    public QuartzJobJavassistHandler(Map<String, String> args) {
-        super(args);
-        if (isDebug()) {
-            System.out.println(QuartzConstants.JAVASSIST_PROXY_LOG_TIPS);
-        }
-    }
 
     @Override
     public Supplier<String> getMethodBody() {

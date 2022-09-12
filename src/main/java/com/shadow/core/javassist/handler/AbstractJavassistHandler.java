@@ -8,7 +8,6 @@ import javassist.bytecode.*;
 import javassist.bytecode.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 
@@ -20,10 +19,6 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
      * @return {@link java.lang.String}
      */
     public abstract Supplier<String> getMethodBody();
-
-    AbstractJavassistHandler(Map<String, String> args) {
-        super(args);
-    }
 
     /**
      * 主方法

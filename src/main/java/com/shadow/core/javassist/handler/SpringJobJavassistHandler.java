@@ -1,19 +1,9 @@
 package com.shadow.core.javassist.handler;
 
 import com.shadow.utils.CommonConstants;
-import com.shadow.utils.SpringConstants;
-
-import java.util.Map;
 import java.util.function.Supplier;
 
 public class SpringJobJavassistHandler extends AbstractJavassistHandler {
-
-    public SpringJobJavassistHandler(Map<String, String> args) {
-        super(args);
-        if (isDebug()) {
-            System.out.println(SpringConstants.JAVASSIST_PROXY_LOG_TIPS);
-        }
-    }
 
     @Override
     public Supplier<String> getMethodBody() {

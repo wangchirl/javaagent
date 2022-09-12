@@ -43,7 +43,7 @@ public abstract class AbstractHandler {
         return threadLocalFieldName;
     }
 
-    public AbstractHandler(Map<String, String> args) {
+    public void setArgs(Map<String, String> args) {
         this.args = args;
         this.threadLocalFieldName = getArgs().get(CommonConstants.THREADLOCAL_FIELD_NAME);
         this.threadLocalClassName = getArgs().get(CommonConstants.THREADLOCAL_CLASS_NAME);

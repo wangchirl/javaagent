@@ -11,7 +11,6 @@ import jdk.internal.org.objectweb.asm.tree.ClassNode;
 import jdk.internal.org.objectweb.asm.tree.FieldNode;
 import jdk.internal.org.objectweb.asm.tree.MethodNode;
 
-import java.util.Map;
 
 public abstract class AbstractAsmHandler extends AbstractHandler implements IAsmHandler {
 
@@ -46,14 +45,8 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
         return innerClassName;
     }
 
-    AbstractAsmHandler(Map<String, String> args) {
-        super(args);
+    public void initInnerClassName() {
         this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
-    }
-
-    AbstractAsmHandler(String innerClassName, Map<String, String> args) {
-        super(args);
-        this.innerClassName = innerClassName;
     }
 
     public byte[] handle(byte[] classfileBuffer) {

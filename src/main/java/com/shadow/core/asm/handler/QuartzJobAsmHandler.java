@@ -7,23 +7,8 @@ import static jdk.internal.org.objectweb.asm.Opcodes.*;
 import jdk.internal.org.objectweb.asm.Type;
 import jdk.internal.org.objectweb.asm.tree.*;
 
-import java.util.Map;
 
 public class QuartzJobAsmHandler extends AbstractAsmHandler {
-
-    public QuartzJobAsmHandler(Map<String, String> args) {
-        super(args);
-        if (isDebug()) {
-            System.out.println(QuartzConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
-
-    public QuartzJobAsmHandler(String innerClassName, Map<String, String> args) {
-        super(innerClassName, args);
-        if (isDebug()) {
-            System.out.println(QuartzConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
 
     /**
      * 0: new           #2                  // class org/quartz/JobDataMap

@@ -8,23 +8,8 @@ import jdk.internal.org.objectweb.asm.Opcodes;
 import jdk.internal.org.objectweb.asm.Type;
 import jdk.internal.org.objectweb.asm.tree.*;
 
-import java.util.Map;
 
 public class SimpleJobAsmHandler extends AbstractAsmHandler {
-
-    public SimpleJobAsmHandler(Map<String, String> args) {
-        super(args);
-        if (isDebug()) {
-            System.out.println(SimpleConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
-
-    public SimpleJobAsmHandler(String innerClassName, Map<String, String> args) {
-        super(innerClassName, args);
-        if (isDebug()) {
-            System.out.println(SimpleConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
 
     /**
      * 0: aload_2

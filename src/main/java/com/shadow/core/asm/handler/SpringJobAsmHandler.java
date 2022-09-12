@@ -5,25 +5,10 @@ import jdk.internal.org.objectweb.asm.Opcodes;
 import jdk.internal.org.objectweb.asm.Type;
 import jdk.internal.org.objectweb.asm.tree.*;
 
-import java.util.Map;
 
 import static jdk.internal.org.objectweb.asm.Opcodes.*;
 
 public class SpringJobAsmHandler extends AbstractAsmHandler {
-
-    public SpringJobAsmHandler(Map<String, String> args) {
-        super(args);
-        if (isDebug()) {
-            System.out.println(SpringConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
-
-    public SpringJobAsmHandler(String innerClassName, Map<String, String> args) {
-        super(innerClassName, args);
-        if (isDebug()) {
-            System.out.println(SpringConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
 
     /**
      * 0: aload_2

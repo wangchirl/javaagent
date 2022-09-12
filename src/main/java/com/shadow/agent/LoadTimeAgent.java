@@ -17,15 +17,6 @@ public class LoadTimeAgent extends BaseAgent {
         Map<String, String> resolveArgs = ParamResolveUtils.resolveArgs(agentArgs);
         // if log allowed
         CommonUtils.printLogAllowed(resolveArgs);
-
-        System.out.println("Premain-Class: " + LoadTimeAgent.class.getName());
-        System.out.println("Instrumentation Class: " + inst.getClass().getName());
-        System.out.println("RedefineClasses Supported : " + inst.isRedefineClassesSupported());
-        System.out.println("RetransformClasses Supported: " + inst.isRetransformClassesSupported());
-        System.out.println("NativeMethodPrefix Supported: " + inst.isNativeMethodPrefixSupported());
-        System.out.println("agentArgs: " + agentArgs);
-        System.out.println("===========================");
-
         // 2、必要参数有时才处理
         if (resolveArgs.get(CommonConstants.JOB_TYPE) != null && resolveArgs.get(CommonConstants.CONTROLLER_CLASS) != null) {
             CommonConstants.ScheduleTypeEnum scheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));

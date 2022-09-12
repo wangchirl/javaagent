@@ -1,0 +1,4 @@
+com.shadow.core.javassist.handler.QuartzJobJavassistHandler
+com.shadow.core.javassist.handler.SimpleJobJavassistHandler
+com.shadow.core.javassist.handler.SpringJobJavassistHandler
+com.shadow.core.javassist.handler.XxlJobJavassistHandler

@@ -15,6 +15,10 @@ public class CommonConstants {
     public static String SPRING_SUCCESS = "Execute Spring Job Successful !";
     public static final String TIPS = "Job agent ...";
 
+    public static final String JAVASSIST_HANDLER_NAME_SUFFIX = "JobJavassistHandler";
+    public static final String ASM_HANDLER_NAME_SUFFIX = "JobAsmHandler";
+    public static final String BYTEBUDDY_HANDLER_NAME_SUFFIX = "JobBuddyHandler";
+
     /**
      * 常见符号
      */

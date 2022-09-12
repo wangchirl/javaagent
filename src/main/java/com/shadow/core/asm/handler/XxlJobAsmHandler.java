@@ -6,24 +6,7 @@ import jdk.internal.org.objectweb.asm.tree.*;
 
 import static jdk.internal.org.objectweb.asm.Opcodes.*;
 
-import java.util.Map;
-
-
 public class XxlJobAsmHandler extends AbstractAsmHandler {
-
-    public XxlJobAsmHandler(Map<String, String> args) {
-        super(args);
-        if (isDebug()) {
-            System.out.println(XxlConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
-
-    public XxlJobAsmHandler(String innerClassName, Map<String, String> args) {
-        super(innerClassName, args);
-        if (isDebug()) {
-            System.out.println(XxlConstants.ASM_PROXY_LOG_TIPS);
-        }
-    }
 
     /**
      * 1、先看 ifxxx 的 label 有多少个
