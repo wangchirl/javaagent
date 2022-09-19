@@ -107,7 +107,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         StringMemberValue path1 = new StringMemberValue(path, constPool);
         ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
         arrayMemberValue.setValue(new MemberValue[]{path1});
-        annotation.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_PATH, arrayMemberValue);
+        annotation.addMemberValue(CommonConstants.CONST_PATH, arrayMemberValue);
         // 2、添加到方法上
         methodAttr.addAnnotation(annotation);
         method.getMethodInfo().addAttribute(methodAttr);
@@ -122,14 +122,14 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         // 1、创建方法参数
         // 1.1 方法参数1
         Annotation annotation1 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_TYPE.getClassName(), constPool);
-        annotation1.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY, constPool));
+        annotation1.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_TASK_KEY, constPool));
         // 1.2 方法参数2
         Annotation annotation2 = new Annotation(SpringConstants.SPRING_REQUEST_PARAM_TYPE.getClassName(), constPool);
-        annotation2.addMemberValue(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, new StringMemberValue(CommonConstants.SPRING_REQUEST_PARAM_NAME, constPool));
-        annotation2.addMemberValue(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
+        annotation2.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_PARAMS, constPool));
+        annotation2.addMemberValue(CommonConstants.CONST_REQUIRED, new BooleanMemberValue(false, constPool));
         // 1.3 方法参数3
         Annotation annotation3 = new Annotation(SpringConstants.SPRING_REQUEST_BODY_TYPE.getClassName(), constPool);
-        annotation3.addMemberValue(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, new BooleanMemberValue(false, constPool));
+        annotation3.addMemberValue(CommonConstants.CONST_REQUIRED, new BooleanMemberValue(false, constPool));
         // 2、加入方法
         Annotation[][] annotations = new Annotation[3][1];
         annotations[0][0] = annotation1;

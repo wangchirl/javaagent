@@ -105,8 +105,8 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
         // 1.2 方法注解及注解参数
         AnnotationNode annotation = (AnnotationNode) methodNode.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
         // 数组格式的参数
-        AnnotationVisitor value = annotation.visitArray(CommonConstants.SPRING_REQUEST_MAPPING_VALUE);
-        value.visit(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI));
+        AnnotationVisitor value = annotation.visitArray(CommonConstants.CONST_VALUE);
+        value.visit(CommonConstants.CONST_VALUE, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI));
         // 1.3 方法参数注解及注解参数
         // @PathVariable("taskKey")
         AnnotationVisitor pathvariable = methodNode.visitParameterAnnotation(
@@ -114,22 +114,22 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
                 SpringConstants.SPRING_PATH_VARIABLE_TYPE.getDescriptor(),
                 true
         );
-        pathvariable.visit(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY);
+        pathvariable.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_TASK_KEY);
         // @RequestParam(value = "params", required = false)
         AnnotationVisitor requestparam = methodNode.visitParameterAnnotation(
                 IndexConstants.INDEX_1,
                 SpringConstants.SPRING_REQUEST_PARAM_TYPE.getDescriptor(),
                 true
         );
-        requestparam.visit(CommonConstants.SPRING_REQUEST_PARAM_NAEM, CommonConstants.SPRING_REQUEST_PARAM_NAME);
-        requestparam.visit(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, false);
+        requestparam.visit(CommonConstants.CONST_NAME, CommonConstants.CONST_PARAMS);
+        requestparam.visit(CommonConstants.CONST_REQUIRED, false);
         // @RequestBody(required = false)
         AnnotationVisitor requestbody = methodNode.visitParameterAnnotation(
                 IndexConstants.INDEX_2,
                 SpringConstants.SPRING_REQUEST_BODY_TYPE.getDescriptor(),
                 true
         );
-        requestbody.visit(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, false);
+        requestbody.visit(CommonConstants.CONST_REQUIRED, false);
         // 1.4 set method body
         setMethodBody(methodNode);
         return methodNode;

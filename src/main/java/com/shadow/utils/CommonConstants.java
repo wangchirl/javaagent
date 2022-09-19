@@ -193,15 +193,15 @@ public class CommonConstants {
     public static String ACC_PRIVATE = "private";
 
     // 常量字段值
-    public static String SPRING_REQUEST_PARAM_NAEM = "name";
-    public static String SPRING_REQUEST_MAPPING_PATH = "path";
-    public static String SPRING_REQUEST_MAPPING_VALUE = "value";
-    public static String SPRING_REQUEST_PARAM_REQUIRED = "required";
-    public static String SPRING_REQUEST_PARAM_NAME = "params";
-    public static String SPRING_REQUEST_BODY_NAME = "body";
-    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_OPERATION = "operation";
-    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_CRON = "cron";
-    public static String SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY = "taskKey";
+    public static String CONST_NAME = "name";
+    public static String CONST_PATH = "path";
+    public static String CONST_VALUE = "value";
+    public static String CONST_REQUIRED = "required";
+    public static String CONST_PARAMS = "params";
+    public static String CONST_BODY = "body";
+    public static String CONST_OPERATION = "operation";
+    public static String CONST_CRON = "cron";
+    public static String CONST_TASK_KEY = "taskKey";
 
     // .class 后缀
     public static String CLASS_SUFFIX = ".class";

@@ -1,8 +1,6 @@
 package com.shadow.core.buddy.handler;
 
-import javassist.ClassPool;
-import javassist.CtClass;
-import jdk.internal.org.objectweb.asm.tree.ClassNode;
+import net.bytebuddy.jar.asm.ClassVisitor;
 
 public interface IBuddyHandler {
 
@@ -10,7 +8,7 @@ public interface IBuddyHandler {
      * 添加额外的字段
      * 目前只有 Simple Job 添加了额外的字段
      */
-    default void addFields(CtClass cc) throws Exception {
+    default void addFields(ClassVisitor classVisitor){
 
     }
 
@@ -18,24 +16,9 @@ public interface IBuddyHandler {
      * 添加额外的方法，默认空实现
      * 目前只有 Simple Job 添加了额外的增删改方法
      */
-    default void addMethods(ClassPool cp, CtClass cc) throws Exception {
+    default void addMethods(ClassVisitor classVisitor) {
 
     }
 
-    /**
-     * 添加额外的字段
-     * 目前只有 Simple Job 添加了额外的字段
-     */
-    default void addFields(int api, ClassNode cn) throws Exception {
-
-    }
-
-    /**
-     * 添加额外的方法，默认空实现
-     * 目前只有 Simple Job 添加了额外的增删改方法
-     */
-    default void addMethods(int api, ClassNode cn) throws Exception {
-
-    }
 
 }

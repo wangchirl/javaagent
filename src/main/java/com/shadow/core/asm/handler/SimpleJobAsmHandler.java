@@ -228,8 +228,8 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         // 1.2 方法注解及注解参数
         AnnotationNode annotation = (AnnotationNode) methodNode.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
         // 数组格式的参数
-        AnnotationVisitor value = annotation.visitArray(CommonConstants.SPRING_REQUEST_MAPPING_VALUE);
-        value.visit(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, CommonConstants.DEFAULT_CRUD_HTTP_PATH);
+        AnnotationVisitor value = annotation.visitArray(CommonConstants.CONST_VALUE);
+        value.visit(CommonConstants.CONST_VALUE, CommonConstants.DEFAULT_CRUD_HTTP_PATH);
         // 1.3 方法参数注解及注解参数
         // @PathVariable("operation")
         AnnotationVisitor pathvariable1 = methodNode.visitParameterAnnotation(
@@ -237,22 +237,22 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
                 SpringConstants.SPRING_PATH_VARIABLE_TYPE.getDescriptor(),
                 true
         );
-        pathvariable1.visit(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_OPERATION);
+        pathvariable1.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_OPERATION);
         // @PathVariable("taskKey")
         AnnotationVisitor pathvariable2 = methodNode.visitParameterAnnotation(
                 IndexConstants.INDEX_1,
                 SpringConstants.SPRING_PATH_VARIABLE_TYPE.getDescriptor(),
                 true
         );
-        pathvariable2.visit(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_TASK_KEY);
+        pathvariable2.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_TASK_KEY);
         // @RequestParam(value = "cron", required = false)
         AnnotationVisitor requestParams = methodNode.visitParameterAnnotation(
                 IndexConstants.INDEX_2,
                 SpringConstants.SPRING_REQUEST_PARAM_TYPE.getDescriptor(),
                 true
         );
-        requestParams.visit(CommonConstants.SPRING_REQUEST_MAPPING_VALUE, CommonConstants.SPRING_PATH_VARIABLE_PARAMETER_NAME_CRON);
-        requestParams.visit(CommonConstants.SPRING_REQUEST_PARAM_REQUIRED, false);
+        requestParams.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_CRON);
+        requestParams.visit(CommonConstants.CONST_REQUIRED, false);
         // 1.4 set method body
         setCrudMethodBody(methodNode);
         return methodNode;

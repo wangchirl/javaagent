@@ -61,13 +61,13 @@ public class QuartzJobAsmHandler extends AbstractAsmHandler {
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_4));
         // "params"
-        il.add(new LdcInsnNode(CommonConstants.SPRING_REQUEST_PARAM_NAME));
+        il.add(new LdcInsnNode(CommonConstants.CONST_PARAMS));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         // "org/quartz/JobDataMap"、"put"、"(Ljava/lang/String;Ljava/lang/String;)V"
         il.add(new MethodInsnNode(INVOKEVIRTUAL, QuartzConstants.QUARTZ_JOBDATAMAP_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_PUT, BaseConstants.V_SS, false));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_4));
         // "body"
-        il.add(new LdcInsnNode(CommonConstants.SPRING_REQUEST_BODY_NAME));
+        il.add(new LdcInsnNode(CommonConstants.CONST_BODY));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
         // "org/quartz/JobDataMap"、"put"、"(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;"
         il.add(new MethodInsnNode(INVOKEVIRTUAL, QuartzConstants.QUARTZ_JOBDATAMAP_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_PUT, BaseConstants.O_SO, false));
