@@ -4,6 +4,7 @@ import com.shadow.core.AbstractHandler;
 import com.shadow.utils.*;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.field.FieldList;
@@ -14,10 +15,10 @@ import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.*;
 import net.bytebuddy.pool.TypePool;
 
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 
-import static net.bytebuddy.jar.asm.Opcodes.ACC_PRIVATE;
-import static net.bytebuddy.jar.asm.Opcodes.ACC_PUBLIC;
+import static net.bytebuddy.jar.asm.Opcodes.*;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 
@@ -26,12 +27,20 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
     /**
      * agent method body
      */
-    private void setMethodBody(MethodVisitor methodVisitor) {
+    public void setMethodBody(MethodVisitor methodVisitor) {
         if (getThreadLocalInnerClassName() != null &&
                 getThreadLocalFieldName() != null) {
-            setThreadLocalMethodBody(methodVisitor);
+            if (originHandler == null) {
+                setThreadLocalMethodBody(methodVisitor);
+            } else {
+                originHandler.setThreadLocalMethodBody(methodVisitor);
+            }
         } else {
-            setNormalMethodBody(methodVisitor);
+            if (originHandler == null) {
+                setNormalMethodBody(methodVisitor);
+            } else {
+                originHandler.setNormalMethodBody(methodVisitor);
+            }
         }
     }
 
@@ -50,6 +59,19 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
      */
     private String innerClassName;
 
+    /**
+     * origin handler for attach api
+     */
+    private AbstractBuddyHandler originHandler;
+
+    public void initOriginHandler(AbstractBuddyHandler originHandler) {
+        this.originHandler = originHandler;
+    }
+
+    public AbstractBuddyHandler getOriginHandler() {
+        return originHandler;
+    }
+
     String getInnerClassName() {
         return innerClassName;
     }
@@ -58,8 +80,8 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
         this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
     }
 
-    public void handle(Instrumentation inst) {
-        new AgentBuilder.Default()
+    public ClassFileTransformer handle(Instrumentation inst) {
+        return new AgentBuilder.Default()
                 .with(AgentBuilder.RedefinitionStrategy.REDEFINITION)
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
                 .type(named(getArgs().get(CommonConstants.CONTROLLER_CLASS)))
@@ -97,7 +119,7 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
                 BaseConstants.OBJECT_TYPE.getInternalName(),
                 null
         );
-
+        System.out.println("测试：" + originHandler);
         // 2、spring ioc 添加字段
         {
             FieldVisitor fieldVisitor = classVisitor.visitField(
@@ -158,5 +180,79 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
         }
         classVisitor.visitEnd();
         return classVisitor;
+    }
+
+    public class TestVisitor extends ClassVisitor {
+
+        private String owner;
+
+        public TestVisitor(int api, ClassVisitor classVisitor) {
+            super(api, classVisitor);
+        }
+
+        @Override
+        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+            super.visit(version, access, name, signature, superName, interfaces);
+            this.owner = name;
+        }
+
+        @Override
+        public MethodVisitor visitMethod(int access,
+                                         String name,
+                                         String descriptor,
+                                         String signature,
+                                         String[] exceptions) {
+            MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
+            if (mv != null && getMethodName().get().equals(name) && BaseConstants.O_SSO.equals(descriptor)) {
+                boolean isAbstractMethod = (access & Opcodes.ACC_ABSTRACT) != 0;
+                boolean isNativeMethod = (access & Opcodes.ACC_NATIVE) != 0;
+                if (!isAbstractMethod && !isNativeMethod) {
+                    System.out.println("新旧方法体");
+                    generateNewBody(mv, owner, access, name, descriptor);
+                    return null;
+                }
+            }
+            return mv;
+        }
+
+        protected void generateNewBody(MethodVisitor mv, String owner, int methodAccess, String methodName, String methodDesc) {
+            // (1) method argument types and return type
+            Type t = Type.getType(methodDesc);
+            Type[] argumentTypes = t.getArgumentTypes();
+            Type returnType = t.getReturnType();
+
+
+            // (2) compute the size of local variable and operand stack
+            boolean isStaticMethod = ((methodAccess & Opcodes.ACC_STATIC) != 0);
+            int localSize = isStaticMethod ? 0 : 1;
+            for (Type argType : argumentTypes) {
+                localSize += argType.getSize();
+            }
+            int stackSize = returnType.getSize();
+
+
+            // (3) method body
+            mv.visitCode();
+            if (returnType.getSort() == Type.VOID) {
+                mv.visitInsn(RETURN);
+            } else if (returnType.getSort() >= Type.BOOLEAN && returnType.getSort() <= Type.INT) {
+                mv.visitInsn(ICONST_1);
+                mv.visitInsn(IRETURN);
+            } else if (returnType.getSort() == Type.LONG) {
+                mv.visitInsn(LCONST_0);
+                mv.visitInsn(LRETURN);
+            } else if (returnType.getSort() == Type.FLOAT) {
+                mv.visitInsn(FCONST_0);
+                mv.visitInsn(FRETURN);
+            } else if (returnType.getSort() == Type.DOUBLE) {
+                mv.visitInsn(DCONST_0);
+                mv.visitInsn(DRETURN);
+            } else {
+                mv.visitInsn(ACONST_NULL);
+                mv.visitInsn(ARETURN);
+            }
+            mv.visitMaxs(stackSize, localSize);
+            mv.visitEnd();
+        }
     }
 }

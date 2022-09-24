@@ -4,6 +4,8 @@ import com.shadow.core.AbstractTransformer;
 import com.shadow.core.buddy.handler.AbstractBuddyHandler;
 import com.shadow.core.buddy.handler.IBuddyHandler;
 import com.shadow.utils.CommonConstants;
+
+import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -29,8 +31,8 @@ public class BuddyTransformer extends AbstractTransformer {
         }
     }
 
-    public void handle(Instrumentation inst) {
-        handler.handle(inst);
+    public ClassFileTransformer handle(Instrumentation inst) {
+        return handler.handle(inst);
     }
 
 }

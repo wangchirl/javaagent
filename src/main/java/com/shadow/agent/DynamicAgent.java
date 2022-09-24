@@ -2,11 +2,17 @@ package com.shadow.agent;
 
 import com.shadow.core.asm.dynamic.AsmTransformer;
 import com.shadow.core.asm.handler.*;
+import com.shadow.core.buddy.dynamic.BuddyTransformer;
+import com.shadow.core.buddy.handler.AbstractBuddyHandler;
+import com.shadow.core.buddy.handler.IBuddyHandler;
 import com.shadow.core.javassist.dynamic.JavassistTransformer;
 import com.shadow.core.javassist.handler.*;
 import com.shadow.utils.CommonConstants;
 import com.shadow.utils.ParamResolveUtils;
 import jdk.internal.org.objectweb.asm.tree.MethodNode;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.agent.builder.AgentBuilder;
+import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
@@ -28,16 +34,19 @@ public class DynamicAgent extends BaseAgent {
             CommonConstants.ScheduleTypeEnum scheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
             if (originScheduleTypeEnum != null && scheduleTypeEnum != null) {
                 // transformer
-                ClassFileTransformer transformer;
-                switch (CommonConstants.getByProxyTypeName(resolveArgs.get(CommonConstants.PROXY_TYPE))) {
+                ClassFileTransformer transformer = null;
+                CommonConstants.ProxyTypeEnum proxyTypeEnum = CommonConstants.getByProxyTypeName(resolveArgs.get(CommonConstants.PROXY_TYPE));
+                switch (proxyTypeEnum) {
                     case ASM:
                         // handle ASM default args
                         MethodNode methodNode = handleAsmDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
                         transformer = new AsmTransformer(resolveArgs, methodNode);
                         break;
                     case BUDDY:
-                        // TODO
-                        throw new RuntimeException("暂不支持的操作");
+                        // FIXME
+                        //AbstractBuddyHandler handler = handleBuddyDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
+                        // transformer = new BuddyTransformer(resolveArgs).handle(handler, inst);
+                        break;
                     case JAVASSIST:
                     default:
                         // handle Javassist default args
@@ -47,13 +56,16 @@ public class DynamicAgent extends BaseAgent {
                 }
                 String ctlClass = resolveArgs.get(CommonConstants.CONTROLLER_CLASS);
                 try {
-                    // add retransform transformer
+                    // add retransform transformer , buddy has been added in handle method
                     inst.addTransformer(transformer, true);
                     Class<?> targetClass = Class.forName(ctlClass);
                     inst.retransformClasses(targetClass);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 } finally {
+                    if (proxyTypeEnum == CommonConstants.ProxyTypeEnum.BUDDY) {
+                        ((ResettableClassFileTransformer) transformer).reset(inst, AgentBuilder.RedefinitionStrategy.RETRANSFORMATION);
+                    }
                     inst.removeTransformer(transformer);
                 }
             }
@@ -86,6 +98,35 @@ public class DynamicAgent extends BaseAgent {
         }
         AbstractAsmHandler currentHandler = handlerMap.get(scheduleTypeEnum.name());
         return currentHandler.getAndSetClassMethod(CommonConstants.ASM_API_VERSION);
+    }
+
+    private static AbstractBuddyHandler handleBuddyDefaultArgs(Map<String, String> resolveArgs,
+                                                               CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
+                                                               CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
+        // 1、公共默认参数处理
+        handleCommonDefaultArgs(resolveArgs);
+        // SPI
+        Map<String, AbstractBuddyHandler> handlerMap = new HashMap<>();
+        ServiceLoader<IBuddyHandler> handlers = ServiceLoader.load(IBuddyHandler.class);
+        for (IBuddyHandler handler : handlers) {
+            ((AbstractBuddyHandler) handler).setArgs(resolveArgs);
+            ((AbstractBuddyHandler) handler).initInnerClassName();
+            handlerMap.put(handler.getClass().getSimpleName().replace(CommonConstants.BYTEBUDDY_HANDLER_NAME_SUFFIX, "").toUpperCase(), (AbstractBuddyHandler) handler);
+        }
+        // 2、find origin handle for method name
+        AbstractBuddyHandler originHandler = handlerMap.get(originScheduleTypeEnum.name());
+        // if args not found method name, set default
+        if (resolveArgs.get(CommonConstants.METHOD_NAME) == null) {
+            resolveArgs.put(CommonConstants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
+        }
+        // 3、find current handle for method body
+        for (IBuddyHandler handler : handlers) {
+            // reset args for set CommonConstants.METHOD_NAME
+            ((AbstractBuddyHandler) handler).setArgs(resolveArgs);
+        }
+        AbstractBuddyHandler handler = handlerMap.get(scheduleTypeEnum.name());
+        handler.initOriginHandler(originHandler);
+        return handler;
     }
 
     private static void handleJavassistDefaultArgs(Map<String, String> resolveArgs,

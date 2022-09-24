@@ -6,6 +6,7 @@ import com.shadow.core.javassist.loadtime.JavassistTransformer;
 import com.shadow.utils.CommonUtils;
 import com.shadow.utils.CommonConstants;
 import com.shadow.utils.ParamResolveUtils;
+
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
@@ -31,16 +32,14 @@ public class LoadTimeAgent extends BaseAgent {
                         transformer = new AsmTransformer(resolveArgs, scheduleTypeEnum);
                         break;
                     case BUDDY:
-                        new BuddyTransformer(resolveArgs, scheduleTypeEnum).handle(inst);
+                        transformer = new BuddyTransformer(resolveArgs, scheduleTypeEnum).handle(inst);
                         break;
                     default:
                         transformer = new JavassistTransformer(resolveArgs, scheduleTypeEnum);
                         break;
                 }
                 // add redefined transformer
-                if(transformer != null) {
-                    inst.addTransformer(transformer);
-                }
+                inst.addTransformer(transformer);
             }
         }
     }
