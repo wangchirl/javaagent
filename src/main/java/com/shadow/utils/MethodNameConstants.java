@@ -8,6 +8,9 @@ public class MethodNameConstants {
 
     // 常用的方法名称
     public static String METHOD_NAME_SET = "set";
+    public static String METHOD_NAME_KEY_SET = "keySet";
+    public static String METHOD_NAME_SPLIT = "split";
+    public static String METHOD_NAME_GET_JOB_KEY = "getJobKey";
     public static String METHOD_NAME_PUT = "put";
     public static String METHOD_NAME_GET = "get";
     public static String METHOD_NAME_ADD = "add";

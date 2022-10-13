@@ -25,6 +25,9 @@ public class BaseConstants {
 
     // ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ 常见的方法描述符 ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀
 
+    // (Ljava/lang/String;)[Ljava/lang/String;
+    public static String AS_S = CommonConstants.LEFT_BRACKETS + STRING_TYPE.getDescriptor() + CommonConstants.RIGHT_BRACKETS +  CommonConstants.LEFT_BIG_BRACKETS + STRING_TYPE.getDescriptor();
+
     // ()V
     public static String V_ = CommonConstants.LEFT_BRACKETS + CommonConstants.RIGHT_BRACKETS + CommonConstants.JavaTypeEnum.V;
 
@@ -45,6 +48,9 @@ public class BaseConstants {
 
     // (Ljava/lang/Object;)Ljava/lang/Object;
     public static String O_O = CommonConstants.LEFT_BRACKETS + OBJECT_TYPE.getDescriptor() + CommonConstants.RIGHT_BRACKETS + OBJECT_TYPE.getDescriptor();
+
+    // (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    public static String O_O_O = CommonConstants.LEFT_BRACKETS + OBJECT_TYPE.getDescriptor() + OBJECT_TYPE.getDescriptor() + CommonConstants.RIGHT_BRACKETS + OBJECT_TYPE.getDescriptor();
 
     // (Ljava/lang/String;)Ljava/lang/String;
     public static String S_S = CommonConstants.LEFT_BRACKETS + STRING_TYPE.getDescriptor() + CommonConstants.RIGHT_BRACKETS + STRING_TYPE.getDescriptor();

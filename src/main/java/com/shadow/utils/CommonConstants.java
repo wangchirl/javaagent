@@ -27,11 +27,14 @@ public class CommonConstants {
     public static String DOT = "\\.";
     public static String BIAS = "/";
     public static String AND = "&";
+    public static String AT = "@";
     public static String OR = "|";
     public static String SPACE = " ";
     public static String SEMICOLON = ";";
     public static String LEFT_BRACKETS = "(";
     public static String RIGHT_BRACKETS = ")";
+    public static String LEFT_BIG_BRACKETS = "[";
+    public static String RIGHT_BIG_BRACKETS = "]";
     public static String DOLLER_S = "$";
     public static String DOLLER_D = "$$";
 
@@ -182,7 +185,7 @@ public class CommonConstants {
     /**
      * crud 方法名称
      */
-    public static String DEFAULT_CRUD_METHOD_NAME = "$$$simpleJobCrud$$$";
+    public static String DEFAULT_CRUD_METHOD_NAME = "$$$jobCrud$$$";
 
     // ASM version
     public static int ASM_API_VERSION = Opcodes.ASM5;

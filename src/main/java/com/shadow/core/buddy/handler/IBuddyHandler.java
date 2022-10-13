@@ -5,16 +5,14 @@ import net.bytebuddy.jar.asm.ClassVisitor;
 public interface IBuddyHandler {
 
     /**
-     * 添加额外的字段
-     * 目前只有 Simple Job 添加了额外的字段
+     * add more fields
      */
     default void addFields(ClassVisitor classVisitor){
 
     }
 
     /**
-     * 添加额外的方法，默认空实现
-     * 目前只有 Simple Job 添加了额外的增删改方法
+     * add more method
      */
     default void addMethods(ClassVisitor classVisitor) {
 

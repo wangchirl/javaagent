@@ -19,6 +19,7 @@ public class QuartzConstants {
     public static Type QUARTZ_CRONTRIGGERIMPL_TYPE = Type.getType("Lorg/quartz/impl/triggers/CronTriggerImpl;");
     public static Type QUARTZ_JOBKEY_TYPE = Type.getType("Lorg/quartz/JobKey;");
     public static Type QUARTZ_SCHEDULER_TYPE = Type.getType("Lorg/quartz/Scheduler;");
+    public static Type QUARTZ_TRIGGER_TYPE = Type.getType("Lorg/quartz/Trigger;");
 
     // ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀ 常见的方法描述符 ❀ ❀ ❀ ❀ ❀ ❀ ❀ ❀
 
@@ -30,5 +31,9 @@ public class QuartzConstants {
 
     // (Lorg/quartz/JobKey;)V
     public static String V_JOBKEY = CommonConstants.LEFT_BRACKETS + QUARTZ_JOBKEY_TYPE.getDescriptor() + CommonConstants.RIGHT_BRACKETS + CommonConstants.JavaTypeEnum.V;
+
+    // "()Lorg/quartz/JobKey;"
+    public static String JOBKEY_ = CommonConstants.LEFT_BRACKETS + CommonConstants.RIGHT_BRACKETS + QUARTZ_JOBKEY_TYPE.getDescriptor() ;
+
 
 }

@@ -4,7 +4,6 @@ import com.shadow.core.AbstractHandler;
 import com.shadow.utils.*;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import net.bytebuddy.agent.builder.AgentBuilder;
-import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 import net.bytebuddy.asm.AsmVisitorWrapper;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.field.FieldList;
@@ -45,12 +44,12 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
     }
 
     /**
-     * 可传递参数的方法体实现
+     * thread local run method body
      */
     public abstract void setThreadLocalMethodBody(MethodVisitor methodVisitor);
 
     /**
-     * 常规方法体实现
+     * normal run method body
      */
     public abstract void setNormalMethodBody(MethodVisitor methodVisitor);
 
@@ -110,7 +109,7 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
                              Implementation.Context implementationContext,
                              TypePool typePool, FieldList<FieldDescription.InDefinedShape> fields,
                              MethodList<?> methods, int writerFlags, int readerFlags) {
-        // 1、访问 class
+        // 1、visit class
         classVisitor.visit(
                 Opcodes.V1_8,
                 Opcodes.ACC_PUBLIC,
@@ -119,9 +118,8 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
                 BaseConstants.OBJECT_TYPE.getInternalName(),
                 null
         );
-        System.out.println("测试：" + originHandler);
-        // 2、spring ioc 添加字段
         {
+            // 2、spring ioc field
             FieldVisitor fieldVisitor = classVisitor.visitField(
                     ACC_PRIVATE,
                     getArgs().get(CommonConstants.IOC_FIELD_NAME),
@@ -133,12 +131,12 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
             annotationVisitor.visit(CommonConstants.CONST_REQUIRED, Boolean.TRUE);
             annotationVisitor.visitEnd();
         }
-        // 2.1 hook 字段
         {
+            // 2.1 add more fields
             addFields(classVisitor);
         }
 
-        // 3、添加方法
+        // 3、add run method
         MethodVisitor methodVisitor = classVisitor.visitMethod(
                 ACC_PUBLIC,
                 getMethodName().get(),
@@ -147,7 +145,8 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
                 new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()}
         );
         {
-            // 3.1 方法注解及参数注解 @RequestMapping
+            // 3.1 method annotation
+            // @RequestMapping
             AnnotationVisitor requestMapping = methodVisitor.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), Boolean.TRUE);
             AnnotationVisitor value = requestMapping.visitArray(CommonConstants.CONST_VALUE);
             value.visit(null, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI));
@@ -175,84 +174,73 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
             methodVisitor.visitEnd();
         }
         {
-            // 4.1 hook 方法
-            addMethods(classVisitor);
+            // 4.1 add more methods
+            addMoreMethods(classVisitor);
         }
         classVisitor.visitEnd();
         return classVisitor;
     }
 
-    public class TestVisitor extends ClassVisitor {
-
-        private String owner;
-
-        public TestVisitor(int api, ClassVisitor classVisitor) {
-            super(api, classVisitor);
-        }
-
-        @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            super.visit(version, access, name, signature, superName, interfaces);
-            this.owner = name;
-        }
-
-        @Override
-        public MethodVisitor visitMethod(int access,
-                                         String name,
-                                         String descriptor,
-                                         String signature,
-                                         String[] exceptions) {
-            MethodVisitor mv = super.visitMethod(access, name, descriptor, signature, exceptions);
-            if (mv != null && getMethodName().get().equals(name) && BaseConstants.O_SSO.equals(descriptor)) {
-                boolean isAbstractMethod = (access & Opcodes.ACC_ABSTRACT) != 0;
-                boolean isNativeMethod = (access & Opcodes.ACC_NATIVE) != 0;
-                if (!isAbstractMethod && !isNativeMethod) {
-                    System.out.println("新旧方法体");
-                    generateNewBody(mv, owner, access, name, descriptor);
-                    return null;
-                }
-            }
-            return mv;
-        }
-
-        protected void generateNewBody(MethodVisitor mv, String owner, int methodAccess, String methodName, String methodDesc) {
-            // (1) method argument types and return type
-            Type t = Type.getType(methodDesc);
-            Type[] argumentTypes = t.getArgumentTypes();
-            Type returnType = t.getReturnType();
-
-
-            // (2) compute the size of local variable and operand stack
-            boolean isStaticMethod = ((methodAccess & Opcodes.ACC_STATIC) != 0);
-            int localSize = isStaticMethod ? 0 : 1;
-            for (Type argType : argumentTypes) {
-                localSize += argType.getSize();
-            }
-            int stackSize = returnType.getSize();
-
-
-            // (3) method body
-            mv.visitCode();
-            if (returnType.getSort() == Type.VOID) {
-                mv.visitInsn(RETURN);
-            } else if (returnType.getSort() >= Type.BOOLEAN && returnType.getSort() <= Type.INT) {
-                mv.visitInsn(ICONST_1);
-                mv.visitInsn(IRETURN);
-            } else if (returnType.getSort() == Type.LONG) {
-                mv.visitInsn(LCONST_0);
-                mv.visitInsn(LRETURN);
-            } else if (returnType.getSort() == Type.FLOAT) {
-                mv.visitInsn(FCONST_0);
-                mv.visitInsn(FRETURN);
-            } else if (returnType.getSort() == Type.DOUBLE) {
-                mv.visitInsn(DCONST_0);
-                mv.visitInsn(DRETURN);
-            } else {
-                mv.visitInsn(ACONST_NULL);
-                mv.visitInsn(ARETURN);
-            }
-            mv.visitMaxs(stackSize, localSize);
-            mv.visitEnd();
-        }
+    private void addMoreMethods(ClassVisitor classVisitor) {
+        // crud method
+        addCurdMethod(classVisitor);
+        // hook method
+        addMethods(classVisitor);
     }
+
+    private void addCurdMethod(ClassVisitor classVisitor) {
+        // 1. add crud method
+        MethodVisitor methodVisitor = classVisitor.visitMethod(
+                jdk.internal.org.objectweb.asm.Opcodes.ACC_PUBLIC,
+                CommonConstants.DEFAULT_CRUD_METHOD_NAME,
+                BaseConstants.O_ISS,
+                null,
+                new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()}
+        );
+        // 1.2 method annotation
+        AnnotationVisitor annotation = methodVisitor.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
+        // array value
+        AnnotationVisitor value = annotation.visitArray(CommonConstants.CONST_VALUE);
+        value.visit(null, CommonConstants.DEFAULT_CRUD_HTTP_PATH);
+        value.visitEnd();
+        annotation.visitEnd();
+        // 1.3 method parameter annotation
+        // @PathVariable("operation")
+        AnnotationVisitor pathvariable1 = methodVisitor.visitParameterAnnotation(
+                IndexConstants.INDEX_0,
+                SpringConstants.SPRING_PATH_VARIABLE_TYPE.getDescriptor(),
+                true
+        );
+        pathvariable1.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_OPERATION);
+        pathvariable1.visitEnd();
+        // @PathVariable("taskKey")
+        AnnotationVisitor pathvariable2 = methodVisitor.visitParameterAnnotation(
+                IndexConstants.INDEX_1,
+                SpringConstants.SPRING_PATH_VARIABLE_TYPE.getDescriptor(),
+                true
+        );
+        pathvariable2.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_TASK_KEY);
+        pathvariable2.visitEnd();
+        // @RequestParam(value = "cron", required = false)
+        AnnotationVisitor requestParams = methodVisitor.visitParameterAnnotation(
+                IndexConstants.INDEX_2,
+                SpringConstants.SPRING_REQUEST_PARAM_TYPE.getDescriptor(),
+                true
+        );
+        requestParams.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_CRON);
+        requestParams.visit(CommonConstants.CONST_REQUIRED, false);
+        requestParams.visitEnd();
+        // 1.4 set method body
+        methodVisitor.visitCode();
+        if (originHandler != null) {
+            originHandler.setCrudMethodBody(methodVisitor);
+        } else {
+            setCrudMethodBody(methodVisitor);
+        }
+        methodVisitor.visitMaxs(0, 0);
+        methodVisitor.visitEnd();
+    }
+
+    protected abstract void setCrudMethodBody(MethodVisitor methodVisitor);
+
 }

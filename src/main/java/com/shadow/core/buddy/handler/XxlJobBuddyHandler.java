@@ -2,9 +2,7 @@ package com.shadow.core.buddy.handler;
 
 
 import com.shadow.utils.*;
-import net.bytebuddy.jar.asm.Label;
-import net.bytebuddy.jar.asm.MethodVisitor;
-import net.bytebuddy.jar.asm.Type;
+import net.bytebuddy.jar.asm.*;
 
 import static net.bytebuddy.jar.asm.Opcodes.*;
 
@@ -49,7 +47,7 @@ public class XxlJobBuddyHandler extends AbstractBuddyHandler {
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SETACCESSIBLE, BaseConstants.V_Z, false);
         methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_5);
         methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_4);
-        methodVisitor.visitMethodInsn(INVOKEVIRTUAL,  BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, false);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, false);
         methodVisitor.visitVarInsn(ASTORE, IndexConstants.INDEX_6);
         methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_6);
         methodVisitor.visitTypeInsn(CHECKCAST, BaseConstants.MAP_TYPE.getInternalName());
@@ -107,7 +105,7 @@ public class XxlJobBuddyHandler extends AbstractBuddyHandler {
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SETACCESSIBLE, BaseConstants.V_Z, false);
         methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_5);
         methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_4);
-        methodVisitor.visitMethodInsn(INVOKEVIRTUAL,  BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, false);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, false);
         methodVisitor.visitVarInsn(ASTORE, IndexConstants.INDEX_6);
         methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_6);
         methodVisitor.visitTypeInsn(CHECKCAST, BaseConstants.MAP_TYPE.getInternalName());
@@ -120,4 +118,43 @@ public class XxlJobBuddyHandler extends AbstractBuddyHandler {
         methodVisitor.visitLdcInsn(CommonConstants.XXL_SUCCESS);
         methodVisitor.visitInsn(ARETURN);
     }
+
+
+    @Override
+    public void setCrudMethodBody(MethodVisitor methodVisitor) {
+        methodVisitor.visitCode();
+        methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_0);
+        // "Lorg/springframework/context/ApplicationContext;"
+        methodVisitor.visitFieldInsn(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor());
+        // "Lcom/xxl/job/core/executor/XxlJobExecutor;"
+        methodVisitor.visitLdcInsn(Type.getType(XxlConstants.XXL_JOBEXECUTOR_TYPE.getDescriptor()));
+        // "org/springframework/context/ApplicationContext" "getBean" "(Ljava/lang/Class;)Ljava/lang/Object;"
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_C_, true);
+        // "com/xxl/job/core/executor/XxlJobExecutor"
+        methodVisitor.visitTypeInsn(CHECKCAST, XxlConstants.XXL_JOBEXECUTOR_TYPE.getInternalName());
+        methodVisitor.visitVarInsn(ASTORE, IndexConstants.INDEX_4);
+        // "Lcom/xxl/job/core/executor/XxlJobExecutor;"
+        methodVisitor.visitLdcInsn(Type.getType(XxlConstants.XXL_JOBEXECUTOR_TYPE.getDescriptor()));
+        // "jobHandlerRepository"
+        methodVisitor.visitLdcInsn(XxlConstants.JOB_HANDLERRE_POSITORY);
+        // "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;"
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, BaseConstants.CLASS_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETDECLAREDFIELD, BaseConstants.REFLECT_FIELD_S, false);
+        methodVisitor.visitVarInsn(ASTORE, IndexConstants.INDEX_5);
+        methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_5);
+        methodVisitor.visitInsn(ICONST_1);
+        // "java/lang/reflect/Field", "setAccessible", "(Z)V"
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SETACCESSIBLE, BaseConstants.V_Z, false);
+        methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_5);
+        methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_4);
+        // "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;"
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, BaseConstants.REFLECT_FIELD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GET, BaseConstants.O_O, false);
+        // "java/util/Map"
+        methodVisitor.visitTypeInsn(CHECKCAST, BaseConstants.MAP_TYPE.getInternalName());
+        methodVisitor.visitVarInsn(ASTORE, IndexConstants.INDEX_6);
+        methodVisitor.visitVarInsn(ALOAD, IndexConstants.INDEX_6);
+        // "java/util/Map", "keySet", "()Ljava/util/Set;"
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE, BaseConstants.MAP_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_KEY_SET, BaseConstants.SET_, true);
+        methodVisitor.visitInsn(ARETURN);
+    }
+
 }
