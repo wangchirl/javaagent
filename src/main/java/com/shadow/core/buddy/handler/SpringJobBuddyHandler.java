@@ -156,8 +156,8 @@ public class SpringJobBuddyHandler extends AbstractBuddyHandler {
 
     @Override
     public void setCrudMethodBody(MethodVisitor methodVisitor) {
-        methodVisitor.visitInsn(ACONST_NULL);
-        methodVisitor.visitVarInsn(ASTORE, 4);
+        methodVisitor.visitInsn(ICONST_0);
+        methodVisitor.visitVarInsn(ISTORE, 4);
         methodVisitor.visitVarInsn(ALOAD, 0);
         methodVisitor.visitFieldInsn(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;");
         methodVisitor.visitLdcInsn(Type.getType("Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;"));
@@ -235,12 +235,36 @@ public class SpringJobBuddyHandler extends AbstractBuddyHandler {
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "org/springframework/scheduling/config/CronTask", "getRunnable", "()Ljava/lang/Runnable;", false);
         methodVisitor.visitTypeInsn(CHECKCAST, "org/springframework/scheduling/support/ScheduledMethodRunnable");
         methodVisitor.visitVarInsn(ASTORE, 18);
+        methodVisitor.visitLdcInsn(Type.getType("Lorg/springframework/scheduling/config/ScheduledTask;"));
+        methodVisitor.visitLdcInsn("future");
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;", false);
+        methodVisitor.visitVarInsn(ASTORE, 19);
+        methodVisitor.visitVarInsn(ALOAD, 19);
+        methodVisitor.visitInsn(ICONST_1);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Field", "setAccessible", "(Z)V", false);
+        methodVisitor.visitVarInsn(ALOAD, 19);
+        methodVisitor.visitVarInsn(ALOAD, 16);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false);
+        methodVisitor.visitTypeInsn(CHECKCAST, "java/util/concurrent/ScheduledFuture");
+        methodVisitor.visitVarInsn(ASTORE, 20);
+        methodVisitor.visitVarInsn(ALOAD, 20);
+        methodVisitor.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/ScheduledFuture", "isCancelled", "()Z", true);
+        methodVisitor.visitVarInsn(ISTORE, 21);
         methodVisitor.visitVarInsn(ALOAD, 12);
         methodVisitor.visitVarInsn(ALOAD, 18);
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "org/springframework/scheduling/support/ScheduledMethodRunnable", "getMethod", "()Ljava/lang/reflect/Method;", false);
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "getName", "()Ljava/lang/String;", false);
+        methodVisitor.visitTypeInsn(NEW, "java/lang/StringBuilder");
+        methodVisitor.visitInsn(DUP);
+        methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V", false);
         methodVisitor.visitVarInsn(ALOAD, 17);
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "org/springframework/scheduling/config/CronTask", "getExpression", "()Ljava/lang/String;", false);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        methodVisitor.visitLdcInsn(" 是否停止: ");
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false);
+        methodVisitor.visitVarInsn(ILOAD, 21);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Z)Ljava/lang/StringBuilder;", false);
+        methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
         methodVisitor.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
         methodVisitor.visitInsn(POP);
         methodVisitor.visitVarInsn(ALOAD, 18);
@@ -264,13 +288,12 @@ public class SpringJobBuddyHandler extends AbstractBuddyHandler {
         Label label6 = new Label();
         Label label7 = new Label();
         Label label8 = new Label();
-        methodVisitor.visitTableSwitchInsn(0, 2, label8, new Label[]{label5, label6, label7});
+        methodVisitor.visitTableSwitchInsn(0, 2, label8, new Label[] { label5, label6, label7 });
         methodVisitor.visitLabel(label5);
         methodVisitor.visitVarInsn(ALOAD, 16);
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "org/springframework/scheduling/config/ScheduledTask", "cancel", "()V", false);
         methodVisitor.visitInsn(ICONST_1);
-        methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
-        methodVisitor.visitVarInsn(ASTORE, 4);
+        methodVisitor.visitVarInsn(ISTORE, 4);
         methodVisitor.visitJumpInsn(GOTO, label4);
         methodVisitor.visitLabel(label6);
         methodVisitor.visitVarInsn(ALOAD, 16);
@@ -293,8 +316,7 @@ public class SpringJobBuddyHandler extends AbstractBuddyHandler {
         methodVisitor.visitMethodInsn(INVOKEINTERFACE, "java/util/Set", "add", "(Ljava/lang/Object;)Z", true);
         methodVisitor.visitInsn(POP);
         methodVisitor.visitInsn(ICONST_1);
-        methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
-        methodVisitor.visitVarInsn(ASTORE, 4);
+        methodVisitor.visitVarInsn(ISTORE, 4);
         methodVisitor.visitJumpInsn(GOTO, label4);
         methodVisitor.visitLabel(label7);
         methodVisitor.visitVarInsn(ALOAD, 16);
@@ -318,12 +340,11 @@ public class SpringJobBuddyHandler extends AbstractBuddyHandler {
         methodVisitor.visitMethodInsn(INVOKEINTERFACE, "java/util/Set", "add", "(Ljava/lang/Object;)Z", true);
         methodVisitor.visitInsn(POP);
         methodVisitor.visitInsn(ICONST_1);
-        methodVisitor.visitMethodInsn(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false);
-        methodVisitor.visitVarInsn(ASTORE, 4);
+        methodVisitor.visitVarInsn(ISTORE, 4);
         methodVisitor.visitJumpInsn(GOTO, label4);
         methodVisitor.visitLabel(label8);
-        methodVisitor.visitVarInsn(ALOAD, 12);
-        methodVisitor.visitVarInsn(ASTORE, 4);
+        methodVisitor.visitInsn(ICONST_0);
+        methodVisitor.visitVarInsn(ISTORE, 4);
         methodVisitor.visitLabel(label4);
         methodVisitor.visitJumpInsn(GOTO, label2);
         methodVisitor.visitLabel(label3);
@@ -350,7 +371,13 @@ public class SpringJobBuddyHandler extends AbstractBuddyHandler {
         methodVisitor.visitVarInsn(ALOAD, 5);
         methodVisitor.visitVarInsn(ALOAD, 7);
         methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Field", "set", "(Ljava/lang/Object;Ljava/lang/Object;)V", false);
-        methodVisitor.visitVarInsn(ALOAD, 4);
+        methodVisitor.visitVarInsn(ILOAD, 4);
+        Label label10 = new Label();
+        methodVisitor.visitJumpInsn(IFEQ, label10);
+        methodVisitor.visitLdcInsn("Success!");
+        methodVisitor.visitInsn(ARETURN);
+        methodVisitor.visitLabel(label10);
+        methodVisitor.visitVarInsn(ALOAD, 12);
         methodVisitor.visitInsn(ARETURN);
     }
 }
