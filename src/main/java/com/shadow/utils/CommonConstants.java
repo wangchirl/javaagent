@@ -143,6 +143,9 @@ public class CommonConstants {
      */
     public static String METHOD_BODY = "methodBody";
 
+
+    public static String CRUD_METHOD_BODY = "crudMethodBody";
+
     /**
      * HTTP 请求 uri - 非必须
      * {@link CommonConstants#DEFAULT_HTTP_PATH_PREFIX}

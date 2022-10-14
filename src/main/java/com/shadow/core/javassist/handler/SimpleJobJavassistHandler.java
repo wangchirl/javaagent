@@ -51,90 +51,40 @@ public class SimpleJobJavassistHandler extends AbstractJavassistHandler {
     }
 
     @Override
-    public void addMethods(ClassPool cp, CtClass cc) throws Exception {
-        if (Boolean.parseBoolean(getArgs().get(CommonConstants.TASK_CRUD))) {
-            CtClass string = cp.get(String.class.getName());
-            CtClass object = cp.get(Object.class.getName());
-            // 1、创建方法
-            CtMethod method = new CtMethod(object, CommonConstants.DEFAULT_CRUD_METHOD_NAME, new CtClass[]{CtClass.intType, string, string}, cc);
-            // 2、方法访问权限
-            method.setModifiers(Modifier.PUBLIC);
-            method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
-            // 3、设置方法体
-            StringBuilder builder = new StringBuilder();
-            builder.append("{");
-            builder.append("\n       java.lang.Object res;");
-            builder.append("\n       if (1 == $1) {");
-            builder.append("\n          res = ");
-            builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
-            builder.append(".update($2, $3);");
-            builder.append("\n        } else if (2 == $1) {");
-            builder.append("\n          res = ");
-            builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
-            builder.append(".restart($2);");
-            builder.append("\n        } else if (3 == $1) {");
-            builder.append("\n          res = ");
-            builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
-            builder.append(".cancel($2);");
-            builder.append("\n        } else if(4 == $1) {");
-            builder.append("\n          java.lang.String beanName = com.shadow.supports.helper.ScheduleTaskInfoEnum.getScheduleTaskBeanNameByTaskKey($2);");
-            builder.append("\n          com.shadow.supports.framework.ICronTriggerTask triggerTask = ");
-            builder.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
-            builder.append(".getBean(beanName, com.shadow.supports.framework.ICronTriggerTask.class);");
-            builder.append("\n          triggerTask.setTrigger(");
-            builder.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
-            builder.append(".getEnvironment().getProperty(com.shadow.supports.helper.ScheduleTaskInfoEnum.getScheduleTaskCronNameByTaskKey($2)));");
-            builder.append("\n          if($3 != null && $3.length() > 6) {");
-            builder.append("\n              triggerTask.setTrigger($3);");
-            builder.append("\n          };");
-            builder.append("\n          res = ");
-            builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
-            builder.append(".add(triggerTask);");
-            builder.append("\n        } else {");
-            builder.append("\n          res = ");
-            builder.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
-            builder.append(".get($2);");
-            builder.append("\n        }");
-            builder.append("\n      return res;");
-            builder.append("\n}");
-            method.setBody(builder.toString());
-            cc.addMethod(method);
-
-            ClassFile ccFile = cc.getClassFile();
-            ConstPool constPool = ccFile.getConstPool();
-            AnnotationsAttribute methodAttr = new AnnotationsAttribute(constPool, AnnotationsAttribute.visibleTag);
-            // 1、创建方法注解
-            Annotation annotation = new Annotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getClassName(), constPool);
-            // 1.1 设置注解参数
-            StringMemberValue path1 = new StringMemberValue(CommonConstants.DEFAULT_CRUD_HTTP_PATH, constPool);
-            ArrayMemberValue arrayMemberValue = new ArrayMemberValue(constPool);
-            arrayMemberValue.setValue(new MemberValue[]{path1});
-            annotation.addMemberValue(CommonConstants.CONST_PATH, arrayMemberValue);
-            // 2、添加到方法上
-            methodAttr.addAnnotation(annotation);
-            method.getMethodInfo().addAttribute(methodAttr);
-
-            ParameterAnnotationsAttribute parameterAnnotationsAttr =
-                    new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
-            // 1、创建方法参数
-            // 1.1 方法参数1
-            Annotation annotation1 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_TYPE.getClassName(), constPool);
-            annotation1.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_OPERATION, constPool));
-            // 1.2 方法参数2
-            Annotation annotation2 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_TYPE.getClassName(), constPool);
-            annotation2.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_TASK_KEY, constPool));
-            // 1.3 方法参数3
-            Annotation annotation3 = new Annotation(SpringConstants.SPRING_REQUEST_PARAM_TYPE.getClassName(), constPool);
-            annotation3.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_CRON, constPool));
-            annotation3.addMemberValue(CommonConstants.CONST_REQUIRED, new BooleanMemberValue(false, constPool));
-
-            // 2、加入方法
-            Annotation[][] annotations = new Annotation[3][1];
-            annotations[0][0] = annotation1;
-            annotations[1][0] = annotation2;
-            annotations[2][0] = annotation3;
-            parameterAnnotationsAttr.setAnnotations(annotations);
-            method.getMethodInfo().addAttribute(parameterAnnotationsAttr);
-        }
+    protected Supplier<String> getCrudMethodBody() {
+        return () -> {
+            StringBuilder body = new StringBuilder();
+            body.append("{");
+            body.append("  switch ($1) {");
+            body.append("     case 0:");
+            body.append("\n    return ");
+            body.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
+            body.append(".cancel($2);");
+            body.append("     case 1:");
+            body.append("\n    return ");
+            body.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
+            body.append(".update($2, $3);");
+            body.append("     case 2:");
+            body.append("       java.lang.String var5 = com.shadow.supports.helper.ScheduleTaskInfoEnum.getScheduleTaskBeanNameByTaskKey($2);");
+            body.append("       Object var6 = ");
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(".getBean(var5, com.shadow.supports.framework.ICronTriggerTask.class);");
+            body.append("       ((com.shadow.supports.framework.ICronTriggerTask) var6).setTrigger(");
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(".getEnvironment().getProperty(com.shadow.supports.helper.ScheduleTaskInfoEnum.getScheduleTaskCronNameByTaskKey($2)));");
+            body.append("       if ($3 != null) {");
+            body.append("         ((com.shadow.supports.framework.ICronTriggerTask) var6).setTrigger($3);");
+            body.append("       }");
+            body.append("       return ");
+            body.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
+            body.append(".add((com.shadow.supports.framework.ICronTriggerTask) var6);");
+            body.append("     default:");
+            body.append("       return ");
+            body.append(getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME));
+            body.append(".get(\"\");");
+            body.append("  }");
+            body.append("\n}");
+            return body.toString();
+        };
     }
 }

@@ -27,12 +27,12 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
     }
 
     /**
-     * 可传递参数的方法体实现
+     * thread local run method
      */
     public abstract void setThreadLocalMethodBody(MethodNode methodNode);
 
     /**
-     * 常规方法体实现
+     * normal run method
      */
     public abstract void setNormalMethodBody(MethodNode methodNode);
 
@@ -51,10 +51,10 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
 
     public byte[] handle(byte[] classfileBuffer) {
         try {
-            // 1、读取 class buffer
+            // 1、read class buffer
             ClassReader cr = new ClassReader(classfileBuffer);
-            // 2、从 class buffer -> class node
-            // 默认 ASM5 ，支持 JDK8版本
+            // 2、class buffer -> class node
+            // asm api version
             ClassNode cn = new ClassNode(CommonConstants.ASM_API_VERSION);
             cr.accept(cn, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
             // 3、transform
@@ -62,13 +62,18 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
             FieldNode fieldNode = setClassField(CommonConstants.ASM_API_VERSION);
             // 3.2 add Filed
             cn.fields.add(fieldNode);
-            // 3.3 hook method 添加额外的字段
+            // 3.3 hook and add more fields
             addFields(CommonConstants.ASM_API_VERSION, cn);
-            // 3.4 create MethodNode
-            MethodNode methodNode = getAndSetClassMethod(CommonConstants.ASM_API_VERSION);
+            // 3.4 create run MethodNode
+            MethodNode runMethodNode = getAndSetClassMethod(CommonConstants.ASM_API_VERSION);
             // 3.5 add to class
-            cn.methods.add(methodNode);
-            // 3.6 hook method 添加额外的方法
+            cn.methods.add(runMethodNode);
+            // 3.6 create crud MethodNode
+            // add crud method
+            MethodNode crudMethodNode = getAndSetCrudClassMethod(CommonConstants.ASM_API_VERSION);
+            // 3.7 add to Class
+            cn.methods.add(crudMethodNode);
+            // 3.8 hook and add more methods
             addMethods(CommonConstants.ASM_API_VERSION, cn);
             // 4、class node -> class writer
             ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
@@ -86,15 +91,53 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
         return null;
     }
 
-    /**
-     * 添加方法、方法注解及参数注解
-     * <p> @RequestMapping(path = {"/agent/run/{taskKey}"})
-     * public Object xxljobjavassisthandler(@PathVariable("taskKey") String var1,@RequestParam(value = "params", required = false) String var2,@RequestBody(required = false) Object var3) throws Exception {
-     * }
-     * </p>
-     */
+    public MethodNode getAndSetCrudClassMethod(int api) {
+        // 1. add crud method
+        MethodNode methodNode = new MethodNode(
+                api,
+                Opcodes.ACC_PUBLIC,
+                CommonConstants.DEFAULT_CRUD_METHOD_NAME,
+                BaseConstants.O_ISS,
+                null,
+                new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()});
+        // 1.2 method annotation
+        AnnotationNode annotation = (AnnotationNode) methodNode.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
+        // array value
+        AnnotationVisitor value = annotation.visitArray(CommonConstants.CONST_VALUE);
+        value.visit(CommonConstants.CONST_VALUE, CommonConstants.DEFAULT_CRUD_HTTP_PATH);
+        // 1.3 method parameter annotation
+        // @PathVariable("operation")
+        AnnotationVisitor pathvariable1 = methodNode.visitParameterAnnotation(
+                IndexConstants.INDEX_0,
+                SpringConstants.SPRING_PATH_VARIABLE_TYPE.getDescriptor(),
+                true
+        );
+        pathvariable1.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_OPERATION);
+        // @PathVariable("taskKey")
+        AnnotationVisitor pathvariable2 = methodNode.visitParameterAnnotation(
+                IndexConstants.INDEX_1,
+                SpringConstants.SPRING_PATH_VARIABLE_TYPE.getDescriptor(),
+                true
+        );
+        pathvariable2.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_TASK_KEY);
+        // @RequestParam(value = "cron", required = false)
+        AnnotationVisitor requestParams = methodNode.visitParameterAnnotation(
+                IndexConstants.INDEX_2,
+                SpringConstants.SPRING_REQUEST_PARAM_TYPE.getDescriptor(),
+                true
+        );
+        requestParams.visit(CommonConstants.CONST_VALUE, CommonConstants.CONST_CRON);
+        requestParams.visit(CommonConstants.CONST_REQUIRED, false);
+        // 1.4 set method body
+        setCrudMethodBody(methodNode);
+        return methodNode;
+    }
+
+    protected abstract void setCrudMethodBody(MethodNode methodNode);
+
+
     public MethodNode getAndSetClassMethod(int api) {
-        // 1. 添加方法
+        // 1. add run method
         MethodNode methodNode = new MethodNode(
                 api,
                 Opcodes.ACC_PUBLIC,
@@ -102,12 +145,12 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
                 BaseConstants.O_SSO,
                 null,
                 new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()});
-        // 1.2 方法注解及注解参数
+        // 1.2 method annotation
         AnnotationNode annotation = (AnnotationNode) methodNode.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
         // 数组格式的参数
         AnnotationVisitor value = annotation.visitArray(CommonConstants.CONST_VALUE);
         value.visit(CommonConstants.CONST_VALUE, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI));
-        // 1.3 方法参数注解及注解参数
+        // 1.3 method parameter annotation
         // @PathVariable("taskKey")
         AnnotationVisitor pathvariable = methodNode.visitParameterAnnotation(
                 IndexConstants.INDEX_0,
@@ -135,12 +178,6 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
         return methodNode;
     }
 
-    /**
-     * 3.1 添加字段及字段注解
-     *
-     * <p> @Autowired
-     * private ApplicationContext $$$springIoc$$$
-     */
     private FieldNode setClassField(int api) {
         FieldNode fieldNode = new FieldNode(
                 api,

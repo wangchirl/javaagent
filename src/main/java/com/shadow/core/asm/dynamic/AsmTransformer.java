@@ -16,11 +16,14 @@ import java.util.Map;
 
 public class AsmTransformer extends AbstractTransformer implements ClassFileTransformer {
 
-    private MethodNode methodNode;
+    private MethodNode runMethodNode;
 
-    public AsmTransformer(Map<String, String> resolveArgs, MethodNode methodNode) {
+    private MethodNode crudMethodNode;
+
+    public AsmTransformer(Map<String, String> resolveArgs, MethodNode runMethodNode, MethodNode crudMethodNode) {
         super(resolveArgs);
-        this.methodNode = methodNode;
+        this.runMethodNode = runMethodNode;
+        this.crudMethodNode = crudMethodNode;
     }
 
     @Override
@@ -31,17 +34,19 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         if (className.equals(getInnerClassName())) {
             try {
-                // 1、读取 class buffer
+                // 1、read class buffer
                 ClassReader cr = new ClassReader(classfileBuffer);
-                // 2、从 class buffer -> class node
-                // 默认 ASM5 ，支持 JDK8版本
+                // 2、class buffer -> class node
+                // asm api version
                 ClassNode cn = new ClassNode(CommonConstants.ASM_API_VERSION);
                 cr.accept(cn, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 // 3、transform
-                // 3.1 删除方法
+                // 3.1 delete exist method
                 cn.methods.removeIf(mn -> mn.name.equals(getArgs().get(CommonConstants.METHOD_NAME)) && mn.desc.equals(BaseConstants.O_SSO));
-                // 3.2 添加方法
-                cn.methods.add(this.methodNode);
+                cn.methods.removeIf(mn -> mn.name.equals(CommonConstants.DEFAULT_CRUD_METHOD_NAME) && mn.desc.equals(BaseConstants.O_ISS));
+                // 3.2 add method
+                cn.methods.add(this.runMethodNode);
+                cn.methods.add(this.crudMethodNode);
                 // 4、class node -> class writer
                 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
                 cn.accept(cw);

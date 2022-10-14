@@ -10,46 +10,6 @@ import jdk.internal.org.objectweb.asm.tree.*;
 
 public class QuartzJobAsmHandler extends AbstractAsmHandler {
 
-    /**
-     * 0: new           #2                  // class org/quartz/JobDataMap
-     * 3: dup
-     * 4: invokespecial #3                  // Method org/quartz/JobDataMap."<init>":()V
-     * 7: astore        4
-     * 9: aload         4
-     * 11: ldc           #4                  // String params
-     * 13: aload_2
-     * 14: invokevirtual #5                  // Method org/quartz/JobDataMap.put:(Ljava/lang/String;Ljava/lang/String;)V
-     * 17: aload         4
-     * 19: ldc           #6                  // String body
-     * 21: aload_3
-     * 22: invokevirtual #7                  // Method org/quartz/JobDataMap.put:(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;
-     * 25: pop
-     * 26: aload_0
-     * 27: getfield      #8                  // Field applicationContext:Lorg/springframework/context/ApplicationContext;
-     * 30: aload_1
-     * 31: invokeinterface #9,  2            // InterfaceMethod org/springframework/context/ApplicationContext.getBean:(Ljava/lang/String;)Ljava/lang/Object;
-     * 36: checkcast     #10                 // class org/quartz/impl/triggers/CronTriggerImpl
-     * 39: astore        5
-     * 41: new           #11                 // class org/quartz/JobKey
-     * 44: dup
-     * 45: aload         5
-     * 47: invokevirtual #12                 // Method org/quartz/impl/triggers/CronTriggerImpl.getJobName:()Ljava/lang/String;
-     * 50: invokespecial #13                 // Method org/quartz/JobKey."<init>":(Ljava/lang/String;)V
-     * 53: astore        6
-     * 55: aload_0
-     * 56: getfield      #8                  // Field applicationContext:Lorg/springframework/context/ApplicationContext;
-     * 59: ldc           #14                 // class org/springframework/scheduling/quartz/SchedulerFactoryBean
-     * 61: invokeinterface #15,  2           // InterfaceMethod org/springframework/context/ApplicationContext.getBean:(Ljava/lang/Class;)Ljava/lang/Object;
-     * 66: checkcast     #14                 // class org/springframework/scheduling/quartz/SchedulerFactoryBean
-     * 69: invokevirtual #16                 // Method org/springframework/scheduling/quartz/SchedulerFactoryBean.getScheduler:()Lorg/quartz/Scheduler;
-     * 72: astore        7
-     * 74: aload         7
-     * 76: aload         6
-     * 78: aload         4
-     * 80: invokeinterface #17,  3           // InterfaceMethod org/quartz/Scheduler.triggerJob:(Lorg/quartz/JobKey;Lorg/quartz/JobDataMap;)V
-     * 85: ldc           #18                 // String Execute Quartz Job Successful !
-     * 87: areturn
-     */
     @Override
     public void setThreadLocalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
@@ -113,32 +73,6 @@ public class QuartzJobAsmHandler extends AbstractAsmHandler {
         methodNode.maxLocals = IndexConstants.INDEX_8;
     }
 
-    /**
-     * 0: aload_0
-     * 1: getfield      #8                  // Field applicationContext:Lorg/springframework/context/ApplicationContext;
-     * 4: aload_1
-     * 5: invokeinterface #9,  2            // InterfaceMethod org/springframework/context/ApplicationContext.getBean:(Ljava/lang/String;)Ljava/lang/Object;
-     * 10: checkcast     #10                 // class org/quartz/impl/triggers/CronTriggerImpl
-     * 13: astore        4
-     * 15: new           #11                 // class org/quartz/JobKey
-     * 18: dup
-     * 19: aload         4
-     * 21: invokevirtual #12                 // Method org/quartz/impl/triggers/CronTriggerImpl.getJobName:()Ljava/lang/String;
-     * 24: invokespecial #13                 // Method org/quartz/JobKey."<init>":(Ljava/lang/String;)V
-     * 27: astore        5
-     * 29: aload_0
-     * 30: getfield      #8                  // Field applicationContext:Lorg/springframework/context/ApplicationContext;
-     * 33: ldc           #14                 // class org/springframework/scheduling/quartz/SchedulerFactoryBean
-     * 35: invokeinterface #15,  2           // InterfaceMethod org/springframework/context/ApplicationContext.getBean:(Ljava/lang/Class;)Ljava/lang/Object;
-     * 40: checkcast     #14                 // class org/springframework/scheduling/quartz/SchedulerFactoryBean
-     * 43: invokevirtual #16                 // Method org/springframework/scheduling/quartz/SchedulerFactoryBean.getScheduler:()Lorg/quartz/Scheduler;
-     * 46: astore        6
-     * 48: aload         6
-     * 50: aload         5
-     * 52: invokeinterface #19,  2           // InterfaceMethod org/quartz/Scheduler.triggerJob:(Lorg/quartz/JobKey;)V
-     * 57: ldc           #18                 // String Execute Quartz Job Successful !
-     * 59: areturn
-     */
     @Override
     public void setNormalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
@@ -180,5 +114,163 @@ public class QuartzJobAsmHandler extends AbstractAsmHandler {
         il.add(new InsnNode(ARETURN));
         methodNode.maxStack = IndexConstants.INDEX_6;
         methodNode.maxLocals = IndexConstants.INDEX_7;
+    }
+
+    @Override
+    protected void setCrudMethodBody(MethodNode methodNode) {
+        InsnList il = methodNode.instructions;
+        il.add(new InsnNode(ACONST_NULL));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
+        il.add(new LdcInsnNode("@"));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "split", "(Ljava/lang/String;)[Ljava/lang/String;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_5));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
+        il.add(new InsnNode(ARRAYLENGTH));
+        il.add(new InsnNode(ICONST_2));
+        LabelNode labelNode0 = new LabelNode();
+        il.add(new JumpInsnNode(IF_ICMPNE, labelNode0));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
+        il.add(new InsnNode(ICONST_0));
+        il.add(new InsnNode(AALOAD));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_6));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new InsnNode(AALOAD));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_7));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_6));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/String;)Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "org/quartz/impl/triggers/CronTriggerImpl"));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_8));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
+        il.add(new LdcInsnNode(Type.getType("Lorg/springframework/scheduling/quartz/SchedulerFactoryBean;")));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/Class;)Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/quartz/SchedulerFactoryBean"));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_9));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_9));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/quartz/SchedulerFactoryBean", "getScheduler", "()Lorg/quartz/Scheduler;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_10));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_7));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_8));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/impl/triggers/CronTriggerImpl", "getJobName", "()Ljava/lang/String;", false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false));
+        il.add(new JumpInsnNode(IFEQ, labelNode0));
+        il.add(new TypeInsnNode(NEW, "org/quartz/JobKey"));
+        il.add(new InsnNode(DUP));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_8));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/impl/triggers/CronTriggerImpl", "getJobName", "()Ljava/lang/String;", false));
+        il.add(new MethodInsnNode(INVOKESPECIAL, "org/quartz/JobKey", "<init>", "(Ljava/lang/String;)V", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_11));
+        il.add(new VarInsnNode(ILOAD, IndexConstants.INDEX_1));
+        LabelNode labelNode1 = new LabelNode();
+        LabelNode labelNode2 = new LabelNode();
+        LabelNode labelNode3 = new LabelNode();
+        LabelNode labelNode4 = new LabelNode();
+        il.add(new TableSwitchInsnNode(IndexConstants.INDEX_0, IndexConstants.INDEX_2, labelNode4, new LabelNode[]{labelNode1, labelNode2, labelNode3}));
+        il.add(labelNode1);
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_10));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_11));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Scheduler", "pauseJob", "(Lorg/quartz/JobKey;)V", true));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
+        il.add(new JumpInsnNode(GOTO, labelNode0));
+        il.add(labelNode2);
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_8));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/impl/triggers/CronTriggerImpl", "setCronExpression", "(Ljava/lang/String;)V", false));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_10));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_8));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/impl/triggers/CronTriggerImpl", "getKey", "()Lorg/quartz/TriggerKey;", false));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_8));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Scheduler", "rescheduleJob", "(Lorg/quartz/TriggerKey;Lorg/quartz/Trigger;)Ljava/util/Date;", true));
+        il.add(new InsnNode(POP));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
+        il.add(new JumpInsnNode(GOTO, labelNode0));
+        il.add(labelNode3);
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_10));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_11));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Scheduler", "resumeJob", "(Lorg/quartz/JobKey;)V", true));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
+        il.add(new JumpInsnNode(GOTO, labelNode0));
+        il.add(labelNode4);
+        il.add(new TypeInsnNode(NEW, "java/util/HashMap"));
+        il.add(new InsnNode(DUP));
+        il.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_12));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_10));
+        il.add(new MethodInsnNode(INVOKESTATIC, "org/quartz/impl/matchers/GroupMatcher", "anyGroup", "()Lorg/quartz/impl/matchers/GroupMatcher;", false));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Scheduler", "getTriggerKeys", "(Lorg/quartz/impl/matchers/GroupMatcher;)Ljava/util/Set;", true));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_13));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_13));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;", true));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_14));
+        LabelNode labelNode6 = new LabelNode();
+        il.add(labelNode6);
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_14));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
+        LabelNode labelNode5 = new LabelNode();
+        il.add(new JumpInsnNode(IFEQ, labelNode5));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_14));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "org/quartz/TriggerKey"));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_15));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_10));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_15));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Scheduler", "getTrigger", "(Lorg/quartz/TriggerKey;)Lorg/quartz/Trigger;", true));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_16));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_16));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Trigger", "getTriggerBuilder", "()Lorg/quartz/TriggerBuilder;", true));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_17));
+        il.add(new LdcInsnNode(Type.getType("Lorg/quartz/TriggerBuilder;")));
+        il.add(new LdcInsnNode("scheduleBuilder"));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_18));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_18));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "setAccessible", "(Z)V", false));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_18));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_17));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false));
+        il.add(new TypeInsnNode(CHECKCAST, "org/quartz/CronScheduleBuilder"));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_19));
+        il.add(new LdcInsnNode(Type.getType("Lorg/quartz/CronScheduleBuilder;")));
+        il.add(new LdcInsnNode("cronExpression"));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_18));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_18));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "setAccessible", "(Z)V", false));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_18));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_19));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false));
+        il.add(new TypeInsnNode(CHECKCAST, "org/quartz/CronExpression"));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_20));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_20));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/CronExpression", "getCronExpression", "()Ljava/lang/String;", false));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_3));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_12));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_16));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/quartz/Trigger", "getJobKey", "()Lorg/quartz/JobKey;", true));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/quartz/JobKey", "getName", "()Ljava/lang/String;", false));
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
+        il.add(new InsnNode(POP));
+        il.add(new JumpInsnNode(GOTO, labelNode6));
+        il.add(labelNode5);
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_12));
+        il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
+        il.add(labelNode0);
+        il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_4));
+        il.add(new InsnNode(ARETURN));
+        methodNode.maxStack = IndexConstants.INDEX_3;
+        methodNode.maxLocals = IndexConstants.INDEX_21;
     }
 }

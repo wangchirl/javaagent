@@ -7,77 +7,10 @@ import jdk.internal.org.objectweb.asm.tree.*;
 
 
 import static jdk.internal.org.objectweb.asm.Opcodes.*;
+import static net.bytebuddy.jar.asm.Opcodes.ASTORE;
 
 public class SpringJobAsmHandler extends AbstractAsmHandler {
 
-    /**
-     * 0: aload_2
-     * 1: ifnull        14
-     * 4: getstatic     #20                 // Field com/shadow/supports/framework/ScheduleService.JOB_PARAMETERS_THREAD_LOCAL:Ljava/lang/ThreadLocal;
-     * 7: aload_2
-     * 8: invokevirtual #21                 // Method java/lang/ThreadLocal.set:(Ljava/lang/Object;)V
-     * 11: goto          25
-     * 14: aload_3
-     * 15: ifnull        25
-     * 18: getstatic     #20                 // Field com/shadow/supports/framework/ScheduleService.JOB_PARAMETERS_THREAD_LOCAL:Ljava/lang/ThreadLocal;
-     * 21: aload_3
-     * 22: invokevirtual #21                 // Method java/lang/ThreadLocal.set:(Ljava/lang/Object;)V
-     * 25: aload_0
-     * 26: getfield      #8                  // Field applicationContext:Lorg/springframework/context/ApplicationContext;
-     * 29: ldc           #38                 // class org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor
-     * 31: invokeinterface #15,  2           // InterfaceMethod org/springframework/context/ApplicationContext.getBean:(Ljava/lang/Class;)Ljava/lang/Object;
-     * 36: checkcast     #38                 // class org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor
-     * 39: astore        4
-     * 41: aload         4
-     * 43: invokevirtual #39                 // Method org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor.getScheduledTasks:()Ljava/util/Set;
-     * 46: astore        5
-     * 48: aload         5
-     * 50: invokeinterface #40,  1           // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
-     * 55: astore        6
-     * 57: aload         6
-     * 59: invokeinterface #41,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
-     * 64: ifeq          122
-     * 67: aload         6
-     * 69: invokeinterface #42,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
-     * 74: checkcast     #43                 // class org/springframework/scheduling/config/ScheduledTask
-     * 77: astore        7
-     * 79: aload         7
-     * 81: invokevirtual #44                 // Method org/springframework/scheduling/config/ScheduledTask.getTask:()Lorg/springframework/scheduling/config/Task;
-     * 84: astore        8
-     * 86: aload         8
-     * 88: invokevirtual #45                 // Method org/springframework/scheduling/config/Task.getRunnable:()Ljava/lang/Runnable;
-     * 91: checkcast     #46                 // class org/springframework/scheduling/support/ScheduledMethodRunnable
-     * 94: astore        9
-     * 96: aload         9
-     * 98: invokevirtual #47                 // Method org/springframework/scheduling/support/ScheduledMethodRunnable.getMethod:()Ljava/lang/reflect/Method;
-     * 101: invokevirtual #48                 // Method java/lang/reflect/Method.getName:()Ljava/lang/String;
-     * 104: aload_1
-     * 105: invokevirtual #49                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
-     * 108: ifeq          119
-     * 111: aload         9
-     * 113: invokevirtual #50                 // Method org/springframework/scheduling/support/ScheduledMethodRunnable.run:()V
-     * 116: goto          122
-     * 119: goto          57
-     * 122: ldc           #51                 // String Execute Spring Job Successful !
-     * 124: astore        6
-     * 126: aload_2
-     * 127: ifnonnull     134
-     * 130: aload_3
-     * 131: ifnull        140
-     * 134: getstatic     #20                 // Field com/shadow/supports/framework/ScheduleService.JOB_PARAMETERS_THREAD_LOCAL:Ljava/lang/ThreadLocal;
-     * 137: invokevirtual #32                 // Method java/lang/ThreadLocal.remove:()V
-     * 140: aload         6
-     * 142: areturn
-     * 143: astore        10
-     * 145: aload_2
-     * 146: ifnonnull     153
-     * 149: aload_3
-     * 150: ifnull        159
-     * 153: getstatic     #20                 // Field com/shadow/supports/framework/ScheduleService.JOB_PARAMETERS_THREAD_LOCAL:Ljava/lang/ThreadLocal;
-     * 156: invokevirtual #32                 // Method java/lang/ThreadLocal.remove:()V
-     * 159: aload         10
-     * 161: athrow
-     */
     @Override
     public void setThreadLocalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
@@ -203,54 +136,12 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
 
     }
 
-    /**
-     * 0: aload_0
-     * 1: getfield      #8                  // Field applicationContext:Lorg/springframework/context/ApplicationContext;
-     * 4: ldc           #39                 // class org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor
-     * 6: invokeinterface #15,  2           // InterfaceMethod org/springframework/context/ApplicationContext.getBean:(Ljava/lang/Class;)Ljava/lang/Object;
-     * 11: checkcast     #39                 // class org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor
-     * 14: astore        4
-     * 16: aload         4
-     * 18: invokevirtual #40                 // Method org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor.getScheduledTasks:()Ljava/util/Set;
-     * 21: astore        5
-     * 23: aload         5
-     * 25: invokeinterface #41,  1           // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
-     * 30: astore        6
-     * 32: aload         6
-     * 34: invokeinterface #42,  1           // InterfaceMethod java/util/Iterator.hasNext:()Z
-     * 39: ifeq          97
-     * 42: aload         6
-     * 44: invokeinterface #43,  1           // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
-     * 49: checkcast     #44                 // class org/springframework/scheduling/config/ScheduledTask
-     * 52: astore        7
-     * 54: aload         7
-     * 56: invokevirtual #45                 // Method org/springframework/scheduling/config/ScheduledTask.getTask:()Lorg/springframework/scheduling/config/Task;
-     * 59: astore        8
-     * 61: aload         8
-     * 63: invokevirtual #46                 // Method org/springframework/scheduling/config/Task.getRunnable:()Ljava/lang/Runnable;
-     * 66: checkcast     #47                 // class org/springframework/scheduling/support/ScheduledMethodRunnable
-     * 69: astore        9
-     * 71: aload         9
-     * 73: invokevirtual #48                 // Method org/springframework/scheduling/support/ScheduledMethodRunnable.getMethod:()Ljava/lang/reflect/Method;
-     * 76: invokevirtual #49                 // Method java/lang/reflect/Method.getName:()Ljava/lang/String;
-     * 79: aload_1
-     * 80: invokevirtual #50                 // Method java/lang/String.equals:(Ljava/lang/Object;)Z
-     * 83: ifeq          94
-     * 86: aload         9
-     * 88: invokevirtual #51                 // Method org/springframework/scheduling/support/ScheduledMethodRunnable.run:()V
-     * 91: goto          97
-     * 94: goto          32
-     * 97: ldc           #52                 // String Execute Spring Job Successful !
-     * 99: areturn
-     */
     @Override
     public void setNormalMethodBody(MethodNode methodNode) {
         InsnList il = methodNode.instructions;
-
         LabelNode line32 = new LabelNode();
         LabelNode line94 = new LabelNode();
         LabelNode line97 = new LabelNode();
-
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_0));
         // "Lorg/springframework/context/ApplicationContext;"
         il.add(new FieldInsnNode(Opcodes.GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
@@ -310,5 +201,208 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(new InsnNode(Opcodes.ARETURN));
         methodNode.maxStack = IndexConstants.INDEX_9;
         methodNode.maxLocals = IndexConstants.INDEX_10;
+    }
+
+    @Override
+    protected void setCrudMethodBody(MethodNode methodNode) {
+        InsnList il = methodNode.instructions;
+        LabelNode labelNode108 = new LabelNode();
+        LabelNode labelNode147 = new LabelNode();
+        LabelNode labelNode280 = new LabelNode();
+        LabelNode labelNode294 = new LabelNode();
+        LabelNode labelNode348 = new LabelNode();
+        LabelNode labelNode406 = new LabelNode();
+        LabelNode labelNode410 = new LabelNode();
+        LabelNode labelNode413 = new LabelNode();
+        LabelNode labelNode416 = new LabelNode();
+        LabelNode labelNode455 = new LabelNode();
+        il.add(new InsnNode(ACONST_NULL));
+        il.add(new VarInsnNode(ASTORE, 4));
+        il.add(new VarInsnNode(ALOAD, 0));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
+        il.add(new LdcInsnNode(Type.getType("Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;")));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/Class;)Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor"));
+        il.add(new VarInsnNode(ASTORE, 5));
+        il.add(new LdcInsnNode(Type.getType("Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;")));
+        il.add(new LdcInsnNode("scheduledTasks"));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;", false));
+        il.add(new VarInsnNode(ASTORE, 6));
+        il.add(new VarInsnNode(ALOAD, 6));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "setAccessible", "(Z)V", false));
+        il.add(new VarInsnNode(ALOAD, 6));
+        il.add(new VarInsnNode(ALOAD, 5));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false));
+        il.add(new TypeInsnNode(CHECKCAST, "java/util/Map"));
+        il.add(new VarInsnNode(ASTORE, 7));
+        il.add(new InsnNode(ACONST_NULL));
+        il.add(new VarInsnNode(ASTORE, 8));
+        il.add(new TypeInsnNode(NEW, "java/util/HashSet"));
+        il.add(new InsnNode(DUP));
+        il.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashSet", "<init>", "()V", false));
+        il.add(new VarInsnNode(ASTORE, 9));
+        il.add(new LdcInsnNode(Type.getType("Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;")));
+        il.add(new LdcInsnNode("registrar"));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;", false));
+        il.add(new VarInsnNode(ASTORE, 10));
+        il.add(new VarInsnNode(ALOAD, 10));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "setAccessible", "(Z)V", false));
+        il.add(new VarInsnNode(ALOAD, 10));
+        il.add(new VarInsnNode(ALOAD, 5));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", false));
+        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/config/ScheduledTaskRegistrar"));
+        il.add(new VarInsnNode(ASTORE, 11));
+        il.add(new TypeInsnNode(NEW, "java/util/HashMap"));
+        il.add(new InsnNode(DUP));
+        il.add(new MethodInsnNode(INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false));
+        il.add(new VarInsnNode(ASTORE, 12));
+        il.add(new VarInsnNode(ALOAD, 7));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "entrySet", "()Ljava/util/Set;", true));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;", true));
+        il.add(new VarInsnNode(ASTORE, 13));
+        il.add(labelNode108);
+        il.add(new VarInsnNode(ALOAD, 13));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
+        il.add(new JumpInsnNode(IFEQ, labelNode416));
+        il.add(new VarInsnNode(ALOAD, 13));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "java/util/Map$Entry"));
+        il.add(new VarInsnNode(ASTORE, 14));
+        il.add(new VarInsnNode(ALOAD, 14));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "java/util/Set"));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;", true));
+        il.add(new VarInsnNode(ASTORE, 15));
+        il.add(labelNode147);
+        il.add(new VarInsnNode(ALOAD, 15));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z", true));
+        il.add(new JumpInsnNode(IFEQ, labelNode413));
+        il.add(new VarInsnNode(ALOAD, 15));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/config/ScheduledTask"));
+        il.add(new VarInsnNode(ASTORE, 16));
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/ScheduledTask", "getTask", "()Lorg/springframework/scheduling/config/Task;", false));
+        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/config/CronTask"));
+        il.add(new VarInsnNode(ASTORE, 17));
+        il.add(new VarInsnNode(ALOAD, 17));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/CronTask", "getRunnable", "()Ljava/lang/Runnable;", false));
+        il.add(new TypeInsnNode(CHECKCAST, "org/springframework/scheduling/support/ScheduledMethodRunnable"));
+        il.add(new VarInsnNode(ASTORE, 18));
+        il.add(new VarInsnNode(ALOAD, 12));
+        il.add(new VarInsnNode(ALOAD, 18));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/support/ScheduledMethodRunnable", "getMethod", "()Ljava/lang/reflect/Method;", false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Method", "getName", "()Ljava/lang/String;", false));
+        il.add(new VarInsnNode(ALOAD, 17));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/CronTask", "getExpression", "()Ljava/lang/String;", false));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
+        il.add(new InsnNode(POP));
+        il.add(new VarInsnNode(ALOAD, 18));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/support/ScheduledMethodRunnable", "getMethod", "()Ljava/lang/reflect/Method;", false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Method", "getName", "()Ljava/lang/String;", false));
+        il.add(new VarInsnNode(ALOAD, 2));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false));
+        il.add(new JumpInsnNode(IFEQ, labelNode410));
+        il.add(new VarInsnNode(ALOAD, 14));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map$Entry", "getKey", "()Ljava/lang/Object;", true));
+        il.add(new VarInsnNode(ASTORE, 8));
+        il.add(new VarInsnNode(ALOAD, 9));
+        il.add(new VarInsnNode(ALOAD, 14));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;", true));
+        il.add(new TypeInsnNode(CHECKCAST, "java/util/Collection"));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "addAll", "(Ljava/util/Collection;)Z", true));
+        il.add(new InsnNode(POP));
+        il.add(new VarInsnNode(ILOAD, 1));
+        il.add(new TableSwitchInsnNode(0, 2, labelNode406, new LabelNode[]{labelNode280, labelNode294, labelNode348}));
+        il.add(labelNode280);
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/ScheduledTask", "cancel", "()V", false));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false));
+        il.add(new VarInsnNode(ASTORE, 4));
+        il.add(new JumpInsnNode(GOTO, labelNode410));
+        il.add(labelNode294);
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/ScheduledTask", "cancel", "()V", false));
+        il.add(new VarInsnNode(ALOAD, 9));
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "remove", "(Ljava/lang/Object;)Z", true));
+        il.add(new InsnNode(POP));
+        il.add(new VarInsnNode(ALOAD, 11));
+        il.add(new TypeInsnNode(NEW, "org/springframework/scheduling/config/CronTask"));
+        il.add(new InsnNode(DUP));
+        il.add(new VarInsnNode(ALOAD, 17));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/CronTask", "getRunnable", "()Ljava/lang/Runnable;", false));
+        il.add(new VarInsnNode(ALOAD, 3));
+        il.add(new MethodInsnNode(INVOKESPECIAL, "org/springframework/scheduling/config/CronTask", "<init>", "(Ljava/lang/Runnable;Ljava/lang/String;)V", false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/ScheduledTaskRegistrar", "scheduleCronTask", "(Lorg/springframework/scheduling/config/CronTask;)Lorg/springframework/scheduling/config/ScheduledTask;", false));
+        il.add(new VarInsnNode(ASTORE, 16));
+        il.add(new VarInsnNode(ALOAD, 9));
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "add", "(Ljava/lang/Object;)Z", true));
+        il.add(new InsnNode(POP));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false));
+        il.add(new VarInsnNode(ASTORE, 4));
+        il.add(new JumpInsnNode(GOTO, labelNode410));
+        il.add(labelNode348);
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/ScheduledTask", "cancel", "()V", false));
+        il.add(new VarInsnNode(ALOAD, 9));
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "remove", "(Ljava/lang/Object;)Z", true));
+        il.add(new InsnNode(POP));
+        il.add(new VarInsnNode(ALOAD, 11));
+        il.add(new TypeInsnNode(NEW, "org/springframework/scheduling/config/CronTask"));
+        il.add(new InsnNode(DUP));
+        il.add(new VarInsnNode(ALOAD, 17));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/CronTask", "getRunnable", "()Ljava/lang/Runnable;", false));
+        il.add(new VarInsnNode(ALOAD, 17));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/CronTask", "getExpression", "()Ljava/lang/String;", false));
+        il.add(new MethodInsnNode(INVOKESPECIAL, "org/springframework/scheduling/config/CronTask", "<init>", "(Ljava/lang/Runnable;Ljava/lang/String;)V", false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "org/springframework/scheduling/config/ScheduledTaskRegistrar", "scheduleCronTask", "(Lorg/springframework/scheduling/config/CronTask;)Lorg/springframework/scheduling/config/ScheduledTask;", false));
+        il.add(new VarInsnNode(ASTORE, 16));
+        il.add(new VarInsnNode(ALOAD, 9));
+        il.add(new VarInsnNode(ALOAD, 16));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Set", "add", "(Ljava/lang/Object;)Z", true));
+        il.add(new InsnNode(POP));
+        il.add(new InsnNode(ICONST_1));
+        il.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false));
+        il.add(new VarInsnNode(ASTORE, 4));
+        il.add(new JumpInsnNode(GOTO, labelNode410));
+        il.add(labelNode406);
+        il.add(new VarInsnNode(ALOAD, 12));
+        il.add(new VarInsnNode(ASTORE, 4));
+        il.add(labelNode410);
+        il.add(new JumpInsnNode(GOTO, labelNode147));
+        il.add(labelNode413);
+        il.add(new JumpInsnNode(GOTO, labelNode108));
+        il.add(labelNode416);
+        il.add(new VarInsnNode(ALOAD, 8));
+        il.add(new JumpInsnNode(IFNULL, labelNode455));
+        il.add(new VarInsnNode(ALOAD, 7));
+        il.add(new VarInsnNode(ALOAD, 8));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
+        il.add(new JumpInsnNode(IFNULL, labelNode455));
+        il.add(new VarInsnNode(ALOAD, 7));
+        il.add(new VarInsnNode(ALOAD, 8));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "remove", "(Ljava/lang/Object;)Ljava/lang/Object;", true));
+        il.add(new InsnNode(POP));
+        il.add(new VarInsnNode(ALOAD, 7));
+        il.add(new VarInsnNode(ALOAD, 8));
+        il.add(new VarInsnNode(ALOAD, 9));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/Map", "putIfAbsent", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true));
+        il.add(new InsnNode(POP));
+        il.add(labelNode455);
+        il.add(new VarInsnNode(ALOAD, 6));
+        il.add(new VarInsnNode(ALOAD, 5));
+        il.add(new VarInsnNode(ALOAD, 7));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/reflect/Field", "set", "(Ljava/lang/Object;Ljava/lang/Object;)V", false));
+        il.add(new VarInsnNode(ALOAD, 4));
+        il.add(new InsnNode(ARETURN));
+        methodNode.maxStack = IndexConstants.INDEX_3;
+        methodNode.maxLocals = IndexConstants.INDEX_17;
     }
 }

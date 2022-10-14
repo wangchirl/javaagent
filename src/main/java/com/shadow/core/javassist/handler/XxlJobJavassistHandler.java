@@ -1,6 +1,7 @@
 package com.shadow.core.javassist.handler;
 
 import com.shadow.utils.CommonConstants;
+
 import java.util.function.Supplier;
 
 public class XxlJobJavassistHandler extends AbstractJavassistHandler {
@@ -21,6 +22,23 @@ public class XxlJobJavassistHandler extends AbstractJavassistHandler {
             body.append("\n    handler.execute();");
             body.append(removeThreadLocal());
             body.append("\n    return \"Successful execute task job : task key = \" + $1 + \" params = \" + $2 + \" body = \" + $3;");
+            body.append("\n}");
+            return body.toString();
+        };
+    }
+
+    @Override
+    protected Supplier<String> getCrudMethodBody() {
+        return () -> {
+            StringBuilder body = new StringBuilder();
+            body.append("{");
+            body.append("\n    com.xxl.job.core.executor.XxlJobExecutor xxlJobExecutor = (com.xxl.job.core.executor.XxlJobExecutor) ");
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(".getBean(com.xxl.job.core.executor.XxlJobExecutor.class);");
+            body.append("\n    java.lang.reflect.Field field = com.xxl.job.core.executor.XxlJobExecutor.class.getDeclaredField(\"jobHandlerRepository\");");
+            body.append("\n    field.setAccessible(true);");
+            body.append("\n    java.util.Map jobHandlerRepository = (java.util.Map) field.get(xxlJobExecutor);");
+            body.append("\n    return jobHandlerRepository.keySet();");
             body.append("\n}");
             return body.toString();
         };

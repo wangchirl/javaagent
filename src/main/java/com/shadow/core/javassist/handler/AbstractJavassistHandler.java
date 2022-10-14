@@ -36,14 +36,10 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
             // 4.1 扩展额外的字段
             addFields(cc);
             // 5、给得到的类添加方法
-            CtMethod method = getAndSetClassMethod(cp, cc, getMethodName(), getMethodBody());
-            // 6、给方法添加注解和参数
-            ClassFile ccFile = cc.getClassFile();
-            ConstPool constPool = ccFile.getConstPool();
-            // 6.1 添加方法注解
-            setClassMethodAnnotations(method, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI), constPool);
-            // 6.2 添加方法参数
-            setClassMethodParameters(method, constPool);
+            addRunMethod(cp, cc);
+            if (Boolean.parseBoolean(getArgs().get(CommonConstants.TASK_CRUD))) {
+                addCrudMethod(cp, cc);
+            }
             // 6.3 扩展添加其他方法
             addMethods(cp, cc);
             // 7、write file for debug
@@ -60,12 +56,36 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         return null;
     }
 
+    private void addRunMethod(ClassPool cp, CtClass cc) throws CannotCompileException, NotFoundException {
+        CtMethod method = getAndSetClassMethod(cp, cc, getMethodName(), getMethodBody());
+        // 6、给方法添加注解和参数
+        ClassFile ccFile = cc.getClassFile();
+        ConstPool constPool = ccFile.getConstPool();
+        // 6.1 添加方法注解
+        setClassMethodAnnotations(method, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI), constPool);
+        // 6.2 添加方法参数
+        setClassMethodParameters(method, constPool);
+    }
+
+    private void addCrudMethod(ClassPool cp, CtClass cc) throws CannotCompileException, NotFoundException {
+        CtMethod method = getAndSetCrudClassMethod(cp, cc, () -> CommonConstants.DEFAULT_CRUD_METHOD_NAME, getCrudMethodBody());
+        // 6、给方法添加注解和参数
+        ClassFile ccFile = cc.getClassFile();
+        ConstPool constPool = ccFile.getConstPool();
+        // 6.1 添加方法注解
+        setClassMethodAnnotations(method, CommonConstants.DEFAULT_CRUD_HTTP_PATH, constPool);
+        // 6.2 添加方法参数
+        setCrudClassMethodParameters(method, constPool);
+    }
+
+    protected abstract Supplier<String> getCrudMethodBody();
+
     /**
      * 设置属性 & 属性添加注解
      */
     private void setClassField(CtClass cc) throws CannotCompileException, NotFoundException {
         // 1、创建属性
-        CtField ctField = CtField.make(CommonConstants.ACC_PRIVATE + CommonConstants.SPACE + SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getClassName() + CommonConstants.SPACE  + getArgs().get(CommonConstants.IOC_FIELD_NAME) + CommonConstants.SEMICOLON, cc);
+        CtField ctField = CtField.make(CommonConstants.ACC_PRIVATE + CommonConstants.SPACE + SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getClassName() + CommonConstants.SPACE + getArgs().get(CommonConstants.IOC_FIELD_NAME) + CommonConstants.SEMICOLON, cc);
         // 2、设置属性访问权限
         ctField.setModifiers(Modifier.PRIVATE);
         cc.addField(ctField);
@@ -79,9 +99,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         ctField.getFieldInfo().addAttribute(annotationsAttr);
     }
 
-    /**
-     * 创建方法 & 方法体
-     */
+
     private CtMethod getAndSetClassMethod(ClassPool cp, CtClass cc, Supplier<String> methodName, Supplier<String> methodBody) throws CannotCompileException, NotFoundException {
         CtClass string = cp.get(String.class.getName());
         CtClass object = cp.get(Object.class.getName());
@@ -92,6 +110,21 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
         // 3、设置方法体
         method.setBody(getArgs().get(CommonConstants.METHOD_BODY) == null ? methodBody.get() : getArgs().get(CommonConstants.METHOD_BODY));
+        cc.addMethod(method);
+        return method;
+    }
+
+    private CtMethod getAndSetCrudClassMethod(ClassPool cp, CtClass cc, Supplier<String> methodName, Supplier<String> methodBody) throws CannotCompileException, NotFoundException {
+        CtClass string = cp.get(String.class.getName());
+        CtClass object = cp.get(Object.class.getName());
+        CtClass intClass = cp.get(int.class.getName());
+        // 1、创建方法
+        CtMethod method = new CtMethod(object, methodName.get(), new CtClass[]{intClass, string, string}, cc);
+        // 2、方法访问权限
+        method.setModifiers(Modifier.PUBLIC);
+        method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
+        // 3、设置方法体
+        method.setBody(getArgs().get(CommonConstants.CRUD_METHOD_BODY) == null ? methodBody.get() : getArgs().get(CommonConstants.CRUD_METHOD_BODY));
         cc.addMethod(method);
         return method;
     }
@@ -113,9 +146,6 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         method.getMethodInfo().addAttribute(methodAttr);
     }
 
-    /**
-     * 方法参数 & 注解参数
-     */
     private void setClassMethodParameters(CtMethod method, ConstPool constPool) {
         ParameterAnnotationsAttribute parameterAnnotationsAttr =
                 new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
@@ -139,9 +169,29 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         method.getMethodInfo().addAttribute(parameterAnnotationsAttr);
     }
 
-    /**
-     * ThreadLocal 参数设置
-     */
+    private void setCrudClassMethodParameters(CtMethod method, ConstPool constPool) {
+        ParameterAnnotationsAttribute parameterAnnotationsAttr =
+                new ParameterAnnotationsAttribute(constPool, ParameterAnnotationsAttribute.visibleTag);
+        // 1、创建方法参数
+        // 1.1 方法参数1
+        Annotation annotation1 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_TYPE.getClassName(), constPool);
+        annotation1.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_OPERATION, constPool));
+        // 1.2 方法参数2
+        Annotation annotation2 = new Annotation(SpringConstants.SPRING_PATH_VARIABLE_TYPE.getClassName(), constPool);
+        annotation2.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_TASK_KEY, constPool));
+        // 1.3 方法参数3
+        Annotation annotation3 = new Annotation(SpringConstants.SPRING_REQUEST_PARAM_TYPE.getClassName(), constPool);
+        annotation3.addMemberValue(CommonConstants.CONST_VALUE, new StringMemberValue(CommonConstants.CONST_CRON, constPool));
+        annotation3.addMemberValue(CommonConstants.CONST_REQUIRED, new BooleanMemberValue(false, constPool));
+        // 2、加入方法
+        Annotation[][] annotations = new Annotation[3][1];
+        annotations[0][0] = annotation1;
+        annotations[1][0] = annotation2;
+        annotations[2][0] = annotation3;
+        parameterAnnotationsAttr.setAnnotations(annotations);
+        method.getMethodInfo().addAttribute(parameterAnnotationsAttr);
+    }
+
     String setThreadLocal() {
         if (getThreadLocalClassName() != null && getThreadLocalFieldName() != null) {
             StringBuilder builder = new StringBuilder();

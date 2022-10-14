@@ -23,10 +23,10 @@ import java.util.ServiceLoader;
 public class DynamicAgent extends BaseAgent {
 
     public static void agentmain(String agentArgs, Instrumentation inst) {
-        // 修改方法体
-        // 1、解析参数
+        // modify method body
+        // 1、resolve args
         Map<String, String> resolveArgs = ParamResolveUtils.resolveArgs(agentArgs);
-        // 2、必要参数有时才处理
+        // 2、check necessary args
         if (resolveArgs.get(CommonConstants.ORIGIN_JOB_TYPE) != null &&
                 resolveArgs.get(CommonConstants.CONTROLLER_CLASS) != null &&
                 resolveArgs.get(CommonConstants.JOB_TYPE) != null) {
@@ -39,8 +39,8 @@ public class DynamicAgent extends BaseAgent {
                 switch (proxyTypeEnum) {
                     case ASM:
                         // handle ASM default args
-                        MethodNode methodNode = handleAsmDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
-                        transformer = new AsmTransformer(resolveArgs, methodNode);
+                        MethodNode[] methodNodes = handleAsmDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
+                        transformer = new AsmTransformer(resolveArgs, methodNodes[0], methodNodes[1]);
                         break;
                     case BUDDY:
                         // FIXME
@@ -72,10 +72,10 @@ public class DynamicAgent extends BaseAgent {
         }
     }
 
-    private static MethodNode handleAsmDefaultArgs(Map<String, String> resolveArgs,
-                                                   CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
-                                                   CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
-        // 1、公共默认参数处理
+    private static MethodNode[] handleAsmDefaultArgs(Map<String, String> resolveArgs,
+                                                     CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
+                                                     CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
+        // 1、common args
         handleCommonDefaultArgs(resolveArgs);
         // SPI
         Map<String, AbstractAsmHandler> handlerMap = new HashMap<>();
@@ -97,13 +97,15 @@ public class DynamicAgent extends BaseAgent {
             ((AbstractAsmHandler) handler).setArgs(resolveArgs);
         }
         AbstractAsmHandler currentHandler = handlerMap.get(scheduleTypeEnum.name());
-        return currentHandler.getAndSetClassMethod(CommonConstants.ASM_API_VERSION);
+        MethodNode runMethodNode = currentHandler.getAndSetClassMethod(CommonConstants.ASM_API_VERSION);
+        MethodNode crudMethodNode = currentHandler.getAndSetCrudClassMethod(CommonConstants.ASM_API_VERSION);
+        return new MethodNode[]{runMethodNode, crudMethodNode};
     }
 
     private static AbstractBuddyHandler handleBuddyDefaultArgs(Map<String, String> resolveArgs,
                                                                CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
                                                                CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
-        // 1、公共默认参数处理
+        // 1、common args
         handleCommonDefaultArgs(resolveArgs);
         // SPI
         Map<String, AbstractBuddyHandler> handlerMap = new HashMap<>();
@@ -132,7 +134,7 @@ public class DynamicAgent extends BaseAgent {
     private static void handleJavassistDefaultArgs(Map<String, String> resolveArgs,
                                                    CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
                                                    CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
-        // 1、公共默认参数处理
+        // 1、common args
         handleCommonDefaultArgs(resolveArgs);
         // SPI
         Map<String, AbstractJavassistHandler> handlerMap = new HashMap<>();

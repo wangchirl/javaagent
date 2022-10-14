@@ -55,4 +55,80 @@ public class SpringJobJavassistHandler extends AbstractJavassistHandler {
             return body.toString();
         };
     }
+
+    @Override
+    protected Supplier<String> getCrudMethodBody() {
+        return () -> {
+            StringBuilder body = new StringBuilder();
+            body.append("{");
+            body.append("   boolean result = false;");
+            body.append("\n    org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor processor = (org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor) ");
+            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(".getBean(org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class);");
+            body.append("\n    java.lang.reflect.Field scheduledTasks = org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class.getDeclaredField(\"scheduledTasks\");");
+            body.append("\n    scheduledTasks.setAccessible(true);");
+            body.append("\n    java.util.Map taskMap = (java.util.Map) scheduledTasks.get(processor);");
+            body.append("\n    Object key = null;");
+            body.append("\n    java.util.Set set = new java.util.HashSet();");
+            body.append("\n    java.lang.reflect.Field registrar = org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class.getDeclaredField(\"registrar\");");
+            body.append("\n    registrar.setAccessible(true);");
+            body.append("\n    org.springframework.scheduling.config.ScheduledTaskRegistrar scheduledTaskRegistrar = (org.springframework.scheduling.config.ScheduledTaskRegistrar) registrar.get(processor);");
+            body.append("\n    java.util.Map message = new java.util.HashMap();");
+            body.append("\n    java.util.Iterator iterator = taskMap.entrySet().iterator();");
+            body.append("\n    while (iterator.hasNext()) {");
+            body.append("\n      java.util.Map.Entry next = (java.util.Map.Entry) iterator.next();");
+            body.append("\n      java.util.Set value = (java.util.Set) next.getValue();");
+            body.append("\n      java.util.Iterator iterator1 = value.iterator();");
+            body.append("\n      while (iterator1.hasNext()) {");
+            body.append("\n        org.springframework.scheduling.config.ScheduledTask scheduledTask = (org.springframework.scheduling.config.ScheduledTask) iterator1.next();");
+            body.append("\n        org.springframework.scheduling.config.CronTask task = (org.springframework.scheduling.config.CronTask) scheduledTask.getTask();");
+            body.append("\n        org.springframework.scheduling.support.ScheduledMethodRunnable runnable = (org.springframework.scheduling.support.ScheduledMethodRunnable) task.getRunnable();");
+            body.append("\n        java.lang.reflect.Field field = org.springframework.scheduling.config.ScheduledTask.class.getDeclaredField(\"future\");");
+            body.append("\n        field.setAccessible(true);");
+            body.append("\n        java.util.concurrent.ScheduledFuture scheduledFuture = (java.util.concurrent.ScheduledFuture) field.get(scheduledTask);");
+            body.append("\n        boolean cancel = scheduledFuture.isCancelled();");
+            body.append("\n        message.put(runnable.getMethod().getName(), task.getExpression() + \" 是否停止：\" + cancel);");
+            body.append("\n        if (runnable.getMethod().getName().equals($2)) {");
+            body.append("\n           key = next.getKey();");
+            body.append("\n           set.addAll((java.util.Set) next.getValue());");
+            body.append("\n           switch ($1) {");
+            body.append("\n             case 0: ");
+            body.append("\n               scheduledTask.cancel();");
+            body.append("\n               result = true;");
+            body.append("\n               break;");
+            body.append("\n             case 1:");
+            body.append("\n               scheduledTask.cancel();");
+            body.append("\n               set.remove(scheduledTask);");
+            body.append("\n               scheduledTask = scheduledTaskRegistrar.scheduleCronTask(new org.springframework.scheduling.config.CronTask(task.getRunnable(), $3));");
+            body.append("\n               set.add(scheduledTask);");
+            body.append("\n               result = true;");
+            body.append("\n               break;");
+            body.append("\n             case 2: ");
+            body.append("\n               scheduledTask.cancel();");
+            body.append("\n               set.remove(scheduledTask);");
+            body.append("\n               scheduledTask = scheduledTaskRegistrar.scheduleCronTask(new org.springframework.scheduling.config.CronTask(task.getRunnable(), task.getExpression()));");
+            body.append("\n               set.add(scheduledTask);");
+            body.append("\n               result = true;");
+            body.append("\n               break;");
+            body.append("\n             default:");
+            body.append("\n               result = false;");
+            body.append("\n               break;");
+            body.append("\n           }");
+            body.append("\n        }");
+            body.append("\n      }");
+            body.append("\n   }");
+            body.append("\n   if (key != null && taskMap.get(key) != null) {");
+            body.append("\n     taskMap.remove(key);");
+            body.append("\n     taskMap.putIfAbsent(key, set);");
+            body.append("\n   }");
+            body.append("\n   scheduledTasks.set(processor, taskMap);");
+            body.append("\n   if (result) {");
+            body.append("\n     return \"Success!\";");
+            body.append("\n    } else {");
+            body.append("\n      return message;");
+            body.append("\n    }");
+            body.append("\n}");
+            return body.toString();
+        };
+    }
 }
