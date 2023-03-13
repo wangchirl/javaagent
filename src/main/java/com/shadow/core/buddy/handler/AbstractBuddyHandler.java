@@ -142,7 +142,7 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
                 getMethodName().get(),
                 BaseConstants.O_SSO,
                 null,
-                new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()}
+                new String[]{/*BaseConstants.EXCEPTION_TYPE.getDescriptor()*/}
         );
         {
             // 3.1 method annotation
@@ -195,7 +195,7 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
                 CommonConstants.DEFAULT_CRUD_METHOD_NAME,
                 BaseConstants.O_ISS,
                 null,
-                new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()}
+                new String[]{/*BaseConstants.EXCEPTION_TYPE.getDescriptor()*/}
         );
         // 1.2 method annotation
         AnnotationVisitor annotation = methodVisitor.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);

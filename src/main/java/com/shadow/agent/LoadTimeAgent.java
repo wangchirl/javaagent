@@ -32,14 +32,14 @@ public class LoadTimeAgent extends BaseAgent {
                         transformer = new AsmTransformer(resolveArgs, scheduleTypeEnum);
                         break;
                     case BUDDY:
-                        transformer = new BuddyTransformer(resolveArgs, scheduleTypeEnum).handle(inst);
+                        new BuddyTransformer(resolveArgs, scheduleTypeEnum).handle(inst);
                         break;
                     default:
                         transformer = new JavassistTransformer(resolveArgs, scheduleTypeEnum);
                         break;
                 }
                 // add redefined transformer
-                inst.addTransformer(transformer);
+                if (transformer != null) inst.addTransformer(transformer);
             }
         }
     }
