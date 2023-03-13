@@ -31,11 +31,11 @@ public abstract class AbstractHandler {
         return this.args;
     }
 
-    public String getThreadLocalClassName() {
+    protected String getThreadLocalClassName() {
         return threadLocalClassName;
     }
 
-    public String getThreadLocalInnerClassName() {
+    protected String getThreadLocalInnerClassName() {
         return threadLocalInnerClassName;
     }
 
@@ -48,6 +48,11 @@ public abstract class AbstractHandler {
         this.threadLocalFieldName = getArgs().get(CommonConstants.THREADLOCAL_FIELD_NAME);
         this.threadLocalClassName = getArgs().get(CommonConstants.THREADLOCAL_CLASS_NAME);
         this.threadLocalInnerClassName = this.threadLocalClassName == null ? null : this.threadLocalClassName.replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
+        init();
+    }
+
+    protected void init() {
+        // hook method
     }
 
     /**

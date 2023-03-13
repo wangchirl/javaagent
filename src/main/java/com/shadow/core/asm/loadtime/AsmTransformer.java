@@ -2,6 +2,7 @@ package com.shadow.core.asm.loadtime;
 
 import com.shadow.core.AbstractTransformer;
 import com.shadow.core.asm.handler.*;
+import com.shadow.core.common.ProxyClassLoader;
 import com.shadow.utils.CommonConstants;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -15,17 +16,15 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
     /**
      * current handle
      */
-    public AbstractAsmHandler handler;
+    private String handlerClassName;
 
     public AsmTransformer(Map<String, String> resolveArgs, CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
         super(resolveArgs);
         // SPI
         ServiceLoader<IAsmHandler> handlers = ServiceLoader.load(IAsmHandler.class);
         for (IAsmHandler handler : handlers) {
-            ((AbstractAsmHandler) handler).setArgs(resolveArgs);
-            ((AbstractAsmHandler) handler).initInnerClassName();
             if (scheduleTypeEnum.name().equalsIgnoreCase(handler.getClass().getSimpleName().replace(CommonConstants.ASM_HANDLER_NAME_SUFFIX, ""))) {
-                this.handler = (AbstractAsmHandler) handler;
+                this.handlerClassName = handler.getClass().getName();
                 break;
             }
         }
@@ -38,7 +37,15 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
                             ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         if (className.equals(getInnerClassName())) {
-            return this.handler.handle(classfileBuffer);
+            try {
+                ProxyClassLoader classLoader = new ProxyClassLoader(loader);
+                Class<?> handlerClass = classLoader.loadClass(this.handlerClassName);
+                AbstractAsmHandler handler = (AbstractAsmHandler) handlerClass.newInstance();
+                handler.setArgs(getArgs());
+                return handler.handle(classfileBuffer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }

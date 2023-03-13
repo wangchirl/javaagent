@@ -36,6 +36,11 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
      */
     public abstract void setNormalMethodBody(MethodNode methodNode);
 
+    @Override
+    protected void init() {
+        initInnerClassName();
+    }
+
     /**
      * inner class name
      */
@@ -99,7 +104,7 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
                 CommonConstants.DEFAULT_CRUD_METHOD_NAME,
                 BaseConstants.O_ISS,
                 null,
-                new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()});
+                new String[]{/*BaseConstants.EXCEPTION_TYPE.getDescriptor()*/});
         // 1.2 method annotation
         AnnotationNode annotation = (AnnotationNode) methodNode.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
         // array value
@@ -144,7 +149,7 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
                 getMethodName().get(),
                 BaseConstants.O_SSO,
                 null,
-                new String[]{BaseConstants.EXCEPTION_TYPE.getDescriptor()});
+                new String[]{/*BaseConstants.EXCEPTION_TYPE.getDescriptor()*/});
         // 1.2 method annotation
         AnnotationNode annotation = (AnnotationNode) methodNode.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
         // 数组格式的参数
