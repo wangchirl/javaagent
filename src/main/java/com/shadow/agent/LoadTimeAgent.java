@@ -21,21 +21,24 @@ public class LoadTimeAgent extends BaseAgent {
         CommonUtils.printLogAllowed(resolveArgs);
         // 2、必要参数有时才处理
         if (resolveArgs.get(CommonConstants.JOB_TYPE) != null && resolveArgs.get(CommonConstants.CONTROLLER_CLASS) != null) {
-            CommonConstants.ScheduleTypeEnum scheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
-            if (scheduleTypeEnum != null) {
+            CommonConstants.JobTypeEnum jobTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
+            if (jobTypeEnum != null) {
                 // set default args
                 handleCommonDefaultArgs(resolveArgs);
                 // transformer
                 ClassFileTransformer transformer = null;
-                switch (CommonConstants.getByProxyTypeName(resolveArgs.get(CommonConstants.PROXY_TYPE))) {
+                CommonConstants.ProxyTypeEnum proxyTypeEnum = CommonConstants.getByProxyTypeName(resolveArgs.get(CommonConstants.PROXY_TYPE));
+                System.out.println("JOB TYPE: " + jobTypeEnum);
+                System.out.println("PROXY TYPE: " + proxyTypeEnum);
+                switch (proxyTypeEnum) {
                     case ASM:
-                        transformer = new AsmTransformer(resolveArgs, scheduleTypeEnum);
+                        transformer = new AsmTransformer(resolveArgs);
                         break;
                     case BUDDY:
-                        new BuddyTransformer(resolveArgs, scheduleTypeEnum).handle(inst);
+                        new BuddyTransformer(resolveArgs).handle(inst);
                         break;
                     default:
-                        transformer = new JavassistTransformer(resolveArgs, scheduleTypeEnum);
+                        transformer = new JavassistTransformer(resolveArgs);
                         break;
                 }
                 // add redefined transformer

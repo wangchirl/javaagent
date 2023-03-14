@@ -24,7 +24,8 @@ public class CommonConstants {
      */
     public static String EQUAL = "=";
     public static String COMM = ",";
-    public static String DOT = "\\.";
+    public static String REG_DOT = "\\.";
+    public static String DOT = ".";
     public static String BIAS = "/";
     public static String AND = "&";
     public static String AT = "@";
@@ -68,17 +69,17 @@ public class CommonConstants {
     /**
      * 定时任务类型枚举
      */
-    public enum ScheduleTypeEnum {
+    public enum JobTypeEnum {
         XXL,
         QUARTZ,
         SPRING,
         SIMPLE
     }
 
-    public static ScheduleTypeEnum getByJobTypeName(String type) {
-        for (ScheduleTypeEnum scheduleTypeEnum : ScheduleTypeEnum.values()) {
-            if (scheduleTypeEnum.name().equalsIgnoreCase(type)) {
-                return scheduleTypeEnum;
+    public static JobTypeEnum getByJobTypeName(String type) {
+        for (JobTypeEnum jobTypeEnum : JobTypeEnum.values()) {
+            if (jobTypeEnum.name().equalsIgnoreCase(type)) {
+                return jobTypeEnum;
             }
         }
         return null;

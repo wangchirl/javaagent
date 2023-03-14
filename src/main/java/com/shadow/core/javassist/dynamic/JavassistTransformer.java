@@ -17,6 +17,11 @@ public class JavassistTransformer extends AbstractTransformer implements ClassFi
     }
 
     @Override
+    protected boolean handlerMatched(Class<?> handler) {
+        return getJobType().name().equalsIgnoreCase(handler.getSimpleName().replace(CommonConstants.JAVASSIST_HANDLER_NAME_SUFFIX, ""));
+    }
+
+    @Override
     public byte[] transform(ClassLoader loader,
                             String className,
                             Class<?> classBeingRedefined,

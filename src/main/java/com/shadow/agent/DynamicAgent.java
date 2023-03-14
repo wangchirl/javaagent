@@ -2,7 +2,6 @@ package com.shadow.agent;
 
 import com.shadow.core.asm.dynamic.AsmTransformer;
 import com.shadow.core.asm.handler.*;
-import com.shadow.core.buddy.dynamic.BuddyTransformer;
 import com.shadow.core.buddy.handler.AbstractBuddyHandler;
 import com.shadow.core.buddy.handler.IBuddyHandler;
 import com.shadow.core.javassist.dynamic.JavassistTransformer;
@@ -10,7 +9,6 @@ import com.shadow.core.javassist.handler.*;
 import com.shadow.utils.CommonConstants;
 import com.shadow.utils.ParamResolveUtils;
 import jdk.internal.org.objectweb.asm.tree.MethodNode;
-import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.agent.builder.ResettableClassFileTransformer;
 
@@ -30,27 +28,27 @@ public class DynamicAgent extends BaseAgent {
         if (resolveArgs.get(CommonConstants.ORIGIN_JOB_TYPE) != null &&
                 resolveArgs.get(CommonConstants.CONTROLLER_CLASS) != null &&
                 resolveArgs.get(CommonConstants.JOB_TYPE) != null) {
-            CommonConstants.ScheduleTypeEnum originScheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.ORIGIN_JOB_TYPE));
-            CommonConstants.ScheduleTypeEnum scheduleTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
-            if (originScheduleTypeEnum != null && scheduleTypeEnum != null) {
+            CommonConstants.JobTypeEnum originJobTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.ORIGIN_JOB_TYPE));
+            CommonConstants.JobTypeEnum jobTypeEnum = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
+            if (originJobTypeEnum != null && jobTypeEnum != null) {
                 // transformer
                 ClassFileTransformer transformer = null;
                 CommonConstants.ProxyTypeEnum proxyTypeEnum = CommonConstants.getByProxyTypeName(resolveArgs.get(CommonConstants.PROXY_TYPE));
                 switch (proxyTypeEnum) {
                     case ASM:
                         // handle ASM default args
-                        MethodNode[] methodNodes = handleAsmDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
+                        MethodNode[] methodNodes = handleAsmDefaultArgs(resolveArgs, originJobTypeEnum, jobTypeEnum);
                         transformer = new AsmTransformer(resolveArgs, methodNodes[0], methodNodes[1]);
                         break;
                     case BUDDY:
                         // FIXME
-                        //AbstractBuddyHandler handler = handleBuddyDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
+                        //AbstractBuddyHandler handler = handleBuddyDefaultArgs(resolveArgs, originJobTypeEnum, jobTypeEnum);
                         // transformer = new BuddyTransformer(resolveArgs).handle(handler, inst);
                         break;
                     case JAVASSIST:
                     default:
                         // handle Javassist default args
-                        handleJavassistDefaultArgs(resolveArgs, originScheduleTypeEnum, scheduleTypeEnum);
+                        handleJavassistDefaultArgs(resolveArgs, originJobTypeEnum, jobTypeEnum);
                         transformer = new JavassistTransformer(resolveArgs);
                         break;
                 }
@@ -73,8 +71,8 @@ public class DynamicAgent extends BaseAgent {
     }
 
     private static MethodNode[] handleAsmDefaultArgs(Map<String, String> resolveArgs,
-                                                     CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
-                                                     CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
+                                                     CommonConstants.JobTypeEnum originJobTypeEnum,
+                                                     CommonConstants.JobTypeEnum jobTypeEnum) {
         // 1、common args
         handleCommonDefaultArgs(resolveArgs);
         // SPI
@@ -86,7 +84,7 @@ public class DynamicAgent extends BaseAgent {
             handlerMap.put(handler.getClass().getSimpleName().replace(CommonConstants.ASM_HANDLER_NAME_SUFFIX, "").toUpperCase(), (AbstractAsmHandler) handler);
         }
         // 2、find origin handle for method name
-        AbstractAsmHandler originHandler = handlerMap.get(originScheduleTypeEnum.name());
+        AbstractAsmHandler originHandler = handlerMap.get(originJobTypeEnum.name());
         // if args not found method name, set default
         if (resolveArgs.get(CommonConstants.METHOD_NAME) == null) {
             resolveArgs.put(CommonConstants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
@@ -96,15 +94,15 @@ public class DynamicAgent extends BaseAgent {
             // reset args for set CommonConstants.METHOD_NAME
             ((AbstractAsmHandler) handler).setArgs(resolveArgs);
         }
-        AbstractAsmHandler currentHandler = handlerMap.get(scheduleTypeEnum.name());
+        AbstractAsmHandler currentHandler = handlerMap.get(jobTypeEnum.name());
         MethodNode runMethodNode = currentHandler.getAndSetClassMethod(CommonConstants.ASM_API_VERSION);
         MethodNode crudMethodNode = currentHandler.getAndSetCrudClassMethod(CommonConstants.ASM_API_VERSION);
         return new MethodNode[]{runMethodNode, crudMethodNode};
     }
 
     private static AbstractBuddyHandler handleBuddyDefaultArgs(Map<String, String> resolveArgs,
-                                                               CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
-                                                               CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
+                                                               CommonConstants.JobTypeEnum originJobTypeEnum,
+                                                               CommonConstants.JobTypeEnum jobTypeEnum) {
         // 1、common args
         handleCommonDefaultArgs(resolveArgs);
         // SPI
@@ -116,7 +114,7 @@ public class DynamicAgent extends BaseAgent {
             handlerMap.put(handler.getClass().getSimpleName().replace(CommonConstants.BYTEBUDDY_HANDLER_NAME_SUFFIX, "").toUpperCase(), (AbstractBuddyHandler) handler);
         }
         // 2、find origin handle for method name
-        AbstractBuddyHandler originHandler = handlerMap.get(originScheduleTypeEnum.name());
+        AbstractBuddyHandler originHandler = handlerMap.get(originJobTypeEnum.name());
         // if args not found method name, set default
         if (resolveArgs.get(CommonConstants.METHOD_NAME) == null) {
             resolveArgs.put(CommonConstants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
@@ -126,14 +124,14 @@ public class DynamicAgent extends BaseAgent {
             // reset args for set CommonConstants.METHOD_NAME
             ((AbstractBuddyHandler) handler).setArgs(resolveArgs);
         }
-        AbstractBuddyHandler handler = handlerMap.get(scheduleTypeEnum.name());
+        AbstractBuddyHandler handler = handlerMap.get(jobTypeEnum.name());
         handler.initOriginHandler(originHandler);
         return handler;
     }
 
     private static void handleJavassistDefaultArgs(Map<String, String> resolveArgs,
-                                                   CommonConstants.ScheduleTypeEnum originScheduleTypeEnum,
-                                                   CommonConstants.ScheduleTypeEnum scheduleTypeEnum) {
+                                                   CommonConstants.JobTypeEnum originJobTypeEnum,
+                                                   CommonConstants.JobTypeEnum jobTypeEnum) {
         // 1、common args
         handleCommonDefaultArgs(resolveArgs);
         // SPI
@@ -144,7 +142,7 @@ public class DynamicAgent extends BaseAgent {
             handlerMap.put(handler.getClass().getSimpleName().replace(CommonConstants.JAVASSIST_HANDLER_NAME_SUFFIX, "").toUpperCase(), (AbstractJavassistHandler) handler);
         }
         // 2、find origin handle for method name
-        AbstractJavassistHandler originHandler = handlerMap.get(originScheduleTypeEnum.name());
+        AbstractJavassistHandler originHandler = handlerMap.get(originJobTypeEnum.name());
         // if args not found method name, set default
         if (resolveArgs.get(CommonConstants.METHOD_NAME) == null) {
             resolveArgs.put(CommonConstants.METHOD_NAME, originHandler.getClass().getSimpleName().toLowerCase());
@@ -154,7 +152,7 @@ public class DynamicAgent extends BaseAgent {
             // reset args for set CommonConstants.METHOD_NAME
             ((AbstractJavassistHandler) handler).setArgs(resolveArgs);
         }
-        AbstractJavassistHandler currentHandler = handlerMap.get(scheduleTypeEnum.name());
+        AbstractJavassistHandler currentHandler = handlerMap.get(jobTypeEnum.name());
         resolveArgs.put(CommonConstants.METHOD_BODY, currentHandler.getMethodBody().get());
     }
 }

@@ -27,6 +27,11 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
     }
 
     @Override
+    protected boolean handlerMatched(Class<?> handler) {
+        return getJobType().name().equalsIgnoreCase(handler.getSimpleName().replace(CommonConstants.ASM_HANDLER_NAME_SUFFIX, ""));
+    }
+
+    @Override
     public byte[] transform(ClassLoader loader,
                             String className,
                             Class<?> classBeingRedefined,

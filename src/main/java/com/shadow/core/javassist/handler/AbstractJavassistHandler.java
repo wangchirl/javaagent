@@ -20,6 +20,11 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
      */
     public abstract Supplier<String> getMethodBody();
 
+    @Override
+    protected void init() {
+
+    }
+
     /**
      * 主方法
      */
@@ -28,7 +33,12 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
             // 1、得到类池
             ClassPool cp = new ClassPool();
             // 2、设置类路径
-            cp.insertClassPath(new ClassClassPath(this.getClass()));
+            ClassLoader classLoader = cp.getClassLoader();
+            Class<?> springContext = classLoader.loadClass(SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getClassName());
+            cp.insertClassPath(new ClassClassPath(springContext));
+            Class<?> springAutowired = classLoader.loadClass(SpringConstants.SPRING_AUTOWIRED_TYPE.getClassName());
+            cp.insertClassPath(new ClassClassPath(springAutowired));
+            cp.appendClassPath(new ClassClassPath(this.getClass()));
             // 3、得到需要操作的类
             CtClass cc = cp.get(className);
             // 4、给得到的类添加注解属性

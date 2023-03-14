@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 public abstract class AbstractHandler {
 
     /**
-     * 记录 javaagent 传递的参数信息
+     * agent request args
      */
     private Map<String, String> args;
 
@@ -47,7 +47,7 @@ public abstract class AbstractHandler {
         this.args = args;
         this.threadLocalFieldName = getArgs().get(CommonConstants.THREADLOCAL_FIELD_NAME);
         this.threadLocalClassName = getArgs().get(CommonConstants.THREADLOCAL_CLASS_NAME);
-        this.threadLocalInnerClassName = this.threadLocalClassName == null ? null : this.threadLocalClassName.replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
+        this.threadLocalInnerClassName = this.threadLocalClassName == null ? null : this.threadLocalClassName.replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
         init();
     }
 

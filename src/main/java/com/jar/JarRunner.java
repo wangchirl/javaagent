@@ -1,9 +1,13 @@
-package com.helper;
+package com.jar;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * 获取 main class：
+ * 传参 file:///F:\source\scheduler\target\shadow.jar
+ */
 public class JarRunner {
 
     public static void main(String[] args) {

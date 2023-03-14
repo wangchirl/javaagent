@@ -51,7 +51,7 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
     }
 
     public void initInnerClassName() {
-        this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
+        this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
     }
 
     public byte[] handle(byte[] classfileBuffer) {

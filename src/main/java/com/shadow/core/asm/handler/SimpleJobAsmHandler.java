@@ -3,7 +3,6 @@ package com.shadow.core.asm.handler;
 import static jdk.internal.org.objectweb.asm.Opcodes.*;
 
 import com.shadow.utils.*;
-import jdk.internal.org.objectweb.asm.AnnotationVisitor;
 import jdk.internal.org.objectweb.asm.Opcodes;
 import jdk.internal.org.objectweb.asm.Type;
 import jdk.internal.org.objectweb.asm.tree.*;

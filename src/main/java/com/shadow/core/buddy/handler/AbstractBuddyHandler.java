@@ -43,6 +43,11 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
         }
     }
 
+    @Override
+    protected void init() {
+        initInnerClassName();
+    }
+
     /**
      * thread local run method body
      */
@@ -76,7 +81,7 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
     }
 
     public void initInnerClassName() {
-        this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.DOT, CommonConstants.BIAS);
+        this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
     }
 
     public ClassFileTransformer handle(Instrumentation inst) {
