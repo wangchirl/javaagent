@@ -1,7 +1,8 @@
 package com.shadow.utils;
 
+import com.shadow.common.RequestArgsVO;
+
 import java.io.PrintStream;
-import java.util.Map;
 
 public class CommonUtils {
 
@@ -9,10 +10,9 @@ public class CommonUtils {
 
     }
 
-    public static void printLogAllowed(Map<String, String> resolveArgs) {
+    public static void printLogAllowed(RequestArgsVO argsBean) {
         // System.out 打印是否开启
-        if (resolveArgs.get(CommonConstants.LOGGER_PRINT_OPEN) == null ||
-                !Boolean.parseBoolean(resolveArgs.get(CommonConstants.LOGGER_PRINT_OPEN))) {
+        if (!argsBean.getLogger()) {
             System.setOut(new PrintStream(System.out) {
                 @Override
                 public void println(String x) {

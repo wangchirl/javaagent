@@ -20,11 +20,6 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
      */
     public abstract Supplier<String> getMethodBody();
 
-    @Override
-    protected void init() {
-
-    }
-
     /**
      * 主方法
      */
@@ -47,7 +42,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
             addFields(cc);
             // 5、给得到的类添加方法
             addRunMethod(cp, cc);
-            if (Boolean.parseBoolean(getArgs().get(CommonConstants.TASK_CRUD))) {
+            if (getArgs().getCrud()) {
                 addCrudMethod(cp, cc);
             }
             // 6.3 扩展添加其他方法
@@ -72,7 +67,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         ClassFile ccFile = cc.getClassFile();
         ConstPool constPool = ccFile.getConstPool();
         // 6.1 添加方法注解
-        setClassMethodAnnotations(method, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI), constPool);
+        setClassMethodAnnotations(method, getArgs().getHttpUri(), constPool);
         // 6.2 添加方法参数
         setClassMethodParameters(method, constPool);
     }
@@ -88,19 +83,19 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         setCrudClassMethodParameters(method, constPool);
     }
 
-    protected abstract Supplier<String> getCrudMethodBody();
+    public abstract Supplier<String> getCrudMethodBody();
 
     /**
      * 设置属性 & 属性添加注解
      */
     private void setClassField(CtClass cc) throws CannotCompileException, NotFoundException {
         // 1、创建属性
-        CtField ctField = CtField.make(CommonConstants.ACC_PRIVATE + CommonConstants.SPACE + SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getClassName() + CommonConstants.SPACE + getArgs().get(CommonConstants.IOC_FIELD_NAME) + CommonConstants.SEMICOLON, cc);
+        CtField ctField = CtField.make(CommonConstants.ACC_PRIVATE + CommonConstants.SPACE + SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getClassName() + CommonConstants.SPACE + getArgs().getIocFieldName() + CommonConstants.SEMICOLON, cc);
         // 2、设置属性访问权限
         ctField.setModifiers(Modifier.PRIVATE);
         cc.addField(ctField);
         // 3、给属性添加注解
-        ctField = cc.getDeclaredField(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+        ctField = cc.getDeclaredField(getArgs().getIocFieldName());
         List<AttributeInfo> attributes = ctField.getFieldInfo().getAttributes();
         AnnotationsAttribute annotationsAttr = !attributes.isEmpty() ? (AnnotationsAttribute) attributes.get(0) :
                 new AnnotationsAttribute(ctField.getFieldInfo().getConstPool(), AnnotationsAttribute.visibleTag);
@@ -119,7 +114,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         method.setModifiers(Modifier.PUBLIC);
         method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
         // 3、设置方法体
-        method.setBody(getArgs().get(CommonConstants.METHOD_BODY) == null ? methodBody.get() : getArgs().get(CommonConstants.METHOD_BODY));
+        method.setBody(getArgs().getMethodBody() == null ? methodBody.get() : getArgs().getMethodBody());
         cc.addMethod(method);
         return method;
     }
@@ -134,7 +129,7 @@ public abstract class AbstractJavassistHandler extends AbstractHandler implement
         method.setModifiers(Modifier.PUBLIC);
         method.setExceptionTypes(new CtClass[]{cp.get(Exception.class.getName())});
         // 3、设置方法体
-        method.setBody(getArgs().get(CommonConstants.CRUD_METHOD_BODY) == null ? methodBody.get() : getArgs().get(CommonConstants.CRUD_METHOD_BODY));
+        method.setBody(getArgs().getCrudMethodBody() == null ? methodBody.get() : getArgs().getCrudMethodBody());
         cc.addMethod(method);
         return method;
     }

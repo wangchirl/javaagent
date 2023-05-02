@@ -7,17 +7,14 @@ public class XxlConstants {
     private XxlConstants() {
 
     }
+    // tips
+    public static String XXL_SUCCESS = "Execute Xxl Job Successful !";
 
-    // TIPS
-    public static String PROXY_LOG_TIPS = "Xxl " + CommonConstants.TIPS;
-    public static String ASM_PROXY_LOG_TIPS = "ASM " + PROXY_LOG_TIPS;
-    public static String JAVASSIST_PROXY_LOG_TIPS = "JAVASSIST " + PROXY_LOG_TIPS;
-
-    public static String JOB_HANDLERRE_POSITORY = "jobHandlerRepository";
+    public static String JOB_HANDLER_REPOSITORY = "jobHandlerRepository";
 
     // ♥♥♥♥♥♥♥♥ XXL 相关类及其描述符 ♥♥♥♥♥♥♥♥
 
-    public static Type XXL_JOBEXECUTOR_TYPE = Type.getType("Lcom/xxl/job/core/executor/XxlJobExecutor;");
-    public static Type XXL_JOBHANDLER_TYPE = Type.getType("Lcom/xxl/job/core/handler/IJobHandler;");
+    public static Type XXL_JOB_EXECUTOR_TYPE = Type.getType("Lcom/xxl/job/core/executor/XxlJobExecutor;");
+    public static Type XXL_JOB_HANDLER_TYPE = Type.getType("Lcom/xxl/job/core/handler/IJobHandler;");
 
 }

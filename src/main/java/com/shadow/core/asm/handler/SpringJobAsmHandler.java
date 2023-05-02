@@ -33,33 +33,33 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         il.add(new JumpInsnNode(IFNULL, line14));
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         // "java/lang/ThreadLocal"、"set"、"(Ljava/lang/Object;)V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
         il.add(new JumpInsnNode(GOTO, line25));
         il.add(line14);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
         il.add(new JumpInsnNode(IFNULL, line25));
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
         // "java/lang/ThreadLocal"、"set"、"(Ljava/lang/Object;)V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
         il.add(line25);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
         // "Lorg/springframework/context/ApplicationContext;"
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getIocFieldName(), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
         // "Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;"
-        il.add(new LdcInsnNode(Type.getType(SpringConstants.SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_TYPE.getDescriptor())));
+        il.add(new LdcInsnNode(Type.getType(SpringConstants.SPRING_SCHEDULED_ANNOTATION_BEAN_POSTPROCESSOR_TYPE.getDescriptor())));
         // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/Class;)Ljava/lang/Object;"
         il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_C_, true));
         // "org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor"
-        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_SCHEDULED_ANNOTATION_BEAN_POSTPROCESSOR_TYPE.getInternalName()));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_4));
         // "org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor"、"getScheduledTasks"、"()Ljava/util/Set;"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULEDTASKS, BaseConstants.SET_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_ANNOTATION_BEAN_POSTPROCESSOR_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULEDTASKS, BaseConstants.SET_, false));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_5));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
         // "java/util/Set"、"iterator"、"()Ljava/util/Iterator;"
@@ -74,21 +74,21 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         // "java/util/Iterator"、"next"、"()Ljava/lang/Object;"
         il.add(new MethodInsnNode(INVOKEINTERFACE, BaseConstants.ITERATOR_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_NEXT, BaseConstants.O_, true));
         // "org/springframework/scheduling/config/ScheduledTask"
-        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_SCHEDULEDTASK_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_SCHEDULED_TASK_TYPE.getInternalName()));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_7));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_7));
         // "org/springframework/scheduling/config/ScheduledTask"、"getTask"、"()Lorg/springframework/scheduling/config/Task;"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDTASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETTASK, SpringConstants.TASK_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETTASK, SpringConstants.TASK_, false));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_8));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_8));
         // "org/springframework/scheduling/config/Task"、"getRunnable"、"()Ljava/lang/Runnable;"
         il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETRUNNABLE, BaseConstants.RUNNABLE_, false));
         // "org/springframework/scheduling/support/ScheduledMethodRunnable"
-        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_SCHEDULEDMETHODRUNNABLE_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(CHECKCAST, SpringConstants.SPRING_SCHEDULED_METHOD_RUNNABLE_TYPE.getInternalName()));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_9));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_9));
         // "org/springframework/scheduling/support/ScheduledMethodRunnable"、"getMethod"、"()Ljava/lang/reflect/Method;"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDMETHODRUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETMETHOD, BaseConstants.REFLECT_METHOD_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_METHOD_RUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETMETHOD, BaseConstants.REFLECT_METHOD_, false));
         // "java/lang/reflect/Method"、"getName"、"()Ljava/lang/String;"
         il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.REFLECT_METHOD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETNAME, BaseConstants.S_, false));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_1));
@@ -97,12 +97,12 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(IFEQ, line119));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_9));
         // "org/springframework/scheduling/support/ScheduledMethodRunnable"、"run"、"()V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDMETHODRUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_METHOD_RUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, false));
         il.add(new JumpInsnNode(GOTO, line122));
         il.add(line119);
         il.add(new JumpInsnNode(GOTO, line57));
         il.add(line122);
-        il.add(new LdcInsnNode(CommonConstants.SPRING_SUCCESS));
+        il.add(new LdcInsnNode(SpringConstants.SPRING_SUCCESS));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_6));
         il.add(end);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
@@ -111,9 +111,9 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(IFNULL, line140));
         il.add(line134);
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         // "java/lang/ThreadLocal"、"remove"、"()V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
         il.add(line140);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_6));
         il.add(new InsnNode(ARETURN));
@@ -125,9 +125,9 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(IFNULL, line159));
         il.add(line153);
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         // "java/lang/ThreadLocal"、"remove"、"()V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
         il.add(line159);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_10));
         il.add(new InsnNode(ATHROW));
@@ -144,17 +144,17 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         LabelNode line97 = new LabelNode();
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_0));
         // "Lorg/springframework/context/ApplicationContext;"
-        il.add(new FieldInsnNode(Opcodes.GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(Opcodes.GETFIELD, getInnerClassName(), getArgs().getIocFieldName(), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
         // "Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;"
-        il.add(new LdcInsnNode(Type.getType(SpringConstants.SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_TYPE.getDescriptor())));
+        il.add(new LdcInsnNode(Type.getType(SpringConstants.SPRING_SCHEDULED_ANNOTATION_BEAN_POSTPROCESSOR_TYPE.getDescriptor())));
         // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/Class;)Ljava/lang/Object;"
         il.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_C_, true));
         // "org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor"
-        il.add(new TypeInsnNode(Opcodes.CHECKCAST, SpringConstants.SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(Opcodes.CHECKCAST, SpringConstants.SPRING_SCHEDULED_ANNOTATION_BEAN_POSTPROCESSOR_TYPE.getInternalName()));
         il.add(new VarInsnNode(Opcodes.ASTORE, IndexConstants.INDEX_4));
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_4));
         // "org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor"、"getScheduledTasks"、"()Ljava/util/Set;"
-        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDANNOTATIONBEANPOSTPROCESSOR_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULEDTASKS, BaseConstants.SET_, false));
+        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_ANNOTATION_BEAN_POSTPROCESSOR_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULEDTASKS, BaseConstants.SET_, false));
         il.add(new VarInsnNode(Opcodes.ASTORE, IndexConstants.INDEX_5));
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_5));
         // "java/util/Set"、"iterator"、"()Ljava/util/Iterator;"
@@ -169,21 +169,21 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         // "java/util/Iterator"、"next"、"()Ljava/lang/Object;"
         il.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, BaseConstants.ITERATOR_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_NEXT, BaseConstants.O_, true));
         // "org/springframework/scheduling/config/ScheduledTask"
-        il.add(new TypeInsnNode(Opcodes.CHECKCAST, SpringConstants.SPRING_SCHEDULEDTASK_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(Opcodes.CHECKCAST, SpringConstants.SPRING_SCHEDULED_TASK_TYPE.getInternalName()));
         il.add(new VarInsnNode(Opcodes.ASTORE, IndexConstants.INDEX_7));
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_7));
         // "org/springframework/scheduling/config/ScheduledTask"、"getTask"、"()Lorg/springframework/scheduling/config/Task;"
-        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDTASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETTASK, SpringConstants.TASK_, false));
+        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETTASK, SpringConstants.TASK_, false));
         il.add(new VarInsnNode(Opcodes.ASTORE, IndexConstants.INDEX_8));
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_8));
         // "org/springframework/scheduling/config/Task"、"getRunnable"、"()Ljava/lang/Runnable;"
         il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETRUNNABLE, BaseConstants.RUNNABLE_, false));
         // "org/springframework/scheduling/support/ScheduledMethodRunnable"
-        il.add(new TypeInsnNode(Opcodes.CHECKCAST, SpringConstants.SPRING_SCHEDULEDMETHODRUNNABLE_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(Opcodes.CHECKCAST, SpringConstants.SPRING_SCHEDULED_METHOD_RUNNABLE_TYPE.getInternalName()));
         il.add(new VarInsnNode(Opcodes.ASTORE, IndexConstants.INDEX_9));
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_9));
         // "org/springframework/scheduling/support/ScheduledMethodRunnable"、"getMethod"、"()Ljava/lang/reflect/Method;"
-        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDMETHODRUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETMETHOD, BaseConstants.REFLECT_METHOD_, false));
+        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_METHOD_RUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETMETHOD, BaseConstants.REFLECT_METHOD_, false));
         // "java/lang/reflect/Method"、"getName"、"()Ljava/lang/String;"
         il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, BaseConstants.REFLECT_METHOD_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETNAME, BaseConstants.S_, false));
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_1));
@@ -192,12 +192,12 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(Opcodes.IFEQ, line94));
         il.add(new VarInsnNode(Opcodes.ALOAD, IndexConstants.INDEX_9));
         // "org/springframework/scheduling/support/ScheduledMethodRunnable"、"run"、"()V"
-        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULEDMETHODRUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, false));
+        il.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, SpringConstants.SPRING_SCHEDULED_METHOD_RUNNABLE_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, false));
         il.add(new JumpInsnNode(Opcodes.GOTO, line97));
         il.add(line94);
         il.add(new JumpInsnNode(Opcodes.GOTO, line32));
         il.add(line97);
-        il.add(new LdcInsnNode(CommonConstants.SPRING_SUCCESS));
+        il.add(new LdcInsnNode(SpringConstants.SPRING_SUCCESS));
         il.add(new InsnNode(Opcodes.ARETURN));
         methodNode.maxStack = IndexConstants.INDEX_9;
         methodNode.maxLocals = IndexConstants.INDEX_10;
@@ -220,7 +220,7 @@ public class SpringJobAsmHandler extends AbstractAsmHandler {
         il.add(new InsnNode(ICONST_0));
         il.add(new VarInsnNode(ISTORE,4));
         il.add(new VarInsnNode(ALOAD,0));
-        il.add(new FieldInsnNode(GETFIELD,getInnerClassName(),getArgs().get(CommonConstants.IOC_FIELD_NAME),"Lorg/springframework/context/ApplicationContext;"));
+        il.add(new FieldInsnNode(GETFIELD,getInnerClassName(),getArgs().getIocFieldName(),"Lorg/springframework/context/ApplicationContext;"));
         il.add(new LdcInsnNode(Type.getType("Lorg/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor;")));
         il.add(new MethodInsnNode(INVOKEINTERFACE,"org/springframework/context/ApplicationContext","getBean","(Ljava/lang/Class;)Ljava/lang/Object;",true));
         il.add(new TypeInsnNode(CHECKCAST,"org/springframework/scheduling/annotation/ScheduledAnnotationBeanPostProcessor"));

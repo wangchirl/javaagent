@@ -1,7 +1,7 @@
 package com.shadow.agent;
 
 /**
- * agemt attach test
+ * agent attach test
  */
 public class LauncherAgent {
 

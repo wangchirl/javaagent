@@ -8,12 +8,12 @@ import com.shadow.utils.CommonConstants;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.Map;
+
 
 public class JavassistTransformer extends AbstractTransformer implements ClassFileTransformer {
 
-    public JavassistTransformer(Map<String, String> resolveArgs) {
-        super(resolveArgs, IJavassistHandler.class);
+    public JavassistTransformer() {
+        super(IJavassistHandler.class);
     }
 
     @Override

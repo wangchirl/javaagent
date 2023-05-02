@@ -36,24 +36,6 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
      */
     public abstract void setNormalMethodBody(MethodNode methodNode);
 
-    @Override
-    protected void init() {
-        initInnerClassName();
-    }
-
-    /**
-     * inner class name
-     */
-    private String innerClassName;
-
-    String getInnerClassName() {
-        return innerClassName;
-    }
-
-    public void initInnerClassName() {
-        this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
-    }
-
     public byte[] handle(byte[] classfileBuffer) {
         try {
             // 1、read class buffer
@@ -154,7 +136,7 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
         AnnotationNode annotation = (AnnotationNode) methodNode.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), true);
         // 数组格式的参数
         AnnotationVisitor value = annotation.visitArray(CommonConstants.CONST_VALUE);
-        value.visit(CommonConstants.CONST_VALUE, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI));
+        value.visit(CommonConstants.CONST_VALUE, getArgs().getHttpUri());
         // 1.3 method parameter annotation
         // @PathVariable("taskKey")
         AnnotationVisitor pathvariable = methodNode.visitParameterAnnotation(
@@ -187,7 +169,7 @@ public abstract class AbstractAsmHandler extends AbstractHandler implements IAsm
         FieldNode fieldNode = new FieldNode(
                 api,
                 Opcodes.ACC_PRIVATE,
-                getArgs().get(CommonConstants.IOC_FIELD_NAME),
+                getArgs().getIocFieldName(),
                 SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor(),
                 null,
                 null);

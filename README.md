@@ -56,7 +56,7 @@
 5. 进入测试项目target目录下，执行脚本
 
    ```sh
-   java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,tlClass=com.shadow.supports.framework.ScheduleService,tlFieldName=JOB_PARAMETERS_THREAD_LOCAL,debug=true,logger=true,crudFieldName=xxxx,crud=true,proxyType=asm,jobType=spring -jar shadow.jar
+   java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,jobType=spring -jar shadow.jar
    ```
 
 6. 测试定时任务立即执行及CRUD
@@ -126,7 +126,7 @@
 
   ```sh
   # 启动项目
-  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,tlClass=com.shadow.supports.framework.ScheduleService,tlFieldName=JOB_PARAMETERS_THREAD_LOCAL,debug=true,logger=true,crudFieldName=xxxx,crud=true,proxyType=asm,jobType=xxl -jar shadow.jar
+  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,jobType=xxl -jar shadow.jar
   ```
 
   ```sh
@@ -142,26 +142,26 @@
 
   ```sh
   # 启动项目
-  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,tlClass=com.shadow.supports.framework.ScheduleService,tlFieldName=JOB_PARAMETERS_THREAD_LOCAL,debug=true,logger=true,crudFieldName=xxxx,crud=true,proxyType=asm,jobType=quartz -jar shadow.jar
+  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,jobType=quartz -jar shadow.jar
   ```
 
   ```sh
   # 执行定时任务 [quartzTriggerKey] 为 Trigger Bean，[quartzJob]为 job detail ID
-  curl -H "Content-Type:application/json"  -X POST  --data "{\"name\":\"shadow\",\"age\":20}" localhost:50084/shadow/api/system/agent/run/quartzTriggerKey?params=quartzJob
+  curl -H "Content-Type:application/json"  -X POST  --data "{\"name\":\"shadow\",\"age\":20}" localhost:50084/shadow/api/system/agent/run/quartzTriggerKey?params=测试
   # 修改 cron 表达式为 0/3 * * * * ?
   curl localhost:50084/shadow/api/system/agent/crud/1/quartzTriggerKey@quartzJob?cron=0/3%20*%20*%20*%20*%20?
   ```
 
   > Quartz 定时任务存在特殊性:
   >
-  > - 除了指定 taskKey 的 trigger 外，还需要额外指定 job detail 的 ID，此处使用了 params 请求参数来传递 job detail 的值
+  > - 除了指定 taskKey 的 trigger 外，还需要额外指定 job detail 的 ID，quartzTriggerKey@quartzJob
   > - 其参数传递不能使用 ThreadLocal 方式，需要使用其 JobDataMap 的方式
 
 - spring job 测试
 
   ```sh
   # 启动项目
-  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,tlClass=com.shadow.supports.framework.ScheduleService,tlFieldName=JOB_PARAMETERS_THREAD_LOCAL,debug=true,logger=true,crudFieldName=xxxx,crud=true,proxyType=asm,jobType=spring -jar shadow.jar
+  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,jobType=spring -jar shadow.jar
   ```
 
   ```sh
@@ -178,12 +178,12 @@
 
   ```sh
   # 启动项目
-  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,tlClass=com.shadow.supports.framework.ScheduleService,tlFieldName=JOB_PARAMETERS_THREAD_LOCAL,debug=true,logger=true,crudFieldName=xxxx,crud=true,proxyType=asm,jobType=simple -jar shadow.jar
+  java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=ctlClass=com.shadow.controller.AgentBaseController,jobType=simple -jar shadow.jar
   ```
 
   ```sh
   # 执行定时任务 [simple1] 为 spring 容器 Bean 名称
-  curl localhost:50084/shadow/api/system//agent/run/simple1?testSimple
+  curl localhost:50084/shadow/api/system//agent/run/simple1?params=testSimple
   # 修改 cron 表达式为 0/3 * * * * ?
   curl localhost:50084/shadow/api/system/agent/crud/1/simple2?cron=0/3%20*%20*%20*%20*%20?
   ```
@@ -212,10 +212,27 @@
 
 
 
-#### 8、Attach 机制 - 可动态替换定时任务类型 TODO
+#### 8、Attach 机制 - 可动态替换定时任务类型
 
 >  测试类：com.shadow.agent.AttachAgentTest
 >
-> ```sh
-> originJobType=xxl&jobType=simple&ctlClass=com.shadow.controller.AgentBaseController&methodName=testMethod&iocFieldName=ioc&tlClass=com.shadow.supports.framework.ScheduleService&tlFieldName=JOB_PARAMETERS_THREAD_LOCAL&debug=true
-> ```
+>  - IDEA 测试
+>
+>    - 加入启动参数
+>
+>    ```sh
+>    # IDEA vm options
+>    -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=jobType=xxl,ctlClass=com.shadow.controller.AgentBaseController,jobType=spring,logger=true
+>    ```
+>
+>    - 执行 com.shadow.agent.AttachAgentTest
+>
+>    > 注意：originJobType 的值是原始定时任务类型，支持重复操作
+>
+>  - jar 测试
+>
+>    - 启动参数
+>
+>    ```sh
+>    java -javaagent:本地路径(替换为自己的)\javaagent\target\SuperAgent-jar-with-dependencies.jar=jobType=xxl,ctlClass=com.shadow.controller.AgentBaseController,jobType=spring,logger=true -jar shadow.jar
+>    ```

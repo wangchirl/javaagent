@@ -21,7 +21,8 @@ public class AttachAgentTest {
             System.out.println("Provider Type: " + provider.type());
             System.out.println("Provider Impl: " + provider.getClass());
             System.out.println("=====================");
-            if (displayName.equals("com.shadow.Application")) {
+            if (displayName.equals("com.shadow.Application")) { // idea 启动 VM options : -javaagent:F:\source\javaagent\target\SuperAgent-jar-with-dependencies.jar=jobType=xxl,ctlClass=com.shadow.controller.AgentBaseController,jobType=spring,logger=true
+//            if (displayName.equals("shadow.jar")) { // jar 启动 java -javaagent:F:\source\javaagent\target\SuperAgent-jar-with-dependencies.jar=jobType=xxl,ctlClass=com.shadow.controller.AgentBaseController,jobType=spring,logger=true -jar shadow.jar
                 VirtualMachine vm = VirtualMachine.attach(vmd);
                 Properties systemProperties = vm.getSystemProperties();
                 Properties agentProperties = vm.getAgentProperties();
@@ -29,7 +30,7 @@ public class AttachAgentTest {
                 System.out.println("agentProperties : " + agentProperties);
                 // attach
                 String agentPath = "F:\\source\\javaagent\\target\\SuperAgent-jar-with-dependencies.jar";
-                vm.loadAgent(agentPath, "proxyType=buddy&debug=true&originJobType=spring&jobType=simple&ctlClass=com.shadow.controller.AgentBaseController&tlClass=com.shadow.supports.framework.ScheduleService&tlFieldName=JOB_PARAMETERS_THREAD_LOCAL");
+                vm.loadAgent(agentPath, "proxyType=asm,debug=true,logger=true,originJobType=spring,jobType=spring,ctlClass=com.shadow.controller.AgentBaseController");
                 vm.detach();
                 break;
             }
