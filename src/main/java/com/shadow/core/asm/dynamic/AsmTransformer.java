@@ -12,7 +12,6 @@ import jdk.internal.org.objectweb.asm.tree.MethodNode;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.Map;
 
 public class AsmTransformer extends AbstractTransformer implements ClassFileTransformer {
 
@@ -20,8 +19,8 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
 
     private MethodNode crudMethodNode;
 
-    public AsmTransformer(Map<String, String> resolveArgs, MethodNode runMethodNode, MethodNode crudMethodNode) {
-        super(resolveArgs);
+    public AsmTransformer(MethodNode runMethodNode, MethodNode crudMethodNode) {
+        super();
         this.runMethodNode = runMethodNode;
         this.crudMethodNode = crudMethodNode;
     }
@@ -47,7 +46,7 @@ public class AsmTransformer extends AbstractTransformer implements ClassFileTran
                 cr.accept(cn, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 // 3、transform
                 // 3.1 delete exist method
-                cn.methods.removeIf(mn -> mn.name.equals(getArgs().get(CommonConstants.METHOD_NAME)) && mn.desc.equals(BaseConstants.O_SSO));
+                cn.methods.removeIf(mn -> mn.name.equals(getArgs().getMethodName()) && mn.desc.equals(BaseConstants.O_SSO));
                 cn.methods.removeIf(mn -> mn.name.equals(CommonConstants.DEFAULT_CRUD_METHOD_NAME) && mn.desc.equals(BaseConstants.O_ISS));
                 // 3.2 add method
                 cn.methods.add(this.runMethodNode);

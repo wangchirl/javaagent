@@ -29,41 +29,41 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         il.add(new JumpInsnNode(IFNULL, line14));
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         // "java/lang/ThreadLocal"、"set"、"(Ljava/lang/Object;)V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
         il.add(new JumpInsnNode(GOTO, line25));
         il.add(line14);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
         il.add(new JumpInsnNode(IFNULL, line25));
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
         // "java/lang/ThreadLocal"、"set"、"(Ljava/lang/Object;)V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_SET, BaseConstants.V_O, false));
         il.add(line25);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_1));
         // "com/shadow/supports/helper/ScheduleTaskInfoEnum"、"getScheduleTaskBeanNameByTaskKey"、"(Ljava/lang/String;)Ljava/lang/String;"
-        il.add(new MethodInsnNode(INVOKESTATIC, SimpleConstants.SIMPLE_SCHEDULETASKINFOENUM_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULETASKBEANNAMEBYTASKKEY, BaseConstants.S_S, false));
+        il.add(new MethodInsnNode(INVOKESTATIC, SimpleConstants.SIMPLE_SCHEDULE_TASK_INFO_ENUM_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULETASKBEANNAMEBYTASKKEY, BaseConstants.S_S, false));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
         // "Lorg/springframework/context/ApplicationContext;"
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getIocFieldName(), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_4));
         // "Lcom/shadow/supports/framework/ICronTriggerTask;"
-        il.add(new LdcInsnNode(Type.getType(SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getDescriptor())));
+        il.add(new LdcInsnNode(Type.getType(SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getDescriptor())));
         // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;"
         il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_S_C_, true));
         // "com/shadow/supports/framework/ICronTriggerTask"
-        il.add(new TypeInsnNode(CHECKCAST, SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(CHECKCAST, SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getInternalName()));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_5));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
         // "com/shadow/supports/framework/ICronTriggerTask"、"run"、"()V"
-        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, true));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, true));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
         // "com/shadow/supports/framework/ICronTriggerTask"、"getResult"、"()Lcom/shadow/supports/framework/support/ScheduleResult;"
-        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETRESULT, SimpleConstants.SCHEDULERESULT_, true));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETRESULT, SimpleConstants.SCHEDULE_RESULT_, true));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_6));
         il.add(end);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
@@ -72,9 +72,9 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(IFNULL, line79));
         il.add(line73);
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         // "java/lang/ThreadLocal"、"remove"、"()V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
         il.add(line79);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_6));
         il.add(new InsnNode(ARETURN));
@@ -86,9 +86,9 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(IFNULL, line98));
         il.add(line92);
         // "Ljava/lang/ThreadLocal;"
-        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREADLOCAL_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETSTATIC, getThreadLocalInnerClassName(), getThreadLocalFieldName(), BaseConstants.THREAD_LOCAL_TYPE.getDescriptor()));
         // "java/lang/ThreadLocal"、"remove"、"()V"
-        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREADLOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
+        il.add(new MethodInsnNode(INVOKEVIRTUAL, BaseConstants.THREAD_LOCAL_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_REMOVE, BaseConstants.V_, false));
         il.add(line98);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_7));
         il.add(new InsnNode(ATHROW));
@@ -101,25 +101,25 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         InsnList il = methodNode.instructions;
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_1));
         // "com/shadow/supports/helper/ScheduleTaskInfoEnum"、"getScheduleTaskBeanNameByTaskKey"、"(Ljava/lang/String;)Ljava/lang/String;"
-        il.add(new MethodInsnNode(INVOKESTATIC, SimpleConstants.SIMPLE_SCHEDULETASKINFOENUM_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULETASKBEANNAMEBYTASKKEY, BaseConstants.S_S, false));
+        il.add(new MethodInsnNode(INVOKESTATIC, SimpleConstants.SIMPLE_SCHEDULE_TASK_INFO_ENUM_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETSCHEDULETASKBEANNAMEBYTASKKEY, BaseConstants.S_S, false));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
         // "Lorg/springframework/context/ApplicationContext;"
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getIocFieldName(), SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor()));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_4));
         // "Lcom/shadow/supports/framework/ICronTriggerTask;"
-        il.add(new LdcInsnNode(Type.getType(SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getDescriptor())));
+        il.add(new LdcInsnNode(Type.getType(SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getDescriptor())));
         // "org/springframework/context/ApplicationContext"、"getBean"、"(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;"
         il.add(new MethodInsnNode(INVOKEINTERFACE, SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETBEAN, BaseConstants.O_S_C_, true));
         // "com/shadow/supports/framework/ICronTriggerTask"
-        il.add(new TypeInsnNode(CHECKCAST, SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getInternalName()));
+        il.add(new TypeInsnNode(CHECKCAST, SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getInternalName()));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_5));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
         // "com/shadow/supports/framework/ICronTriggerTask"、"run"、"()V"
-        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, true));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_RUN, BaseConstants.V_, true));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
         // "com/shadow/supports/framework/ICronTriggerTask"、"getResult"、"()Lcom/shadow/supports/framework/support/ScheduleResult;"
-        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRONTRIGGERTASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETRESULT, SimpleConstants.SCHEDULERESULT_, true));
+        il.add(new MethodInsnNode(INVOKEINTERFACE, SimpleConstants.SIMPLE_ICRON_TRIGGER_TASK_TYPE.getInternalName(), MethodNameConstants.METHOD_NAME_GETRESULT, SimpleConstants.SCHEDULE_RESULT_, true));
         il.add(new InsnNode(ARETURN));
         methodNode.maxStack = IndexConstants.INDEX_5;
         methodNode.maxLocals = IndexConstants.INDEX_6;
@@ -137,8 +137,8 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         FieldNode fieldNode = new FieldNode(
                 api,
                 Opcodes.ACC_PRIVATE,
-                getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME),
-                SimpleConstants.SIMPLE_COMMONSCHEDULINGCONFIGURER_TYPE.getDescriptor(),
+                getArgs().getCrudFieldName(),
+                SimpleConstants.SIMPLE_COMMON_SCHEDULING_CONFIGURER_TYPE.getDescriptor(),
                 null,
                 null);
         fieldNode.visitAnnotation(SpringConstants.SPRING_AUTOWIRED_TYPE.getDescriptor(), true);
@@ -156,7 +156,7 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new TableSwitchInsnNode(IndexConstants.INDEX_0, IndexConstants.INDEX_2, labelNode3, new LabelNode[] { labelNode0, labelNode1, labelNode2 }));
         il.add(labelNode0);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getCrudFieldName(), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         il.add(new MethodInsnNode(INVOKEVIRTUAL, "com/shadow/supports/framework/CommonSchedulingConfigurer", "cancel", "(Ljava/lang/String;)Ljava/lang/Boolean;", false));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_4));
@@ -164,7 +164,7 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(GOTO, labelNode4));
         il.add(labelNode1);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getCrudFieldName(), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_3));
         il.add(new MethodInsnNode(INVOKEVIRTUAL, "com/shadow/supports/framework/CommonSchedulingConfigurer", "update", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Boolean;", false));
@@ -175,7 +175,7 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new MethodInsnNode(INVOKESTATIC, "com/shadow/supports/helper/ScheduleTaskInfoEnum", "getScheduleTaskBeanNameByTaskKey", "(Ljava/lang/String;)Ljava/lang/String;", false));
         il.add(new VarInsnNode(ASTORE, IndexConstants.INDEX_5));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getIocFieldName(), "Lorg/springframework/context/ApplicationContext;"));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_5));
         il.add(new LdcInsnNode(Type.getType("Lcom/shadow/supports/framework/ICronTriggerTask;")));
         il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getBean", "(Ljava/lang/String;Ljava/lang/Class;)Ljava/lang/Object;", true));
@@ -183,7 +183,7 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_6));
         il.add(new TypeInsnNode(CHECKCAST, "com/shadow/supports/framework/ICronTriggerTask"));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.IOC_FIELD_NAME), "Lorg/springframework/context/ApplicationContext;"));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getIocFieldName(), "Lorg/springframework/context/ApplicationContext;"));
         il.add(new MethodInsnNode(INVOKEINTERFACE, "org/springframework/context/ApplicationContext", "getEnvironment", "()Lorg/springframework/core/env/Environment;", true));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_2));
         il.add(new MethodInsnNode(INVOKESTATIC, "com/shadow/supports/helper/ScheduleTaskInfoEnum", "getScheduleTaskCronNameByTaskKey", "(Ljava/lang/String;)Ljava/lang/String;", false));
@@ -204,7 +204,7 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new InsnNode(POP));
         il.add(labelNode5);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getCrudFieldName(), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_6));
         il.add(new TypeInsnNode(CHECKCAST, "com/shadow/supports/framework/ICronTriggerTask"));
         il.add(new MethodInsnNode(INVOKEVIRTUAL, "com/shadow/supports/framework/CommonSchedulingConfigurer", "add", "(Lcom/shadow/supports/framework/ICronTriggerTask;)Ljava/lang/Boolean;", false));
@@ -212,7 +212,7 @@ public class SimpleJobAsmHandler extends AbstractAsmHandler {
         il.add(new JumpInsnNode(GOTO, labelNode4));
         il.add(labelNode3);
         il.add(new VarInsnNode(ALOAD, IndexConstants.INDEX_0));
-        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().get(CommonConstants.SIMPLE_JOB_IOC_FIELD_NAME), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
+        il.add(new FieldInsnNode(GETFIELD, getInnerClassName(), getArgs().getCrudFieldName(), "Lcom/shadow/supports/framework/CommonSchedulingConfigurer;"));
         il.add(new InsnNode(ACONST_NULL));
         il.add(new MethodInsnNode(INVOKEVIRTUAL, "com/shadow/supports/framework/CommonSchedulingConfigurer", "get", "(Ljava/lang/String;)Lcom/shadow/supports/helper/ScheduleVO;", false));
         il.add(new InsnNode(ARETURN));

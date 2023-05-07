@@ -1,11 +1,12 @@
 package com.shadow.core;
 
-import com.shadow.core.common.ProxyClassLoader;
+import com.shadow.common.ProxyClassLoader;
+import com.shadow.common.RequestArgsVO;
 import com.shadow.utils.CommonConstants;
+import com.shadow.utils.ParamResolveUtils;
 import org.reflections.Reflections;
 
 import java.lang.reflect.Modifier;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class AbstractTransformer {
@@ -21,12 +22,6 @@ public abstract class AbstractTransformer {
     private CommonConstants.JobTypeEnum jobType;
 
     /**
-     * proxy controller class name
-     * {@code java.lang.String}
-     */
-    private String className;
-
-    /**
      * proxy controller inner class name
      * {@code java/lang/String}
      */
@@ -35,7 +30,7 @@ public abstract class AbstractTransformer {
     /**
      * agent request args
      */
-    private Map<String, String> args;
+    private RequestArgsVO args;
 
     protected CommonConstants.JobTypeEnum getJobType() {
         return jobType;
@@ -45,23 +40,22 @@ public abstract class AbstractTransformer {
         return innerClassName;
     }
 
-    public String getClassName() {
-        return className;
+    protected String getClassName() {
+        return args.getCtlClass();
     }
 
-    public Map<String, String> getArgs() {
+    public RequestArgsVO getArgs() {
         return args;
     }
 
-    public AbstractTransformer(Map<String, String> resolveArgs) {
-        this.args = resolveArgs;
-        this.className = resolveArgs.get(CommonConstants.CONTROLLER_CLASS);
-        this.innerClassName = this.className.replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
-        this.jobType = CommonConstants.getByJobTypeName(resolveArgs.get(CommonConstants.JOB_TYPE));
+    public AbstractTransformer() {
+        this.args = ParamResolveUtils.REQUEST_ARGS_VO_THREAD_LOCAL.get();
+        this.innerClassName = this.args.getCtlClass().replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
+        this.jobType = CommonConstants.getByJobTypeName(this.args.getJobType());
     }
 
-    public AbstractTransformer(Map<String, String> resolveArgs, Class clazz) {
-        this(resolveArgs);
+    public AbstractTransformer(Class clazz) {
+        this();
         String clazzName = clazz.getName();
         Reflections reflections = new Reflections(clazzName, clazzName.substring(0, clazzName.lastIndexOf(CommonConstants.DOT)));
         Set<Class<?>> handlers = reflections.getSubTypesOf(clazz);
@@ -82,9 +76,7 @@ public abstract class AbstractTransformer {
         try {
             ProxyClassLoader classLoader = new ProxyClassLoader(loader);
             Class<?> handlerClass = classLoader.loadClass(this.handlerClassName);
-            AbstractHandler handler = (AbstractHandler) handlerClass.newInstance();
-            handler.setArgs(getArgs());
-            return handler;
+            return(AbstractHandler) handlerClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,8 +86,8 @@ public abstract class AbstractTransformer {
     /**
      * 是否 debug 模式
      */
-    public boolean isDebug() {
-        return Boolean.parseBoolean(getArgs().get(CommonConstants.DEBUG));
+    protected boolean isDebug() {
+        return this.args.getDebug();
     }
 
 }

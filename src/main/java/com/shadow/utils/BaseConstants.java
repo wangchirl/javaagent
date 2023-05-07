@@ -17,7 +17,7 @@ public class BaseConstants {
     public static Type RUNNABLE_TYPE = Type.getType("Ljava/lang/Runnable;");
     public static Type REFLECT_FIELD_TYPE = Type.getType("Ljava/lang/reflect/Field;");
     public static Type REFLECT_METHOD_TYPE = Type.getType("Ljava/lang/reflect/Method;");
-    public static Type THREADLOCAL_TYPE = Type.getType("Ljava/lang/ThreadLocal;");
+    public static Type THREAD_LOCAL_TYPE = Type.getType("Ljava/lang/ThreadLocal;");
     public static Type ITERATOR_TYPE = Type.getType("Ljava/util/Iterator;");
     public static Type SET_TYPE = Type.getType("Ljava/util/Set;");
     public static Type MAP_TYPE = Type.getType("Ljava/util/Map;");

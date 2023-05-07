@@ -7,12 +7,11 @@ import com.shadow.utils.CommonConstants;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
-import java.util.Map;
 
 public class AsmTransformer extends AbstractTransformer implements ClassFileTransformer {
 
-    public AsmTransformer(Map<String, String> resolveArgs) {
-        super(resolveArgs, IAsmHandler.class);
+    public AsmTransformer() {
+        super(IAsmHandler.class);
     }
 
     @Override

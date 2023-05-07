@@ -1,6 +1,5 @@
 package com.shadow.core.javassist.handler;
 
-import com.shadow.utils.CommonConstants;
 import java.util.function.Supplier;
 
 public class SpringJobJavassistHandler extends AbstractJavassistHandler {
@@ -12,7 +11,7 @@ public class SpringJobJavassistHandler extends AbstractJavassistHandler {
             body.append("{");
             body.append(setThreadLocal());
             body.append("\n    org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor postProcessor = ");
-            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(getArgs().getIocFieldName());
             body.append(".getBean(org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class);");
             body.append("\n    java.lang.reflect.Field field = org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class.getDeclaredField(\"scheduledTasks\");");
             body.append("\n    field.setAccessible(true);");
@@ -57,13 +56,13 @@ public class SpringJobJavassistHandler extends AbstractJavassistHandler {
     }
 
     @Override
-    protected Supplier<String> getCrudMethodBody() {
+    public Supplier<String> getCrudMethodBody() {
         return () -> {
             StringBuilder body = new StringBuilder();
             body.append("{");
             body.append("   boolean result = false;");
             body.append("\n    org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor processor = (org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor) ");
-            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(getArgs().getIocFieldName());
             body.append(".getBean(org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class);");
             body.append("\n    java.lang.reflect.Field scheduledTasks = org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor.class.getDeclaredField(\"scheduledTasks\");");
             body.append("\n    scheduledTasks.setAccessible(true);");

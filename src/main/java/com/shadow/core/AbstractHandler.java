@@ -1,8 +1,9 @@
 package com.shadow.core;
 
+import com.shadow.common.RequestArgsVO;
 import com.shadow.utils.CommonConstants;
+import com.shadow.utils.ParamResolveUtils;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
 public abstract class AbstractHandler {
@@ -10,7 +11,7 @@ public abstract class AbstractHandler {
     /**
      * agent request args
      */
-    private Map<String, String> args;
+    private RequestArgsVO args;
 
     /**
      * ThreadLocal class name
@@ -27,7 +28,20 @@ public abstract class AbstractHandler {
      */
     private String threadLocalFieldName;
 
-    public Map<String, String> getArgs() {
+    /**
+     * inner class name
+     */
+    private String innerClassName;
+
+    public String getInnerClassName() {
+        return innerClassName;
+    }
+
+    public void initInnerClassName() {
+        this.innerClassName = getArgs().getCtlClass().replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
+    }
+
+    public RequestArgsVO getArgs() {
         return this.args;
     }
 
@@ -43,16 +57,21 @@ public abstract class AbstractHandler {
         return threadLocalFieldName;
     }
 
-    public void setArgs(Map<String, String> args) {
-        this.args = args;
-        this.threadLocalFieldName = getArgs().get(CommonConstants.THREADLOCAL_FIELD_NAME);
-        this.threadLocalClassName = getArgs().get(CommonConstants.THREADLOCAL_CLASS_NAME);
-        this.threadLocalInnerClassName = this.threadLocalClassName == null ? null : this.threadLocalClassName.replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
+    public AbstractHandler() {
+        this.args = ParamResolveUtils.REQUEST_ARGS_VO_THREAD_LOCAL.get();
         init();
     }
 
-    protected void init() {
-        // hook method
+    public void setArgs(RequestArgsVO args) {
+        this.args = args;
+        init();
+    }
+
+    private void init() {
+        this.threadLocalFieldName = getArgs().getTlFieldName();
+        this.threadLocalClassName = getArgs().getTlClass();
+        this.threadLocalInnerClassName = this.threadLocalClassName == null ? null : this.threadLocalClassName.replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
+        this.initInnerClassName();
     }
 
     /**
@@ -61,14 +80,14 @@ public abstract class AbstractHandler {
      * @return {@link java.lang.String}
      */
     protected Supplier<String> getMethodName() {
-        return () -> this.args.get(CommonConstants.METHOD_NAME) == null ? this.getClass().getSimpleName().toLowerCase() : this.args.get(CommonConstants.METHOD_NAME);
+        return () -> this.args.getMethodName() == null ? this.getClass().getSimpleName().toLowerCase() : this.args.getMethodName();
     }
 
     /**
      * 是否 debug 模式
      */
     protected boolean isDebug() {
-        return Boolean.parseBoolean(this.args.get(CommonConstants.DEBUG));
+        return this.args.getDebug();
     }
 
 }

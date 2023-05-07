@@ -43,11 +43,6 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
         }
     }
 
-    @Override
-    protected void init() {
-        initInnerClassName();
-    }
-
     /**
      * thread local run method body
      */
@@ -57,11 +52,6 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
      * normal run method body
      */
     public abstract void setNormalMethodBody(MethodVisitor methodVisitor);
-
-    /**
-     * inner class name
-     */
-    private String innerClassName;
 
     /**
      * origin handler for attach api
@@ -76,19 +66,12 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
         return originHandler;
     }
 
-    String getInnerClassName() {
-        return innerClassName;
-    }
-
-    public void initInnerClassName() {
-        this.innerClassName = getArgs().get(CommonConstants.CONTROLLER_CLASS).replaceAll(CommonConstants.REG_DOT, CommonConstants.BIAS);
-    }
 
     public ClassFileTransformer handle(Instrumentation inst) {
         return new AgentBuilder.Default()
                 .with(AgentBuilder.RedefinitionStrategy.REDEFINITION)
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
-                .type(named(getArgs().get(CommonConstants.CONTROLLER_CLASS)))
+                .type(named(getArgs().getCtlClass()))
                 .transform((builder, typeDescription, classLoader, module) -> {
                     DynamicType.Builder<?> newBuilder = builder.visit(this);
                     if (isDebug()) {
@@ -127,7 +110,7 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
             // 2、spring ioc field
             FieldVisitor fieldVisitor = classVisitor.visitField(
                     ACC_PRIVATE,
-                    getArgs().get(CommonConstants.IOC_FIELD_NAME),
+                    getArgs().getIocFieldName(),
                     SpringConstants.SPRING_APPLICATION_CONTEXT_TYPE.getDescriptor(),
                     null,
                     null
@@ -154,7 +137,7 @@ public abstract class AbstractBuddyHandler extends AbstractHandler implements IB
             // @RequestMapping
             AnnotationVisitor requestMapping = methodVisitor.visitAnnotation(SpringConstants.SPRING_REQUEST_MAPPING_TYPE.getDescriptor(), Boolean.TRUE);
             AnnotationVisitor value = requestMapping.visitArray(CommonConstants.CONST_VALUE);
-            value.visit(null, getArgs().get(CommonConstants.HTTP_REQUEST_PREFIX_URI));
+            value.visit(null, getArgs().getHttpUri());
             value.visitEnd();
             requestMapping.visitEnd();
             // @PathVariable

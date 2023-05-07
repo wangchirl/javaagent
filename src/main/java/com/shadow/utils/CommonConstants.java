@@ -1,6 +1,5 @@
 package com.shadow.utils;
 
-import com.shadow.core.AbstractHandler;
 import jdk.internal.org.objectweb.asm.Opcodes;
 
 public class CommonConstants {
@@ -8,12 +7,6 @@ public class CommonConstants {
     private CommonConstants() {
 
     }
-
-    // tips
-    public static String XXL_SUCCESS = "Execute Xxl Job Successful !";
-    public static String QUARTZ_SUCCESS = "Execute Quartz Job Successful !";
-    public static String SPRING_SUCCESS = "Execute Spring Job Successful !";
-    public static final String TIPS = "Job agent ...";
 
     public static final String JAVASSIST_HANDLER_NAME_SUFFIX = "JobJavassistHandler";
     public static final String ASM_HANDLER_NAME_SUFFIX = "JobAsmHandler";
@@ -63,7 +56,7 @@ public class CommonConstants {
                 return proxyTypeEnum;
             }
         }
-        return ProxyTypeEnum.JAVASSIST;
+        return ProxyTypeEnum.ASM;
     }
 
     /**
@@ -98,78 +91,9 @@ public class CommonConstants {
     }
 
     /**
-     * 字节码操作类型 javassist 、 ASM 、 ByteBuddy
-     */
-    public static String PROXY_TYPE = "proxyType";
-
-    /**
-     * JOB 类型 - 必须
-     */
-    public static String JOB_TYPE = "jobType";
-
-    /**
-     * 指定的 controller 类 - 必须
-     */
-    public static String CONTROLLER_CLASS = "ctlClass";
-
-    /**
-     * 注入 controller IOC 容器字段名称 - 非必须
-     * {@link CommonConstants#DEFAULT_IOC_FIELD_VALUE}
-     */
-    public static String IOC_FIELD_NAME = "iocFieldName";
-
-    /**
      * 默认注入 controller 的 ioc 容器字段名称
      */
     public static String DEFAULT_IOC_FIELD_VALUE = "$$$springIoc$$$";
-
-    /**
-     * ThreadLocal 传参使用的类 - 非必须
-     */
-    public static String THREADLOCAL_CLASS_NAME = "tlClass";
-
-    /**
-     * ThreadLocal 所在类的字段名称 - THREADLOCAL_CLASS 存在的情况下必须
-     */
-    public static String THREADLOCAL_FIELD_NAME = "tlFieldName";
-
-    /**
-     * 方法名称 - 非必须
-     * default {@link AbstractHandler#getMethodName()}
-     */
-    public static String METHOD_NAME = "methodName";
-
-    /**
-     * 允许传入方法 body - 非必须
-     */
-    public static String METHOD_BODY = "methodBody";
-
-
-    public static String CRUD_METHOD_BODY = "crudMethodBody";
-
-    /**
-     * HTTP 请求 uri - 非必须
-     * {@link CommonConstants#DEFAULT_HTTP_PATH_PREFIX}
-     */
-    public static String HTTP_REQUEST_PREFIX_URI = "httpUri";
-
-    /**
-     * 是否输出代理后的 class file
-     */
-    public static String DEBUG = "debug";
-
-    /**
-     * System.out.println() log 是否打印
-     */
-    public static String LOGGER_PRINT_OPEN = "logger";
-
-
-    // Simple Job CRUD 相关
-
-    /**
-     * Simple Job 定时任务容器对象字段名称
-     */
-    public static String SIMPLE_JOB_IOC_FIELD_NAME = "crudFieldName";
 
     /**
      * Simple Job IOC 对象类型
@@ -180,11 +104,6 @@ public class CommonConstants {
      * 默认 Simple Job 定时任务容器对象字段名称
      */
     public static String DEFAULT_SIMPLE_JOB_IOC_FIELD_NAME = "$$$simpleJobConfigurer$$$";
-
-    /**
-     * 是否给 Simple Job 添加 CRUD 方法
-     */
-    public static String TASK_CRUD = "crud";
 
     /**
      * crud 方法名称
@@ -212,15 +131,5 @@ public class CommonConstants {
 
     // .class 后缀
     public static String CLASS_SUFFIX = ".class";
-
-    // ========= dynamic args naming ==========
-
-    /**
-     * 原 JOB 类型
-     *
-     * @see CommonConstants#JOB_TYPE
-     */
-    public static String ORIGIN_JOB_TYPE = "originJobType";
-
 
 }

@@ -1,6 +1,5 @@
 package com.shadow.core.javassist.handler;
 
-import com.shadow.utils.CommonConstants;
 import java.util.function.Supplier;
 
 public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
@@ -12,11 +11,11 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
             body.append("{");
             body.append(setThreadLocal());
             body.append("\n    org.quartz.impl.triggers.CronTriggerImpl trigger = (org.quartz.impl.triggers.CronTriggerImpl) ");
-            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(getArgs().getIocFieldName());
             body.append(".getBean($1);");
             body.append("\n    org.quartz.JobKey jobKey = new org.quartz.JobKey(trigger.getJobName());");
             body.append("\n    org.quartz.Scheduler scheduler = ((org.springframework.scheduling.quartz.SchedulerFactoryBean) ");
-            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(getArgs().getIocFieldName());
             body.append(".getBean(org.springframework.scheduling.quartz.SchedulerFactoryBean.class)).getScheduler();");
             if (getThreadLocalClassName() != null && getThreadLocalFieldName() != null) {
                 body.append("\n    scheduler.triggerJob(jobKey, jobDataMap);");
@@ -42,7 +41,7 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
     }
 
     @Override
-    protected Supplier<String> getCrudMethodBody() {
+    public Supplier<String> getCrudMethodBody() {
         return () -> {
             StringBuilder body = new StringBuilder();
             body.append("{");
@@ -53,10 +52,10 @@ public class QuartzJobJavassistHandler extends AbstractJavassistHandler {
             body.append("         java.lang.String triggerName = split[0];");
             body.append("         java.lang.String taskKey = split[1];");
             body.append("         org.quartz.impl.triggers.CronTriggerImpl cronTrigger = (org.quartz.impl.triggers.CronTriggerImpl) ");
-            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(getArgs().getIocFieldName());
             body.append(".getBean(triggerName);");
             body.append("         org.springframework.scheduling.quartz.SchedulerFactoryBean schedulerFactoryBean = (org.springframework.scheduling.quartz.SchedulerFactoryBean) ");
-            body.append(getArgs().get(CommonConstants.IOC_FIELD_NAME));
+            body.append(getArgs().getIocFieldName());
             body.append(".getBean(org.springframework.scheduling.quartz.SchedulerFactoryBean.class);");
             body.append("\n       org.quartz.Scheduler scheduler = schedulerFactoryBean.getScheduler();");
             body.append("\n       if (taskKey.equals(cronTrigger.getJobName())) {");

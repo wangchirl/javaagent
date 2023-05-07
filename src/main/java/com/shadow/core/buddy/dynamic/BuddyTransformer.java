@@ -10,15 +10,14 @@ import net.bytebuddy.dynamic.DynamicType;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
-import java.util.Map;
 
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 
 public class BuddyTransformer extends AbstractTransformer {
 
-    public BuddyTransformer(Map<String, String> resolveArgs) {
-        super(resolveArgs);
+    public BuddyTransformer() {
+        super();
     }
 
     @Override
@@ -27,16 +26,12 @@ public class BuddyTransformer extends AbstractTransformer {
     }
 
     public ClassFileTransformer handle(AbstractBuddyHandler handler, Instrumentation inst) {
-        getArgs().forEach((k,v) ->{
-            System.out.println(k + " = " + v);
-        });
         return new AgentBuilder.Default()
                 .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
-                .type(named(getArgs().get(CommonConstants.CONTROLLER_CLASS)))
+                .type(named(getArgs().getCtlClass()))
                 .transform((builder, typeDescription, classLoader, module) -> {
                     DynamicType.Builder<?> newBuilder = builder.visit(handler);
-                    System.out.println("hahaha");
                     if (isDebug()) {
                         FileUtils.writeBytes(getInnerClassName() + CommonConstants.CLASS_SUFFIX, newBuilder.make().getBytes());
                     }

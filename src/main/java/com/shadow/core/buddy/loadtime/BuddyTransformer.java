@@ -7,12 +7,11 @@ import com.shadow.utils.CommonConstants;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
-import java.util.Map;
 
 public class BuddyTransformer extends AbstractTransformer {
 
-    public BuddyTransformer(Map<String, String> resolveArgs) {
-        super(resolveArgs, IBuddyHandler.class);
+    public BuddyTransformer() {
+        super(IBuddyHandler.class);
     }
 
     @Override

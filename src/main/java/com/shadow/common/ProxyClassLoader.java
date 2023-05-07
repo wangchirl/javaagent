@@ -1,4 +1,4 @@
-package com.shadow.core.common;
+package com.shadow.common;
 
 public class ProxyClassLoader extends ClassLoader {
 

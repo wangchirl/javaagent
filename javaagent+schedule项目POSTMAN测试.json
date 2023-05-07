@@ -22,7 +22,7 @@
 					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
 				},
 				"url": {
-					"raw": "localhost:50084/shadow/api/system/agent/run/xxl2?params=王钦",
+					"raw": "localhost:50084/shadow/api/system/agent/run/xxl1?params=测试",
 					"host": [
 						"localhost"
 					],
@@ -33,12 +33,12 @@
 						"system",
 						"agent",
 						"run",
-						"xxl2"
+						"xxl1"
 					],
 					"query": [
 						{
 							"key": "params",
-							"value": "王钦"
+							"value": "测试"
 						}
 					]
 				}
@@ -62,7 +62,7 @@
 					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
 				},
 				"url": {
-					"raw": "localhost:50084/shadow/api/system/agent/run/quartzTriggerKey?params=quartzJob",
+					"raw": "localhost:50084/shadow/api/system/agent/run/quartzTriggerKey?params=测试",
 					"host": [
 						"localhost"
 					],
@@ -78,7 +78,7 @@
 					"query": [
 						{
 							"key": "params",
-							"value": "quartzJob"
+							"value": "测试"
 						}
 					]
 				}
@@ -102,7 +102,7 @@
 					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
 				},
 				"url": {
-					"raw": "localhost:50084/shadow/api/system/agent/run/spring2?params=王钦1",
+					"raw": "localhost:50084/shadow/api/system/agent/run/spring2?params=测试",
 					"host": [
 						"localhost"
 					],
@@ -118,7 +118,7 @@
 					"query": [
 						{
 							"key": "params",
-							"value": "王钦1"
+							"value": "测试"
 						}
 					]
 				}
@@ -142,7 +142,7 @@
 					"raw": "{\n\t\"name\":\"王钦\",\n\t\"age\":20\n}"
 				},
 				"url": {
-					"raw": "localhost:50084/shadow/api/system/agent/run/simple1?params=王钦1",
+					"raw": "localhost:50084/shadow/api/system/agent/run/simple1?params=测试",
 					"host": [
 						"localhost"
 					],
@@ -158,7 +158,122 @@
 					"query": [
 						{
 							"key": "params",
-							"value": "王钦1"
+							"value": "测试"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Xxl 定时任务 - 查",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": "localhost:50084/shadow/api/system/agent/crud/1/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Quartz 定时任务 - 增删改查",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:50084/shadow/api/system/agent/crud/1/quartzTriggerKey@quartzJob?cron=0/2 * * * * ?",
+					"host": [
+						"localhost"
+					],
+					"port": "50084",
+					"path": [
+						"shadow",
+						"api",
+						"system",
+						"agent",
+						"crud",
+						"1",
+						"quartzTriggerKey@quartzJob"
+					],
+					"query": [
+						{
+							"key": "cron",
+							"value": "0/2 * * * * ?"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Spring 定时任务 - 增删改查",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:50084/shadow/api/system/agent/crud/1/spring1?cron=0/2 * * * * ?",
+					"host": [
+						"localhost"
+					],
+					"port": "50084",
+					"path": [
+						"shadow",
+						"api",
+						"system",
+						"agent",
+						"crud",
+						"1",
+						"spring1"
+					],
+					"query": [
+						{
+							"key": "cron",
+							"value": "0/2 * * * * ?"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Simple 定时任务 - 增删改查",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:50084/shadow/api/system/agent/crud/1/simple2?cron=0/2 * * * * ?",
+					"host": [
+						"localhost"
+					],
+					"port": "50084",
+					"path": [
+						"shadow",
+						"api",
+						"system",
+						"agent",
+						"crud",
+						"1",
+						"simple2"
+					],
+					"query": [
+						{
+							"key": "cron",
+							"value": "0/2 * * * * ?"
 						}
 					]
 				}
