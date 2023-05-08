@@ -1,0 +1,5 @@
+document.getElementsByTagName("main")[0].style="width:100%";
+document.getElementById("article_content").style="height:12222111px";
+document.getElementsByClassName("blog_container_aside")[0].style="display:none";
+document.getElementById("content_views").id="xx";
+document.getElementById("mainBox").style="width:100%"
